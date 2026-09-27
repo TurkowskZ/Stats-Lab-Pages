@@ -1,2 +1,2 @@
-# BayesLab
-Webpage for Explaining Bayes Theorem to Lab
+# Zach Statistics Lab Pages
+Webpage for Explaining Various Statistics Ideas to Students
