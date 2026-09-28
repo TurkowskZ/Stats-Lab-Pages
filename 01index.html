@@ -4,101 +4,107 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Statistics Explainers</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
     body {
-      font-family: 'Inter', sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f8fafc;
+      color: #1e293b;
+      line-height: 1.5;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    header {
+      margin-bottom: 32px;
+      text-align: center;
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+    p.subtitle {
+      color: #64748b;
+      font-size: 1.05rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    @media (min-width: 600px) {
+      .grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    .card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 24px;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: #cbd5e1;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+    .card h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 8px;
+    }
+    .card p {
+      font-size: 0.95rem;
+      color: #64748b;
+      margin-bottom: 16px;
+    }
+    .card .link-text {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #2563eb;
     }
   </style>
 </head>
-<body class="bg-stone-50 text-stone-800 min-h-screen flex flex-col justify-between p-6 sm:p-12">
+<body>
 
-  <!-- Main Container -->
-  <main class="max-w-2xl mx-auto w-full pt-6">
-
-    <!-- Header Section -->
-    <header class="mb-10 text-center sm:text-left">
-      <p class="text-xs uppercase tracking-widest text-stone-500 font-semibold mb-2">Course Modules</p>
-      <h1 class="text-3xl font-bold tracking-tight text-stone-900">Statistics Concept Explainers</h1>
-      <p class="mt-2 text-stone-600 text-sm leading-relaxed">
-        Select a topic below to open the interactive explainer in your browser.
-      </p>
+  <div class="container">
+    <header>
+      <h1>Statistics Explainers</h1>
+      <p class="subtitle">Select a topic below to review concepts and interactive demos.</p>
     </header>
 
-    <!-- 
-      ===============================================================
-      LINKS LIST
-      To add a new page, simply duplicate one of the <a> ... </a> cards 
-      below, update the "href", the title, and the short description.
-      ===============================================================
-    -->
-    <div class="space-y-4">
-
-      <!-- CARD 1: Bayes' Theorem -->
-      <a href="fkItBayesLife.html" 
-         class="group block p-5 sm:p-6 bg-white rounded-2xl border border-stone-200 shadow-xs hover:border-stone-400 hover:shadow-md transition duration-150">
-        <div class="flex items-center justify-between mb-1.5">
-          <h2 class="text-lg font-semibold text-stone-900 group-hover:text-blue-600 transition">
-            Bayes' Theorem &amp; Conditional Probability
-          </h2>
-          <span class="text-stone-400 group-hover:text-stone-700 group-hover:translate-x-0.5 transition text-sm">
-            &rarr;
-          </span>
-        </div>
-        <p class="text-sm text-stone-500 leading-relaxed">
-          Explore prior and posterior probabilities, likelihood, and how new sample evidence updates your degree of belief.
-        </p>
+    <main class="grid">
+      <!-- Card 1 -->
+      <a class="card" href="bayes.html">
+        <h2>Bayes' Theorem</h2>
+        <p>Prior probabilities, likelihood, and updating beliefs with evidence.</p>
+        <div class="link-text">Open Explainer &rarr;</div>
       </a>
 
-      <!-- CARD 2: Student's t-Test -->
-      <a href="t_test_Walkthrough.html" 
-         class="group block p-5 sm:p-6 bg-white rounded-2xl border border-stone-200 shadow-xs hover:border-stone-400 hover:shadow-md transition duration-150">
-        <div class="flex items-center justify-between mb-1.5">
-          <h2 class="text-lg font-semibold text-stone-900 group-hover:text-blue-600 transition">
-            Student's t-Tests
-          </h2>
-          <span class="text-stone-400 group-hover:text-stone-700 group-hover:translate-x-0.5 transition text-sm">
-            &rarr;
-          </span>
-        </div>
-        <p class="text-sm text-stone-500 leading-relaxed">
-          Compare sample means across one-sample, independent two-sample, and paired designs with interactive degrees of freedom.
-        </p>
+      <!-- Card 2 -->
+      <a class="card" href="t-test.html">
+        <h2>Student's t-Test</h2>
+        <p>Hypothesis testing, distributions, standard errors, and group comparisons.</p>
+        <div class="link-text">Open Explainer &rarr;</div>
       </a>
 
-      <!-- 
-        ===============================================================
-        PASTE FUTURE TOPIC CARDS BELOW THIS LINE:
-        ===============================================================
-        
-        Example template:
-        
-        <a href="your-page-name.html" 
-           class="group block p-5 sm:p-6 bg-white rounded-2xl border border-stone-200 shadow-xs hover:border-stone-400 hover:shadow-md transition duration-150">
-          <div class="flex items-center justify-between mb-1.5">
-            <h2 class="text-lg font-semibold text-stone-900 group-hover:text-blue-600 transition">
-              Topic Title
-            </h2>
-            <span class="text-stone-400 group-hover:text-stone-700 group-hover:translate-x-0.5 transition text-sm">
-              &rarr;
-            </span>
-          </div>
-          <p class="text-sm text-stone-500 leading-relaxed">
-            Brief 1-2 sentence description of the explainer concept.
-          </p>
-        </a>
-      -->
-
-    </div>
-  </main>
-
-  <!-- Clean Minimal Footer -->
-  <footer class="max-w-2xl mx-auto w-full text-center sm:text-left pt-12 pb-4 text-xs text-stone-400">
-    <p>&copy; Statistics Department &bull; Interactive Web Explainers</p>
-  </footer>
+      <!-- To add a new topic, copy a block above and update the href and text -->
+    </main>
+  </div>
 
 </body>
 </html>
