@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>t Test Conceptual Reference and Guide</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              400: '#38bdf8',
+              500: '#0ea5e9',
+              600: '#0284c7',
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .math_fraction {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      padding: 0 4px;
+    }
+    .math_numerator {
+      border-bottom: 1.5px solid currentColor;
+      padding-bottom: 2px;
+    }
+    .math_denominator {
+      padding-top: 2px;
+    }
+  </style>
+</head>
+<body class="bg-[#090d16] text-slate-200 antialiased min-h-screen flex flex-col selection:bg-brand-500 selection:text-white">
+
+  <!-- Header -->
+  <header class="bg-[#0f172a] border-b border-slate-800 sticky top-0 z-30 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-sky-600 text-white font-bold text-xl shadow-lg shadow-sky-950">
+            t
+          </span>
+          <div>
+            <h1 class="text-xl sm:text-2xl font-bold text-slate-100 tracking-tight">t Test Conceptual Reference Guide</h1>
+            <p class="text-xs sm:text-sm text-slate-400">Core distinctions, sampling distributions, and variance assumption dynamics</p>
+          </div>
+        </div>
+        <div class="text-xs font-semibold px-3 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
+          Executive Companion
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-10">
+
+    <!-- Section 1: Overview of the 3 Tests -->
+    <section class="space-y-4">
+      <div>
+        <h2 class="text-2xl font-bold text-slate-100">Overview of the Three Different t Tests</h2>
+        <p class="text-sm text-slate-400 mt-1">
+          A side by side structural comparison identifying known parameters, unknown parameters, hypotheses, and distribution properties.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <!-- One Sample Card -->
+        <div class="bg-[#0f172a] rounded-2xl border border-slate-800 p-6 flex flex-col justify-between shadow-sm hover:border-slate-700 transition">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-950/80 text-emerald-400 border border-emerald-800">
+                Single Sample
+              </span>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-slate-100">One Sample t Test</h3>
+              <p class="text-xs text-slate-400 mt-0.5">Evaluating against a known population parameter</p>
+            </div>
+
+            <div class="border-t border-slate-800 pt-3 space-y-2 text-xs">
+              <div>
+                <span class="font-semibold text-slate-300">Knowns:</span>
+                <span class="text-slate-400">Population mean (μ), Sample mean (X̄ or m), Sample SD (s)</span>
+              </div>
+              <div>
+                <span class="font-semibold text-slate-300">Unknown:</span>
+                <span class="text-slate-400">Population SD (σ)</span>
+              </div>
+              <div>
+                <span class="font-semibold text-slate-300">Research Question:</span>
+                <span class="text-slate-400">Is my sample mean significantly different than the established population?</span>
+              </div>
+              <div>
+                <span class="font-semibold text-slate-300">Null Hypothesis (H₀):</span>
+                <span class="font-mono text-emerald-400 font-semibold">X̄ = μ &nbsp;(or X̄ − μ = 0)</span>
+              </div>
+              <div>
+                <span class="font-semibold text-slate-300">Sampling Distribution:</span>
+                <span class="text-slate-400">One distribution, using the sample standard deviation (s) to estimate standard error (SE).</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dependent Samples Card -->
+        <div class="bg-[#0f172a] rounded-2xl border border-slate-800 p-6 flex flex-col justify-between shadow-sm hover:border-slate-700 transition">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-sky-950/80 text-sky-400 border border-sky-800">
+                Paired Measures
+              </span>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-slate-100">Dependent Samples t Test</h3>
+              <p class="text-xs text-sky-400 font-medium mt-0.5">Scores originate from the exact same person</p>
+            </div>
+
+            <div class="border-t border-slate-800 pt-3 space-y-2 text-xs">
+              <div>
+                <span class="font-semibold text-slate-300">Knowns:</span>
+                <span class="text-slate-400">Sample means (X̄₁, X̄₂), Sample SD (s)</span>
+              </div>
+              <div>
+                <span class="font-semibold text-slate-300">Unknowns:</span>
+                <span class="text-slate-400">Population mean (μ), Population SD (σ)</span>
+              </div>
+              <div>
+                <span class="font-semibold text-slate-300">Research Question:</span>
+                <span class="text-slate-400">Does my sample mean change after my intervention?</span>
+              </div>
+              <div>
+                <span class="font-semibold text-slate-300">Null Hypothesis (H₀):</span>
+                <span class="font-mono text-sky-400 font-semibold">X̄₁ = X̄₂ &nbsp;(or X̄₁ − X̄₂ = 0)</span>
+              </div>
+              <div>
+                <span class="font-semibold text-slate-300">Sampling Distribution:</span>
+                <span class="text-slate-400">One sampling distribution of difference scores, using the SD of differences to estimate SE.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Independent Samples Card -->
+        <div class="bg-[#0f172a] rounded-2xl border border-slate-800 p-6 flex flex-col justify-between shadow-sm hover:border-slate-700 transition">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-purple-950/80 text-purple-400 border border-purple-800">
+                Two Distinct Groups
+              </span>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-slate-100">Independent Samples t Test</h3>
+              <p class="text-xs text-purple-400 font-medium mt-0.5">Scores originate from completely different people</p>
+            </div>
+
+            <div class="border-t border-slate-800 pt-3 space-y-2 text-xs">
+              <div>
+                <span class="font-semibold text-slate-300">Knowns:</span>
+                <span class="text-slate-400">Sample means (X̄₁, X̄₂), Sample SDs (s₁, s₂)</span>
+              </div>
+              <div>
+                <span class="font-semibold text-slate-300">Unknowns:</span>
+                <span class="text-slate-400">Population means (μ₁, μ₂), Population SDs (σ₁, σ₂)</span>
+              </div>
+              <div>
+                <span class="font-semibold text-slate-300">Research Question:</span>
+                <span class="text-slate-400">Are our two samples significantly different, suggesting they originate from two different populations?</span>
+              </div>
+              <div>
+                <span class="font-semibold text-slate-300">Null Hypothesis (H₀):</span>
+                <span class="font-mono text-purple-400 font-semibold">μ₁ = μ₂ &nbsp;(or μ₁ − μ₂ = 0)</span>
+              </div>
+              <div>
+                <span class="font-semibold text-slate-300">Sampling Distributions:</span>
+                <span class="text-slate-400">Three total distributions: two estimating group SEs, plus one distribution of difference scores.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Critical Distinction Banner -->
+      <div class="bg-gradient-to-r from-slate-900 via-[#111c38] to-slate-900 border border-sky-900/60 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+        <div class="space-y-1">
+          <span class="font-bold text-sky-300 uppercase tracking-wide">Key Disciplinary Distinction</span>
+          <p class="text-slate-300">
+            <strong>Dependent Samples:</strong> The two sets of scores being compared come from <span class="underline decoration-sky-400 text-sky-200">the same person</span> (pre versus post or matched pairs).
+          </p>
+          <p class="text-slate-300">
+            <strong>Independent Samples:</strong> The two sets of scores being compared come from <span class="underline decoration-purple-400 text-purple-200">different people</span> (separate group entities).
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Universal Foundations & Sampling Distributions -->
+    <section class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold text-slate-100">Universal Decision Logic and Distribution Architecture</h2>
+        <p class="text-sm text-slate-400 mt-1">
+          Foundational probabilistic steps shared by all Student t tests and how sampling distributions operate across research designs.
+        </p>
+      </div>
+
+      <!-- 4 Step Universal Pipeline -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-[#0f172a] border border-slate-800 p-5 rounded-xl space-y-2">
+          <div class="w-7 h-7 rounded-lg bg-sky-900 text-sky-300 font-bold text-xs flex items-center justify-center border border-sky-700">
+            1
+          </div>
+          <h3 class="font-bold text-slate-200 text-sm">Central Limit Theorem</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            The Central Limit Theorem allows you to determine the nature of a sampling distribution, making inference mathematically sound even when population shapes are unknown.
+          </p>
+        </div>
+
+        <div class="bg-[#0f172a] border border-slate-800 p-5 rounded-xl space-y-2">
+          <div class="w-7 h-7 rounded-lg bg-sky-900 text-sky-300 font-bold text-xs flex items-center justify-center border border-sky-700">
+            2
+          </div>
+          <h3 class="font-bold text-slate-200 text-sm">Sample Variance and Shape</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Use the variance of your sample or samples to establish the shape, dispersion, and standard error of your theoretical sampling distribution.
+          </p>
+        </div>
+
+        <div class="bg-[#0f172a] border border-slate-800 p-5 rounded-xl space-y-2">
+          <div class="w-7 h-7 rounded-lg bg-sky-900 text-sky-300 font-bold text-xs flex items-center justify-center border border-sky-700">
+            3
+          </div>
+          <h3 class="font-bold text-slate-200 text-sm">Alpha and Critical Cutoff</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Apply your designated significance level (α) to your sampling distribution to establish the exact critical threshold required for rejection.
+          </p>
+        </div>
+
+        <div class="bg-[#0f172a] border border-slate-800 p-5 rounded-xl space-y-2">
+          <div class="w-7 h-7 rounded-lg bg-sky-900 text-sky-300 font-bold text-xs flex items-center justify-center border border-sky-700">
+            4
+          </div>
+          <h3 class="font-bold text-slate-200 text-sm">Decision Comparison</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Compare your observed statistic or probability value against the critical boundaries to reach a formal statistical conclusion.
+          </p>
+        </div>
+      </div>
+
+      <!-- Decision Rules & Sampling Distributions Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- Universal Decision Rules -->
+        <div class="bg-[#0f172a] border border-slate-800 rounded-xl p-6 space-y-4">
+          <h3 class="font-bold text-slate-200 text-base">Universal Rejection Criteria</h3>
+          <div class="space-y-3">
+            <div class="p-4 bg-[#141e33] rounded-lg border border-slate-800 space-y-1">
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">Test Statistic Comparison</span>
+              <div class="font-mono text-base font-bold text-sky-400">
+                If |t_observed| &gt; t_critical, reject H₀
+              </div>
+              <p class="text-xs text-slate-400 mt-1">
+                The observed difference between sample and baseline exceeds the maximum deviation expected from random sampling error alone.
+              </p>
+            </div>
+
+            <div class="p-4 bg-[#141e33] rounded-lg border border-slate-800 space-y-1">
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">Probability Value Comparison</span>
+              <div class="font-mono text-base font-bold text-sky-400">
+                If p &lt; α, reject H₀
+              </div>
+              <p class="text-xs text-slate-400 mt-1">
+                The probability of obtaining a sample result this extreme assuming the null hypothesis is true falls below your accepted risk threshold.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sampling Distribution Breakdown -->
+        <div class="bg-[#0f172a] border border-slate-800 rounded-xl p-6 space-y-4">
+          <h3 class="font-bold text-slate-200 text-base">Sampling Distribution Properties</h3>
+          <div class="space-y-3 text-xs">
+            <div class="p-3 bg-[#141e33] rounded-lg border border-slate-800">
+              <span class="font-bold text-emerald-400 block mb-1">One Sample t Test</span>
+              <p class="text-slate-300">
+                Uses <strong>one sampling distribution</strong>. The standard deviation of the single sample estimates the standard error of the mean (SE = s / √n).
+              </p>
+            </div>
+
+            <div class="p-3 bg-[#141e33] rounded-lg border border-slate-800">
+              <span class="font-bold text-sky-400 block mb-1">Dependent Samples t Test</span>
+              <p class="text-slate-300">
+                Uses <strong>one sampling distribution of difference scores</strong>. Differences (D = X₁ − X₂) are calculated per subject, collapsing pairs into a single distribution to estimate SE.
+              </p>
+            </div>
+
+            <div class="p-3 bg-[#141e33] rounded-lg border border-slate-800">
+              <span class="font-bold text-purple-400 block mb-1">Independent Samples t Test</span>
+              <p class="text-slate-300">
+                Involves <strong>three sampling distributions</strong>: one for sample 1 estimating its SE, one for sample 2 estimating its SE, and a third distribution of difference scores between group means.
+              </p>
+              <p class="text-slate-400 mt-1 font-medium">
+                The <strong>Variance Sum Law</strong> makes this standard error calculation direct: the variance of the difference distribution equals the sum of the individual sampling variances.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Section 3: Homogeneity of Variance & Welch Solution -->
+    <section class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold text-slate-100">Homogeneity of Variance Assumption</h2>
+        <p class="text-sm text-slate-400 mt-1">
+          Evaluating equal population variances in independent designs, diagnostic interpretations of Levene test, and corrective protocols.
+        </p>
+      </div>
+
+      <!-- Levene Interpretation Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-[#0a2018] border border-emerald-900/60 rounded-xl p-5 space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+            <h3 class="font-bold text-emerald-300 text-sm uppercase tracking-wide">Assumption Met: p &gt; .05</h3>
+          </div>
+          <p class="text-xs text-emerald-200 leading-relaxed">
+            Variances of the two groups do not differ significantly. Homogeneity of variance holds. Proceed with standard pooled variance and conventional degrees of freedom (df = n₁ + n₂ − 2).
+          </p>
+        </div>
+
+        <div class="bg-[#241014] border border-rose-900/60 rounded-xl p-5 space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+            <h3 class="font-bold text-rose-300 text-sm uppercase tracking-wide">Assumption Violated: p ≤ .05</h3>
+          </div>
+          <p class="text-xs text-rose-200 leading-relaxed">
+            Heterogeneity of variance is present. Whether this violation invalidates your test conclusions depends directly on sample size balance between your two groups.
+          </p>
+        </div>
+      </div>
+
+      <!-- Equal vs Unequal Sample Sizes -->
+      <div class="border border-slate-800 rounded-xl overflow-hidden bg-[#0f172a]">
+        <div class="bg-[#141e33] px-6 py-4 font-bold text-slate-200 text-sm border-b border-slate-800">
+          How Group Sample Sizes Dictate Violation Impact
+        </div>
+        <div class="divide-y divide-slate-800">
+
+          <!-- Equal Sample Sizes -->
+          <div class="p-6 space-y-2">
+            <div class="flex items-center gap-2 text-sky-400 font-semibold text-sm">
+              <span class="text-base">⚖️</span>
+              <span>Condition One: Violated Assumption With Equal Sample Sizes (n₁ = n₂)</span>
+            </div>
+            <p class="text-slate-300 text-xs leading-relaxed">
+              The Student t distribution is <strong class="text-emerald-400 font-bold">robust</strong> to this violation. When sample sizes are balanced, unequal variances will not affect test results to a meaningful degree. Results computed with or without correction remain essentially identical.
+            </p>
+          </div>
+
+          <!-- Unequal Sample Sizes -->
+          <div class="p-6 space-y-3">
+            <div class="flex items-center gap-2 text-amber-400 font-semibold text-sm">
+              <span class="text-base">⚠️</span>
+              <span>Condition Two: Violated Assumption With Unequal Sample Sizes (n₁ ≠ n₂)</span>
+            </div>
+            <p class="text-slate-300 text-xs leading-relaxed">
+              You must apply the <strong class="text-slate-100 font-bold">Welch Satterthwaite solution</strong> for adjusted t prime (t') and adjusted degrees of freedom (df'). If uncorrected, systematic distortion damages nominal statistical validity:
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+              <div class="bg-[#24130d] border border-amber-900/60 p-4 rounded-lg space-y-1">
+                <span class="font-bold text-xs uppercase tracking-wide text-amber-400">Smallest Group Has Largest Variance</span>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                  The observed t statistic becomes <strong class="text-rose-400 font-bold">inflated</strong>. This elevates <strong class="text-rose-400 font-bold">Type I error risk</strong> (falsely rejecting the null hypothesis and declaring a nonexistent difference).
+                </p>
+              </div>
+
+              <div class="bg-[#101b2b] border border-sky-900/60 p-4 rounded-lg space-y-1">
+                <span class="font-bold text-xs uppercase tracking-wide text-sky-400">Largest Group Has Largest Variance</span>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                  The observed t statistic becomes <strong class="text-sky-300 font-bold">underestimated</strong>. This elevates <strong class="text-sky-300 font-bold">Type II error risk</strong> (failing to detect a genuine experimental difference).
+                </p>
+              </div>
+            </div>
+
+            <div class="bg-[#141e33] p-4 rounded-lg text-xs text-slate-300 border border-slate-800 space-y-1">
+              <span class="font-semibold text-slate-200">Sample Size Rule of Thumb:</span>
+              <p class="text-slate-400">
+                These distortion effects are heightened when total sample sizes are small. However, they will not necessarily improve simply by gathering larger overall samples if severe imbalance persists. Keeping group sample sizes equal in experimental design is your most reliable defense.
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Welch Formulas Display -->
+      <div class="bg-[#020617] border border-slate-800 rounded-xl p-6 space-y-4">
+        <div>
+          <h3 class="text-base font-bold text-slate-200">Welch Satterthwaite Analytical Solution</h3>
+          <p class="text-xs text-slate-400">Analytical corrections adjusting the denominator and degrees of freedom</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-1 font-mono text-xs">
+          <!-- Welch t' -->
+          <div class="bg-[#0f172a] p-4 rounded-lg border border-slate-800 space-y-3">
+            <span class="text-sky-400 font-bold block text-sm">Adjusted Test Statistic (t')</span>
+            <div class="text-center py-2 text-slate-200 text-sm">
+              t' = 
+              <span class="math_fraction">
+                <span class="math_numerator">(X̄₁ − X̄₂)</span>
+                <span class="math_denominator">√[ (s₁² / n₁) + (s₂² / n₂) ]</span>
+              </span>
+            </div>
+            <p class="text-slate-400 text-[11px] font-sans">
+              Replaces the pooled variance estimate with direct sample variance estimates per group, correcting denominator scaling.
+            </p>
+          </div>
+
+          <!-- Welch df' -->
+          <div class="bg-[#0f172a] p-4 rounded-lg border border-slate-800 space-y-3">
+            <span class="text-purple-400 font-bold block text-sm">Adjusted Degrees of Freedom (df')</span>
+            <div class="text-center py-2 text-slate-200 text-sm">
+              df' = 
+              <span class="math_fraction">
+                <span class="math_numerator">[ (s₁² / n₁) + (s₂² / n₂) ]²</span>
+                <span class="math_denominator">[ (s₁² / n₁)² / (n₁ − 1) ] + [ (s₂² / n₂)² / (n₂ − 1) ]</span>
+              </span>
+            </div>
+            <p class="text-slate-400 text-[11px] font-sans">
+              Adjusts degrees of freedom to a fractional value, effectively raising the critical threshold cutoff to prevent false positives.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: Targeted Conceptual Scenario Explorer -->
+    <section class="space-y-4">
+      <div>
+        <h2 class="text-2xl font-bold text-slate-100">Targeted Independent Samples Scenario Explorer</h2>
+        <p class="text-sm text-slate-400 mt-1">
+          Click the scenario conditions below to verify the required statistical procedure and error risk profile.
+        </p>
+      </div>
+
+      <div class="bg-[#0f172a] border border-slate-800 rounded-2xl p-6 space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+          <!-- Levene Buttons -->
+          <div class="space-y-2">
+            <span class="block text-xs font-semibold text-slate-300 uppercase tracking-wide">1. Levene Test Outcome</span>
+            <div class="grid grid-cols-1 gap-2">
+              <button type="button" id="btn-levene-met" onclick="setLevene('met')" class="text-left px-3 py-2.5 rounded-lg border text-xs font-medium transition">
+                <div class="font-bold">Met (p &gt; .05)</div>
+                <div class="text-[11px] opacity-80">Equal Variances</div>
+              </button>
+              <button type="button" id="btn-levene-violated" onclick="setLevene('violated')" class="text-left px-3 py-2.5 rounded-lg border text-xs font-medium transition">
+                <div class="font-bold">Violated (p ≤ .05)</div>
+                <div class="text-[11px] opacity-80">Unequal Variances</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Sample Size Buttons -->
+          <div class="space-y-2">
+            <span class="block text-xs font-semibold text-slate-300 uppercase tracking-wide">2. Sample Sizes (n)</span>
+            <div class="grid grid-cols-1 gap-2">
+              <button type="button" id="btn-n-equal" onclick="setN('equal')" class="text-left px-3 py-2.5 rounded-lg border text-xs font-medium transition">
+                <div class="font-bold">Equal Sizes</div>
+                <div class="text-[11px] opacity-80">n₁ = n₂</div>
+              </button>
+              <button type="button" id="btn-n-unequal" onclick="setN('unequal')" class="text-left px-3 py-2.5 rounded-lg border text-xs font-medium transition">
+                <div class="font-bold">Unequal Sizes</div>
+                <div class="text-[11px] opacity-80">n₁ ≠ n₂</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Variance Pairing Buttons -->
+          <div class="space-y-2">
+            <span class="block text-xs font-semibold text-slate-300 uppercase tracking-wide">3. Variance Imbalance Pairing</span>
+            <div class="grid grid-cols-1 gap-2" id="pairing-button-group">
+              <button type="button" id="btn-pairing-small" onclick="setPairing('small_large')" class="text-left px-3 py-2.5 rounded-lg border text-xs font-medium transition">
+                <div class="font-bold">Small Group, Large Var</div>
+                <div class="text-[11px] opacity-80">Smallest n has largest s²</div>
+              </button>
+              <button type="button" id="btn-pairing-large" onclick="setPairing('large_large')" class="text-left px-3 py-2.5 rounded-lg border text-xs font-medium transition">
+                <div class="font-bold">Large Group, Large Var</div>
+                <div class="text-[11px] opacity-80">Largest n has largest s²</div>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Dynamic Output Box -->
+        <div id="sim_result_box" class="p-5 rounded-xl border border-slate-800 bg-[#141e33] space-y-3">
+          <!-- Dynamically populated via JS -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-[#090d16] border-t border-slate-800 py-6 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4">
+      Conceptual t Test Reference Guide based on course curriculum notes.
+    </div>
+  </footer>
+
+  <script>
+    let currentLevene = 'violated';
+    let currentN = 'unequal';
+    let currentPairing = 'small_large';
+
+    function setLevene(val) {
+      currentLevene = val;
+      renderButtons();
+      updateScenario();
+    }
+
+    function setN(val) {
+      currentN = val;
+      renderButtons();
+      updateScenario();
+    }
+
+    function setPairing(val) {
+      currentPairing = val;
+      renderButtons();
+      updateScenario();
+    }
+
+    function renderButtons() {
+      const activeClass = 'bg-sky-600 text-white border-sky-400 shadow-md shadow-sky-950/40';
+      const inactiveClass = 'bg-[#141e33] text-slate-300 border-slate-700 hover:border-slate-500 hover:bg-[#1a2744]';
+      const disabledClass = 'bg-[#0f172a] text-slate-600 border-slate-800 cursor-not-allowed opacity-40';
+
+      // Levene buttons
+      const btnLeveneMet = document.getElementById('btn-levene-met');
+      const btnLeveneViolated = document.getElementById('btn-levene-violated');
+      btnLeveneMet.className = `text-left px-3 py-2.5 rounded-lg border text-xs font-medium transition ${currentLevene === 'met' ? activeClass : inactiveClass}`;
+      btnLeveneViolated.className = `text-left px-3 py-2.5 rounded-lg border text-xs font-medium transition ${currentLevene === 'violated' ? activeClass : inactiveClass}`;
+
+      // Sample size buttons
+      const btnNEqual = document.getElementById('btn-n-equal');
+      const btnNUnequal = document.getElementById('btn-n-unequal');
+      btnNEqual.className = `text-left px-3 py-2.5 rounded-lg border text-xs font-medium transition ${currentN === 'equal' ? activeClass : inactiveClass}`;
+      btnNUnequal.className = `text-left px-3 py-2.5 rounded-lg border text-xs font-medium transition ${currentN === 'unequal' ? activeClass : inactiveClass}`;
+
+      // Variance pairing buttons
+      const btnPairingSmall = document.getElementById('btn-pairing-small');
+      const btnPairingLarge = document.getElementById('btn-pairing-large');
+
+      const isPairingDisabled = (currentLevene === 'met' || currentN === 'equal');
+
+      if (isPairingDisabled) {
+        btnPairingSmall.disabled = true;
+        btnPairingLarge.disabled = true;
+        btnPairingSmall.className = `text-left px-3 py-2.5 rounded-lg border text-xs font-medium transition ${disabledClass}`;
+        btnPairingLarge.className = `text-left px-3 py-2.5 rounded-lg border text-xs font-medium transition ${disabledClass}`;
+      } else {
+        btnPairingSmall.disabled = false;
+        btnPairingLarge.disabled = false;
+        btnPairingSmall.className = `text-left px-3 py-2.5 rounded-lg border text-xs font-medium transition ${currentPairing === 'small_large' ? activeClass : inactiveClass}`;
+        btnPairingLarge.className = `text-left px-3 py-2.5 rounded-lg border text-xs font-medium transition ${currentPairing === 'large_large' ? activeClass : inactiveClass}`;
+      }
+    }
+
+    function updateScenario() {
+      const box = document.getElementById('sim_result_box');
+
+      if (currentLevene === 'met') {
+        box.className = 'p-5 rounded-xl border border-emerald-900/70 bg-[#0a2018] space-y-2';
+        box.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Diagnosis: Standard Model Valid</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 font-semibold border border-emerald-800">No Distortion Risk</span>
+          </div>
+          <h4 class="text-sm font-bold text-slate-100">Homogeneity of Variance Preserved</h4>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Because Levene test is non significant (p &gt; .05), sample variances are statistically equivalent. Compute standard pooled variance (s_p²) and use traditional degrees of freedom (df = n₁ + n₂ − 2). Nominal false positive rates are preserved regardless of sample size balance.
+          </p>
+        `;
+        return;
+      }
+
+      if (currentN === 'equal') {
+        box.className = 'p-5 rounded-xl border border-sky-900/70 bg-[#0c1e38] space-y-2';
+        box.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-sky-400">Diagnosis: Test Is Robust</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-sky-950 text-sky-300 font-semibold border border-sky-800">Balanced n Safeguard</span>
+          </div>
+          <h4 class="text-sm font-bold text-slate-100">Equal Group Sizes (n₁ = n₂) Neutralize Heterogeneity</h4>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Although the homogeneity assumption is violated (p ≤ .05), the t distribution is <strong class="text-sky-300 font-bold">robust</strong> to this violation because group sizes are equal. The calculated test statistic and resulting substantive conclusions will remain essentially identical with or without correction.
+          </p>
+        `;
+        return;
+      }
+
+      if (currentPairing === 'small_large') {
+        box.className = 'p-5 rounded-xl border border-rose-900/70 bg-[#290d14] space-y-2';
+        box.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-rose-400">Severe Distortion: Inflated Test Statistic</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-rose-950 text-rose-300 font-semibold border border-rose-800">Elevated Type I Error</span>
+          </div>
+          <h4 class="text-sm font-bold text-slate-100">Smallest Group Has Largest Variance</h4>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            The standard unadjusted t statistic is artificially <strong class="text-rose-400 font-bold">inflated</strong>. You risk rejecting the null hypothesis when no true effect exists (false positive). You <strong class="text-white font-bold">must use the Welch Satterthwaite solution</strong> (t' and df') to establish appropriate cutoff bounds.
+          </p>
+          <div class="text-[11px] text-slate-400 pt-1 border-t border-rose-950">
+            Note: This distortion is especially acute when sample sizes are small, and does not simply disappear with larger sample sizes if balance is missing.
+          </div>
+        `;
+      } else {
+        box.className = 'p-5 rounded-xl border border-amber-900/70 bg-[#2b1706] space-y-2';
+        box.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Distortion: Underestimated Test Statistic</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-amber-950 text-amber-300 font-semibold border border-amber-800">Elevated Type II Error</span>
+          </div>
+          <h4 class="text-sm font-bold text-slate-100">Largest Group Has Largest Variance</h4>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            The standard unadjusted t statistic is <strong class="text-amber-300 font-bold">underestimated</strong>. Test power is dampened, risking a failure to detect a real world difference that actually exists (false negative). You <strong class="text-white font-bold">must use the Welch Satterthwaite solution</strong> to restore test sensitivity.
+          </p>
+          <div class="text-[11px] text-slate-400 pt-1 border-t border-amber-950">
+            Note: Equal group sample sizes should be prioritized during study design to protect statistical power.
+          </div>
+        `;
+      }
+    }
+
+    window.addEventListener('load', () => {
+      renderButtons();
+      updateScenario();
+    });
+  </script>
+</body>
+</html>
