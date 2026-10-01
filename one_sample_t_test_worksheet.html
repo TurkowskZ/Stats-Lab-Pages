@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>One Sample t-Test Hand Calculation</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"
+          onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 15px;
+      color: #111;
+      background-color: #fcfcfc;
+    }
+    .wrapper {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .top-container {
+      display: flex;
+      flex-direction: row;
+      gap: 25px;
+      align-items: flex-start;
+    }
+    .worksheet-side {
+      flex: 1;
+    }
+    .sidebar {
+      width: 270px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    h2 {
+      text-align: center;
+      margin: 0 0 4px 0;
+      font-size: 1.35rem;
+    }
+    .subtitle {
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.05rem;
+      margin: 0 0 16px 0;
+    }
+    .sheet-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .sheet-table td {
+      vertical-align: top;
+    }
+    .bordered-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 2px solid #000;
+      background: #fff;
+    }
+    .bordered-table th, .bordered-table td {
+      border: 1px solid #000;
+      padding: 4px 6px;
+      font-size: 0.9rem;
+    }
+    .bordered-table th {
+      background-color: #fff;
+      font-weight: bold;
+      text-align: center;
+    }
+    .text-center { text-align: center; }
+    .text-left { text-align: left; }
+    .bold-row { font-weight: bold; }
+    .sheet-input {
+      width: 100%;
+      border: 1px solid #bbb;
+      background-color: #fff;
+      font-size: 0.9rem;
+      padding: 3px 5px;
+      text-align: right;
+      outline: none;
+      font-family: monospace;
+    }
+    .sheet-input:focus {
+      border-color: #000;
+      background-color: #fffff0;
+    }
+    .correct {
+      background-color: #d4edda !important;
+      border: 1px solid #28a745 !important;
+    }
+    .incorrect {
+      background-color: #f8d7da !important;
+      border: 1px solid #dc3545 !important;
+    }
+    .formula-display-box {
+      border: 2px solid #000;
+      background: #fff;
+      padding: 8px 10px;
+      margin-top: 10px;
+      text-align: center;
+      font-size: 0.95rem;
+    }
+    .ci-container {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 10px;
+    }
+    .ci-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      font-weight: bold;
+    }
+    .ci-row .sheet-input {
+      width: 90px;
+    }
+    .d-box-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 10px;
+      font-size: 0.9rem;
+      font-weight: bold;
+    }
+    .d-box-container .sheet-input {
+      width: 80px;
+    }
+    .controls-row {
+      margin-top: 16px;
+      display: flex;
+      gap: 10px;
+    }
+    .btn {
+      padding: 8px 14px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    .btn-check {
+      background: #000;
+      color: #fff;
+      border: 2px solid #000;
+    }
+    .btn-check:hover { background: #333; }
+    .btn-clear {
+      background: #fff;
+      color: #000;
+      border: 2px solid #000;
+    }
+    .btn-clear:hover { background: #eee; }
+    .btn-table {
+      background: #1976d2;
+      color: #fff;
+      border: 2px solid #1565c0;
+    }
+    .btn-table:hover { background: #1565c0; }
+
+    /* Tools Panels */
+    .tool-panel {
+      border: 2px solid #333;
+      border-radius: 4px;
+      background: #fff;
+      padding: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+    }
+    .tool-title {
+      font-size: 0.85rem;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: #222;
+    }
+
+    /* Desk Calculator */
+    .calc-screen {
+      background: #202b38;
+      color: #fff;
+      font-family: monospace;
+      font-size: 1.15rem;
+      padding: 8px;
+      text-align: right;
+      border-radius: 3px;
+      margin-bottom: 8px;
+      min-height: 38px;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+    }
+    .cbtn {
+      padding: 7px 0;
+      font-size: 0.85rem;
+      font-weight: bold;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      background: #f7f7f7;
+      cursor: pointer;
+    }
+    .cbtn:hover { background: #e8e8e8; }
+    .cbtn-op { background: #e3f2fd; color: #0d47a1; }
+    .cbtn-fn { background: #fff3e0; color: #e65100; }
+    .cbtn-eq { background: #202b38; color: #fff; }
+    .cbtn-eq:hover { background: #2c3e50; }
+    .cbtn-clr { background: #ffebee; color: #c62828; }
+
+    /* p-Value Calculator */
+    .pval-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-size: 0.85rem;
+    }
+    .pval-input {
+      width: 90px;
+      padding: 3px 5px;
+      border: 1px solid #bbb;
+      border-radius: 3px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      text-align: right;
+    }
+    .pval-select {
+      width: 90px;
+      padding: 3px 2px;
+      border: 1px solid #bbb;
+      border-radius: 3px;
+      font-size: 0.8rem;
+    }
+    .pval-btn {
+      width: 100%;
+      margin-top: 6px;
+      padding: 6px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      background: #2e7d32;
+      color: #fff;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    .pval-btn:hover { background: #1b5e20; }
+    .pval-result {
+      margin-top: 8px;
+      padding: 6px;
+      background: #f1f8e9;
+      border: 1px solid #c8e6c9;
+      border-radius: 3px;
+      font-family: monospace;
+      font-size: 0.9rem;
+      font-weight: bold;
+      text-align: center;
+      color: #2e7d32;
+    }
+
+    /* Modal for t Table */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+    .modal-content {
+      background: #fff;
+      width: 94%;
+      max-width: 820px;
+      max-height: 90vh;
+      border-radius: 4px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      padding: 14px 18px;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #000;
+      padding-bottom: 8px;
+    }
+    .modal-body {
+      overflow-y: auto;
+      margin-top: 10px;
+    }
+    .close-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .ttable-custom {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+      text-align: right;
+    }
+    .ttable-custom th, .ttable-custom td {
+      padding: 3px 5px;
+      border-right: 1px solid #ddd;
+    }
+    .ttable-custom th:first-child, .ttable-custom td:first-child {
+      text-align: center;
+      font-weight: bold;
+      border-right: 2px solid #000;
+    }
+    .stripe-blue {
+      background-color: #90caf9 !important;
+    }
+
+    /* Reference Cards */
+    .ref-section {
+      margin-top: 30px;
+      border-top: 2px solid #000;
+      padding-top: 14px;
+    }
+    .ref-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .ref-card {
+      border: 1px solid #333;
+      padding: 8px 12px;
+      background: #fff;
+      border-radius: 3px;
+    }
+    .ref-card h4 {
+      margin: 0 0 4px 0;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #111;
+    }
+    .ref-math {
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="wrapper">
+  <h2>One Sample t Test Hand Calculation</h2>
+  <div class="subtitle">Population mean math score is 85</div>
+
+  <div class="top-container">
+    
+    <!-- Left Hand Worksheet Area -->
+    <div class="worksheet-side">
+      <table class="sheet-table">
+        <tr>
+          <!-- Math Scores Table -->
+          <td style="width: 48%; padding-right: 12px;">
+            <table class="bordered-table">
+              <thead>
+                <tr>
+                  <th style="width: 45%;">Math score</th>
+                  <th style="width: 55%;">$$(X_i - \bar{X})^2$$</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td class="text-center">84</td><td><input type="text" class="sheet-input" id="dev_0" data-target="4.84"></td></tr>
+                <tr><td class="text-center">95</td><td><input type="text" class="sheet-input" id="dev_1" data-target="77.44"></td></tr>
+                <tr><td class="text-center">53</td><td><input type="text" class="sheet-input" id="dev_2" data-target="1102.24"></td></tr>
+                <tr><td class="text-center">96</td><td><input type="text" class="sheet-input" id="dev_3" data-target="96.04"></td></tr>
+                <tr><td class="text-center">82</td><td><input type="text" class="sheet-input" id="dev_4" data-target="17.64"></td></tr>
+                <tr><td class="text-center">79</td><td><input type="text" class="sheet-input" id="dev_5" data-target="51.84"></td></tr>
+                <tr><td class="text-center">68</td><td><input type="text" class="sheet-input" id="dev_6" data-target="331.24"></td></tr>
+                <tr><td class="text-center">93</td><td><input type="text" class="sheet-input" id="dev_7" data-target="46.24"></td></tr>
+                <tr><td class="text-center">90</td><td><input type="text" class="sheet-input" id="dev_8" data-target="14.44"></td></tr>
+                <tr><td class="text-center">88</td><td><input type="text" class="sheet-input" id="dev_9" data-target="3.24"></td></tr>
+                <tr><td class="text-center">85</td><td><input type="text" class="sheet-input" id="dev_10" data-target="1.44"></td></tr>
+                <tr><td class="text-center">99</td><td><input type="text" class="sheet-input" id="dev_11" data-target="163.84"></td></tr>
+                <tr><td class="text-center">100</td><td><input type="text" class="sheet-input" id="dev_12" data-target="190.44"></td></tr>
+                <tr><td class="text-center">91</td><td><input type="text" class="sheet-input" id="dev_13" data-target="23.04"></td></tr>
+                <tr><td class="text-center">90</td><td><input type="text" class="sheet-input" id="dev_14" data-target="14.44"></td></tr>
+                <tr class="bold-row">
+                  <td>Sum <input type="text" class="sheet-input" id="sum_x" data-target="1293" style="width: 65px; margin-left: 4px;"></td>
+                  <td><input type="text" class="sheet-input" id="sum_ss" data-target="2138.4"></td>
+                </tr>
+                <tr class="bold-row">
+                  <td>Mean <input type="text" class="sheet-input" id="tbl_mean" data-target="86.2" style="width: 60px; margin-left: 2px;"></td>
+                  <td><input type="text" class="sheet-input" id="tbl_var" data-target="152.74"></td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+
+          <!-- Right Column Summary Calculations -->
+          <td style="width: 52%; padding-left: 6px;">
+            <table class="bordered-table">
+              <tbody>
+                <tr><td class="text-left" style="width: 48%;">n</td><td><input type="text" class="sheet-input" id="val_n" data-target="15"></td></tr>
+                <tr><td class="text-left">mean</td><td><input type="text" class="sheet-input" id="val_mean" data-target="86.2"></td></tr>
+                <tr><td class="text-left">var</td><td><input type="text" class="sheet-input" id="val_var" data-target="152.74"></td></tr>
+                <tr><td class="text-left">std dev</td><td><input type="text" class="sheet-input" id="val_sd" data-target="12.36" data-alt="12.3589"></td></tr>
+                <tr><td class="text-left">std error</td><td><input type="text" class="sheet-input" id="val_se" data-target="3.191" data-alt="3.19"></td></tr>
+                <tr><td class="text-left">pop mean</td><td><input type="text" class="sheet-input" id="val_mu" data-target="85"></td></tr>
+                <tr><td class="text-left">alpha</td><td><input type="text" class="sheet-input" id="val_alpha" data-target="0.05"></td></tr>
+                <tr><td class="text-left">tails</td><td><input type="text" class="sheet-input" id="val_tails" data-target="2"></td></tr>
+                <tr><td class="text-left">df</td><td><input type="text" class="sheet-input" id="val_df" data-target="14"></td></tr>
+                <tr><td class="text-left">t stat</td><td><input type="text" class="sheet-input" id="val_tstat" data-target="0.376" data-alt=".376"></td></tr>
+                <tr><td class="text-left">p value</td><td><input type="text" class="sheet-input" id="val_pval" data-target="0.712" data-alt=".712"></td></tr>
+                <tr><td class="text-left">t crit</td><td><input type="text" class="sheet-input" id="val_tcrit" data-target="2.145" data-alt="2.144"></td></tr>
+              </tbody>
+            </table>
+
+            <div class="formula-display-box">
+              $$t = \frac{\bar{X} - \mu}{\sqrt{s^2 / n}}$$
+            </div>
+
+            <div class="ci-container">
+              <div class="ci-row">
+                <span>CI UL</span>
+                <input type="text" class="sheet-input" id="val_ci_ul" data-target="93.04">
+              </div>
+              <div class="ci-row">
+                <span>CI LL</span>
+                <input type="text" class="sheet-input" id="val_ci_ll" data-target="79.36">
+              </div>
+            </div>
+
+            <div class="formula-display-box" style="margin-top: 8px; font-size: 0.88rem;">
+              $$\text{CI}_{1-\alpha} = \bar{X} \pm t_{\alpha/2} \cdot s_{\bar{X}} = \bar{X} \pm t_{\alpha/2} \frac{s}{\sqrt{n}}$$
+            </div>
+
+            <div class="d-box-container">
+              <span>Cohen's d</span>
+              <input type="text" class="sheet-input" id="val_d" data-target="0.097" data-alt=".097">
+              <div class="formula-display-box" style="margin-top: 0; padding: 4px 8px; font-size: 0.85rem;">
+                $$d = \frac{\bar{X} - \mu}{s}$$
+              </div>
+            </div>
+          </td>
+        </tr>
+      </table>
+
+      <div class="controls-row">
+        <button class="btn btn-check" onclick="checkAllAnswers()">Check Answers</button>
+        <button class="btn btn-clear" onclick="clearWorksheet()">Clear Form</button>
+        <button class="btn btn-table" onclick="openModal()">Open t Table</button>
+      </div>
+    </div>
+
+    <!-- Sidebar Tools -->
+    <div class="sidebar">
+
+      <!-- Desk Calculator -->
+      <div class="tool-panel">
+        <div class="tool-title">Desk Calculator</div>
+        <div class="calc-screen" id="calcDisplay">0</div>
+        <div class="calc-grid">
+          <button class="cbtn cbtn-clr" onclick="calcClear()">C</button>
+          <button class="cbtn cbtn-fn" onclick="calcBackspace()">&larr;</button>
+          <button class="cbtn cbtn-fn" onclick="calcSquare()">x&sup2;</button>
+          <button class="cbtn cbtn-fn" onclick="calcSqrt()">&radic;x</button>
+
+          <button class="cbtn" onclick="calcNum('7')">7</button>
+          <button class="cbtn" onclick="calcNum('8')">8</button>
+          <button class="cbtn" onclick="calcNum('9')">9</button>
+          <button class="cbtn cbtn-op" onclick="calcOp('/')">&divide;</button>
+
+          <button class="cbtn" onclick="calcNum('4')">4</button>
+          <button class="cbtn" onclick="calcNum('5')">5</button>
+          <button class="cbtn" onclick="calcNum('6')">6</button>
+          <button class="cbtn cbtn-op" onclick="calcOp('*')">&times;</button>
+
+          <button class="cbtn" onclick="calcNum('1')">1</button>
+          <button class="cbtn" onclick="calcNum('2')">2</button>
+          <button class="cbtn" onclick="calcNum('3')">3</button>
+          <button class="cbtn cbtn-op" onclick="calcOp('-')">&minus;</button>
+
+          <button class="cbtn" onclick="calcNum('0')">0</button>
+          <button class="cbtn" onclick="calcDecimal()">.</button>
+          <button class="cbtn cbtn-op" onclick="calcOp('+')">+</button>
+          <button class="cbtn cbtn-fn" onclick="calcNegate()">&plusmn;</button>
+
+          <button class="cbtn cbtn-eq" style="grid-column: span 2;" onclick="calcEqual()">=</button>
+          <button class="cbtn cbtn-fn" style="grid-column: span 2;" onclick="calcCopy()">Copy</button>
+        </div>
+      </div>
+
+      <!-- Dedicated p-Value Calculator -->
+      <div class="tool-panel">
+        <div class="tool-title">p-Value Calculator</div>
+        
+        <div class="pval-row">
+          <label for="pv_t">t-stat:</label>
+          <input type="text" id="pv_t" class="pval-input" placeholder="0.000">
+        </div>
+        
+        <div class="pval-row">
+          <label for="pv_df">df:</label>
+          <input type="text" id="pv_df" class="pval-input" placeholder="00">
+        </div>
+
+        <div class="pval-row">
+          <label for="pv_tails">Tails:</label>
+          <select id="pv_tails" class="pval-select">
+            <option value="2">2-tailed</option>
+            <option value="1">1-tailed</option>
+          </select>
+        </div>
+
+        <button class="pval-btn" onclick="computePValue()">Compute p-value</button>
+        <div class="pval-result" id="pv_output">p = &mdash;</div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Formula Guide Section -->
+  <div class="ref-section">
+    <h3 style="margin: 0; font-size: 1.1rem; text-transform: uppercase;">Formula Reference Guide</h3>
+    <div class="ref-grid">
+      <div class="ref-card">
+        <h4>Sample Mean</h4>
+        <div class="ref-math">$$\bar{X} = \frac{\sum X}{n}$$</div>
+      </div>
+      <div class="ref-card">
+        <h4>Sum of Squared Deviations (SS)</h4>
+        <div class="ref-math">$$\text{SS} = \sum (X_i - \bar{X})^2$$</div>
+      </div>
+      <div class="ref-card">
+        <h4>Sample Variance</h4>
+        <div class="ref-math">$$s^2 = \frac{\text{SS}}{n - 1}$$</div>
+      </div>
+      <div class="ref-card">
+        <h4>Sample Standard Deviation</h4>
+        <div class="ref-math">$$s = \sqrt{s^2}$$</div>
+      </div>
+      <div class="ref-card">
+        <h4>Standard Error of the Mean</h4>
+        <div class="ref-math">$$s_{\bar{X}} = \frac{s}{\sqrt{n}} = \sqrt{\frac{s^2}{n}}$$</div>
+      </div>
+      <div class="ref-card">
+        <h4>Degrees of Freedom</h4>
+        <div class="ref-math">$$\text{df} = n - 1$$</div>
+      </div>
+      <div class="ref-card">
+        <h4>One Sample t Statistic</h4>
+        <div class="ref-math">$$t = \frac{\bar{X} - \mu}{s_{\bar{X}}} = \frac{\bar{X} - \mu}{\sqrt{s^2 / n}}$$</div>
+      </div>
+      <div class="ref-card">
+        <h4>Confidence Interval</h4>
+        <div class="ref-math">$$\text{CI}_{1-\alpha} = \bar{X} \pm t_{\text{crit}} \cdot s_{\bar{X}}$$</div>
+      </div>
+      <div class="ref-card" style="grid-column: span 2;">
+        <h4>Cohen's d (Effect Size)</h4>
+        <div class="ref-math">$$d = \frac{\bar{X} - \mu}{s}$$</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- t-Table Modal -->
+<div class="modal-overlay" id="tTableModal" onclick="closeModalOnBg(event)">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 style="margin: 0; font-size: 1.15rem;">t Distribution Critical Values</h3>
+      <button class="close-btn" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <table class="ttable-custom">
+        <thead>
+          <tr style="border-bottom: 1px solid #aaa;">
+            <th rowspan="3" style="vertical-align: bottom; padding-bottom: 6px;">df</th>
+            <th colspan="10" style="text-align: center; border-bottom: 1px solid #ddd; padding: 2px;">Cumulative Probability / Tail Area</th>
+          </tr>
+          <tr>
+            <th>0.50</th><th>0.25</th><th>0.20</th><th>0.15</th><th>0.10</th><th>0.05</th><th>0.025</th><th>0.01</th><th>0.005</th><th>0.001</th>
+          </tr>
+          <tr style="border-bottom: 2px solid #000; font-weight: bold;">
+            <th>1.00</th><th>0.50</th><th>0.40</th><th>0.30</th><th>0.20</th><th>0.10</th><th>0.05</th><th>0.02</th><th>0.01</th><th>0.002</th>
+          </tr>
+        </thead>
+        <tbody id="tTableBody">
+          <!-- Rows dynamically inserted via JavaScript -->
+        </tbody>
+        <tfoot>
+          <tr style="border-top: 2px solid #000; font-weight: bold; background: #e3f2fd;" id="tRowZ"></tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* Desk Calculator Logic */
+  let currentVal = "0";
+  let storedVal = null;
+  let currentOp = null;
+  let clearOnNext = false;
+
+  function updateCalcScreen() {
+    document.getElementById("calcDisplay").textContent = currentVal;
+  }
+  function calcNum(digit) {
+    if (clearOnNext || currentVal === "0") {
+      currentVal = digit;
+      clearOnNext = false;
+    } else {
+      currentVal += digit;
+    }
+    updateCalcScreen();
+  }
+  function calcDecimal() {
+    if (clearOnNext) {
+      currentVal = "0.";
+      clearOnNext = false;
+    } else if (!currentVal.includes(".")) {
+      currentVal += ".";
+    }
+    updateCalcScreen();
+  }
+  function calcClear() {
+    currentVal = "0";
+    storedVal = null;
+    currentOp = null;
+    clearOnNext = false;
+    updateCalcScreen();
+  }
+  function calcBackspace() {
+    if (clearOnNext) return;
+    currentVal = currentVal.length > 1 ? currentVal.slice(0, -1) : "0";
+    updateCalcScreen();
+  }
+  function calcNegate() {
+    if (currentVal !== "0") {
+      currentVal = currentVal.startsWith("-") ? currentVal.substring(1) : "-" + currentVal;
+      updateCalcScreen();
+    }
+  }
+  function calcSquare() {
+    const v = parseFloat(currentVal);
+    if (!isNaN(v)) {
+      currentVal = String(Math.round((v * v) * 100000) / 100000);
+      clearOnNext = true;
+      updateCalcScreen();
+    }
+  }
+  function calcSqrt() {
+    const v = parseFloat(currentVal);
+    if (v >= 0) {
+      currentVal = String(Math.round(Math.sqrt(v) * 100000) / 100000);
+      clearOnNext = true;
+      updateCalcScreen();
+    } else {
+      currentVal = "Error";
+      clearOnNext = true;
+      updateCalcScreen();
+    }
+  }
+  function calcOp(op) {
+    const v = parseFloat(currentVal);
+    if (storedVal !== null && currentOp && !clearOnNext) {
+      calcEqual();
+    } else {
+      storedVal = v;
+    }
+    currentOp = op;
+    clearOnNext = true;
+  }
+  function calcEqual() {
+    if (storedVal === null || currentOp === null) return;
+    const v2 = parseFloat(currentVal);
+    let res = 0;
+    if (currentOp === "+") res = storedVal + v2;
+    else if (currentOp === "-") res = storedVal - v2;
+    else if (currentOp === "*") res = storedVal * v2;
+    else if (currentOp === "/") res = v2 !== 0 ? storedVal / v2 : "Error";
+
+    currentVal = res === "Error" ? "Error" : String(Math.round(res * 100000) / 100000);
+    storedVal = null;
+    currentOp = null;
+    clearOnNext = true;
+    updateCalcScreen();
+  }
+  function calcCopy() {
+    navigator.clipboard.writeText(currentVal);
+  }
+
+  /* Exact p-Value Mathematical Formulation */
+  function logGamma(x) {
+    const cof = [
+      76.18009172947146, -86.50532032941677,
+      24.01409824083091, -1.231739572450155,
+      0.1208650973866179e-2, -0.5395239384953e-5
+    ];
+    let y = x;
+    let tmp = x + 5.5;
+    tmp -= (x + 0.5) * Math.log(tmp);
+    let ser = 1.000000000190015;
+    for (let j = 0; j <= 5; j++) {
+      ser += cof[j] / ++y;
+    }
+    return -tmp + Math.log(2.5066282746310005 * ser / x);
+  }
+
+  function betacf(a, b, x) {
+    const MAXIT = 100;
+    const EPS = 3.0e-7;
+    const FPMIN = 1.0e-30;
+    const qab = a + b;
+    const qap = a + 1.0;
+    const qam = a - 1.0;
+    let c = 1.0;
+    let d = 1.0 - qab * x / qap;
+    if (Math.abs(d) < FPMIN) d = FPMIN;
+    d = 1.0 / d;
+    let h = d;
+    for (let m = 1; m <= MAXIT; m++) {
+      const m2 = 2 * m;
+      let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+      d = 1.0 + aa * d;
+      if (Math.abs(d) < FPMIN) d = FPMIN;
+      c = 1.0 + aa / c;
+      if (Math.abs(c) < FPMIN) c = FPMIN;
+      d = 1.0 / d;
+      h *= d * c;
+      aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+      d = 1.0 + aa * d;
+      if (Math.abs(d) < FPMIN) d = FPMIN;
+      c = 1.0 + aa / c;
+      if (Math.abs(c) < FPMIN) c = FPMIN;
+      d = 1.0 / d;
+      const del = d * c;
+      h *= del;
+      if (Math.abs(del - 1.0) < EPS) break;
+    }
+    return h;
+  }
+
+  function ibeta(a, b, x) {
+    if (x < 0.0 || x > 1.0) return 0;
+    if (x === 0.0) return 0;
+    if (x === 1.0) return 1;
+    const bt = Math.exp(logGamma(a + b) - logGamma(a) - logGamma(b) + a * Math.log(x) + b * Math.log(1.0 - x));
+    if (x < (a + 1.0) / (a + b + 2.0)) {
+      return bt * betacf(a, b, x) / a;
+    } else {
+      return 1.0 - bt * betacf(b, a, 1.0 - x) / b;
+    }
+  }
+
+  function tDistPValue(t, df, tails) {
+    const absT = Math.abs(t);
+    const x = df / (df + absT * absT);
+    const pOneTail = 0.5 * ibeta(0.5 * df, 0.5, x);
+    return tails === 1 ? pOneTail : 2 * pOneTail;
+  }
+
+  function computePValue() {
+    const tVal = parseFloat(document.getElementById("pv_t").value);
+    const dfVal = parseFloat(document.getElementById("pv_df").value);
+    const tailsVal = parseInt(document.getElementById("pv_tails").value, 10);
+    const out = document.getElementById("pv_output");
+
+    if (isNaN(tVal) || isNaN(dfVal) || dfVal <= 0) {
+      out.textContent = "Invalid t or df";
+      out.style.color = "#c62828";
+      return;
+    }
+
+    const p = tDistPValue(tVal, dfVal, tailsVal);
+    out.textContent = `p = ${p.toFixed(3)}`;
+    out.style.color = "#2e7d32";
+  }
+
+  /* Worksheet Validation Logic */
+  function cleanVal(v) {
+    if (!v) return null;
+    const s = v.trim().replace(/^0+/, "");
+    return s.startsWith(".") ? "0" + s : s;
+  }
+
+  function checkAllAnswers() {
+    const inputs = document.querySelectorAll(".sheet-input");
+    inputs.forEach(inp => {
+      const target = inp.getAttribute("data-target");
+      const alt = inp.getAttribute("data-alt");
+      const userVal = cleanVal(inp.value);
+      if (!userVal) {
+        inp.classList.remove("correct", "incorrect");
+        return;
+      }
+      const tClean = cleanVal(target);
+      const altClean = cleanVal(alt);
+      const isNum = !isNaN(parseFloat(userVal));
+      let matches = false;
+
+      if (isNum && !isNaN(parseFloat(tClean))) {
+        const u = parseFloat(userVal);
+        const t = parseFloat(tClean);
+        matches = Math.abs(u - t) <= 0.03;
+        if (!matches && altClean && !isNaN(parseFloat(altClean))) {
+          matches = Math.abs(u - parseFloat(altClean)) <= 0.03;
+        }
+      } else {
+        matches = (userVal === tClean) || (altClean && userVal === altClean);
+      }
+
+      if (matches) {
+        inp.classList.add("correct");
+        inp.classList.remove("incorrect");
+      } else {
+        inp.classList.add("incorrect");
+        inp.classList.remove("correct");
+      }
+    });
+  }
+
+  function clearWorksheet() {
+    document.querySelectorAll(".sheet-input").forEach(inp => {
+      inp.value = "";
+      inp.classList.remove("correct", "incorrect");
+    });
+  }
+
+  /* Table Modal Data and Logic */
+  const tData = [
+    { df: 1, v: ["1.000", "1.376", "1.963", "3.078", "6.314", "12.71", "31.82", "63.66", "318.31", "636.62"] },
+    { df: 2, v: ["0.816", "1.061", "1.386", "1.886", "2.920", "4.303", "6.965", "9.925", "22.327", "31.599"] },
+    { df: 3, v: ["0.765", "0.978", "1.250", "1.638", "2.353", "3.182", "4.541", "5.841", "10.215", "12.924"] },
+    { df: 4, v: ["0.741", "0.941", "1.190", "1.533", "2.132", "2.776", "3.747", "4.604", "7.173", "8.610"] },
+    { df: 5, v: ["0.727", "0.920", "1.156", "1.476", "2.015", "2.571", "3.365", "4.032", "5.893", "6.869"] },
+    { df: 6, v: ["0.718", "0.906", "1.134", "1.440", "1.943", "2.447", "3.143", "3.707", "5.208", "5.959"] },
+    { df: 7, v: ["0.711", "0.896", "1.119", "1.415", "1.895", "2.365", "2.998", "3.499", "4.785", "5.408"] },
+    { df: 8, v: ["0.706", "0.889", "1.108", "1.397", "1.860", "2.306", "2.896", "3.355", "4.501", "5.041"] },
+    { df: 9, v: ["0.703", "0.883", "1.100", "1.383", "1.833", "2.262", "2.821", "3.250", "4.297", "4.781"] },
+    { df: 10, v: ["0.700", "0.879", "1.093", "1.372", "1.812", "2.228", "2.764", "3.169", "4.144", "4.587"] },
+    { df: 11, v: ["0.697", "0.876", "1.088", "1.363", "1.796", "2.201", "2.718", "3.106", "4.025", "4.437"] },
+    { df: 12, v: ["0.695", "0.873", "1.083", "1.356", "1.782", "2.179", "2.681", "3.055", "3.930", "4.318"] },
+    { df: 13, v: ["0.694", "0.870", "1.079", "1.350", "1.771", "2.160", "2.650", "3.012", "3.852", "4.221"] },
+    { df: 14, v: ["0.692", "0.868", "1.076", "1.345", "1.761", "2.145", "2.624", "2.977", "3.787", "4.140"] },
+    { df: 15, v: ["0.691", "0.866", "1.074", "1.341", "1.753", "2.131", "2.602", "2.947", "3.733", "4.073"] },
+    { df: 16, v: ["0.690", "0.865", "1.071", "1.337", "1.746", "2.120", "2.583", "2.921", "3.686", "4.015"] },
+    { df: 17, v: ["0.689", "0.863", "1.069", "1.333", "1.740", "2.110", "2.567", "2.898", "3.646", "3.965"] },
+    { df: 18, v: ["0.688", "0.862", "1.067", "1.330", "1.734", "2.101", "2.552", "2.878", "3.610", "3.922"] },
+    { df: 19, v: ["0.688", "0.861", "1.066", "1.328", "1.729", "2.093", "2.539", "2.861", "3.579", "3.883"] },
+    { df: 20, v: ["0.687", "0.860", "1.064", "1.325", "1.725", "2.086", "2.528", "2.845", "3.552", "3.850"] },
+    { df: 21, v: ["0.686", "0.859", "1.063", "1.323", "1.721", "2.080", "2.518", "2.831", "3.527", "3.819"] },
+    { df: 22, v: ["0.686", "0.858", "1.061", "1.321", "1.717", "2.074", "2.508", "2.819", "3.505", "3.792"] },
+    { df: 23, v: ["0.685", "0.858", "1.060", "1.319", "1.714", "2.069", "2.500", "2.807", "3.485", "3.768"] },
+    { df: 24, v: ["0.685", "0.857", "1.059", "1.318", "1.711", "2.064", "2.492", "2.797", "3.467", "3.745"] },
+    { df: 25, v: ["0.684", "0.856", "1.058", "1.316", "1.708", "2.060", "2.485", "2.787", "3.450", "3.725"] },
+    { df: 26, v: ["0.684", "0.856", "1.058", "1.315", "1.706", "2.056", "2.479", "2.779", "3.435", "3.707"] },
+    { df: 27, v: ["0.684", "0.855", "1.057", "1.314", "1.703", "2.052", "2.473", "2.771", "3.421", "3.690"] },
+    { df: 28, v: ["0.683", "0.855", "1.056", "1.313", "1.701", "2.048", "2.467", "2.763", "3.408", "3.674"] },
+    { df: 29, v: ["0.683", "0.854", "1.055", "1.311", "1.699", "2.045", "2.462", "2.756", "3.396", "3.659"] },
+    { df: 30, v: ["0.683", "0.854", "1.055", "1.310", "1.697", "2.042", "2.457", "2.750", "3.385", "3.646"] },
+    { df: 40, v: ["0.681", "0.851", "1.050", "1.303", "1.684", "2.021", "2.423", "2.704", "3.307", "3.551"] },
+    { df: 60, v: ["0.679", "0.848", "1.045", "1.296", "1.671", "2.000", "2.390", "2.660", "3.232", "3.460"] },
+    { df: 80, v: ["0.678", "0.846", "1.043", "1.292", "1.664", "1.990", "2.374", "2.639", "3.195", "3.416"] },
+    { df: 100, v: ["0.677", "0.845", "1.042", "1.290", "1.660", "1.984", "2.364", "2.626", "3.174", "3.390"] },
+    { df: 1000, v: ["0.675", "0.842", "1.037", "1.282", "1.646", "1.962", "2.330", "2.581", "3.098", "3.300"] }
+  ];
+
+  const zRowVals = ["0.674", "0.842", "1.036", "1.282", "1.645", "1.960", "2.326", "2.576", "3.090", "3.291"];
+
+  function buildTTable() {
+    const tbody = document.getElementById("tTableBody");
+    tbody.innerHTML = "";
+    tData.forEach(row => {
+      const tr = document.createElement("tr");
+      if ((row.df >= 6 && row.df <= 10) || (row.df >= 26 && row.df <= 30)) {
+        tr.classList.add("stripe-blue");
+      }
+      let html = `<td>${row.df}</td>`;
+      row.v.forEach(val => {
+        html += `<td>${val}</td>`;
+      });
+      tr.innerHTML = html;
+      tbody.appendChild(tr);
+    });
+
+    const zRow = document.getElementById("tRowZ");
+    let zHtml = "<td>Z</td>";
+    zRowVals.forEach(val => {
+      zHtml += `<td>${val}</td>`;
+    });
+    zRow.innerHTML = zHtml;
+  }
+
+  function openModal() {
+    document.getElementById("tTableModal").style.display = "flex";
+  }
+  function closeModal() {
+    document.getElementById("tTableModal").style.display = "none";
+  }
+  function closeModalOnBg(e) {
+    if (e.target.id === "tTableModal") closeModal();
+  }
+
+  window.addEventListener("DOMContentLoaded", () => {
+    buildTTable();
+  });
+</script>
+
+</body>
+</html>
