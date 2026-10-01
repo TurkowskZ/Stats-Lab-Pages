@@ -368,7 +368,7 @@
               <thead>
                 <tr>
                   <th style="width: 45%;">Math score</th>
-                  <th style="width: 55%;">$$(X_i - \bar{X})^2$$</th>
+                  <th style="width: 55%;">$$\Sigma(X - M)^2$$</th>
                 </tr>
               </thead>
               <tbody>
@@ -404,12 +404,12 @@
             <table class="bordered-table">
               <tbody>
                 <tr><td class="text-left" style="width: 48%;">n</td><td><input type="text" class="sheet-input" id="val_n" data-target="15"></td></tr>
-                <tr><td class="text-left">mean</td><td><input type="text" class="sheet-input" id="val_mean" data-target="86.2"></td></tr>
-                <tr><td class="text-left">var</td><td><input type="text" class="sheet-input" id="val_var" data-target="152.74"></td></tr>
-                <tr><td class="text-left">std dev</td><td><input type="text" class="sheet-input" id="val_sd" data-target="12.36" data-alt="12.3589"></td></tr>
-                <tr><td class="text-left">std error</td><td><input type="text" class="sheet-input" id="val_se" data-target="3.191" data-alt="3.19"></td></tr>
-                <tr><td class="text-left">pop mean</td><td><input type="text" class="sheet-input" id="val_mu" data-target="85"></td></tr>
-                <tr><td class="text-left">alpha</td><td><input type="text" class="sheet-input" id="val_alpha" data-target="0.05"></td></tr>
+                <tr><td class="text-left">Mean (M)</td><td><input type="text" class="sheet-input" id="val_mean" data-target="86.2"></td></tr>
+                <tr><td class="text-left">Variance (S²)</td><td><input type="text" class="sheet-input" id="val_var" data-target="152.74"></td></tr>
+                <tr><td class="text-left">Std Dev (S)</td><td><input type="text" class="sheet-input" id="val_sd" data-target="12.36" data-alt="12.3589"></td></tr>
+                <tr><td class="text-left">Std Error (S<sub>M</sub>)</td><td><input type="text" class="sheet-input" id="val_se" data-target="3.191" data-alt="3.19"></td></tr>
+                <tr><td class="text-left">Pop Mean (μ)</td><td><input type="text" class="sheet-input" id="val_mu" data-target="85"></td></tr>
+                <tr><td class="text-left">alpha (α)</td><td><input type="text" class="sheet-input" id="val_alpha" data-target="0.05"></td></tr>
                 <tr><td class="text-left">tails</td><td><input type="text" class="sheet-input" id="val_tails" data-target="2"></td></tr>
                 <tr><td class="text-left">df</td><td><input type="text" class="sheet-input" id="val_df" data-target="14"></td></tr>
                 <tr><td class="text-left">t stat</td><td><input type="text" class="sheet-input" id="val_tstat" data-target="0.376" data-alt=".376"></td></tr>
@@ -419,7 +419,7 @@
             </table>
 
             <div class="formula-display-box">
-              $$t = \frac{\bar{X} - \mu}{\sqrt{s^2 / n}}$$
+              $$t = \frac{M - \mu_M}{S_M} = \frac{M - \mu_M}{S / \sqrt{n}}$$
             </div>
 
             <div class="ci-container">
@@ -434,14 +434,14 @@
             </div>
 
             <div class="formula-display-box" style="margin-top: 8px; font-size: 0.88rem;">
-              $$\text{CI}_{1-\alpha} = \bar{X} \pm t_{\alpha/2} \cdot s_{\bar{X}} = \bar{X} \pm t_{\alpha/2} \frac{s}{\sqrt{n}}$$
+              $$\text{CI} = M \pm S_M(t_{\text{crit}})$$
             </div>
 
             <div class="d-box-container">
               <span>Cohen's d</span>
               <input type="text" class="sheet-input" id="val_d" data-target="0.097" data-alt=".097">
               <div class="formula-display-box" style="margin-top: 0; padding: 4px 8px; font-size: 0.85rem;">
-                $$d = \frac{\bar{X} - \mu}{s}$$
+                $$d = \frac{M - \mu}{S}$$
               </div>
             </div>
           </td>
@@ -529,23 +529,23 @@
     <div class="ref-grid">
       <div class="ref-card">
         <h4>Sample Mean</h4>
-        <div class="ref-math">$$\bar{X} = \frac{\sum X}{n}$$</div>
+        <div class="ref-math">$$M = \frac{\sum X}{n}$$</div>
       </div>
       <div class="ref-card">
         <h4>Sum of Squared Deviations (SS)</h4>
-        <div class="ref-math">$$\text{SS} = \sum (X_i - \bar{X})^2$$</div>
+        <div class="ref-math">$$\text{SS} = \sum (X - M)^2$$</div>
       </div>
       <div class="ref-card">
         <h4>Sample Variance</h4>
-        <div class="ref-math">$$s^2 = \frac{\text{SS}}{n - 1}$$</div>
+        <div class="ref-math">$$S^2 = \frac{\text{SS}}{\text{df}} = \frac{\text{SS}}{n - 1}$$</div>
       </div>
       <div class="ref-card">
         <h4>Sample Standard Deviation</h4>
-        <div class="ref-math">$$s = \sqrt{s^2}$$</div>
+        <div class="ref-math">$$S = \sqrt{S^2}$$</div>
       </div>
       <div class="ref-card">
-        <h4>Standard Error of the Mean</h4>
-        <div class="ref-math">$$s_{\bar{X}} = \frac{s}{\sqrt{n}} = \sqrt{\frac{s^2}{n}}$$</div>
+        <h4>Estimated Standard Error of the Mean</h4>
+        <div class="ref-math">$$S_M = \frac{S}{\sqrt{n}} = \sqrt{\frac{S^2}{n}}$$</div>
       </div>
       <div class="ref-card">
         <h4>Degrees of Freedom</h4>
@@ -553,15 +553,15 @@
       </div>
       <div class="ref-card">
         <h4>One Sample t Statistic</h4>
-        <div class="ref-math">$$t = \frac{\bar{X} - \mu}{s_{\bar{X}}} = \frac{\bar{X} - \mu}{\sqrt{s^2 / n}}$$</div>
+        <div class="ref-math">$$t = \frac{M - \mu_M}{S_M} = \frac{M - \mu_M}{S / \sqrt{n}}$$</div>
       </div>
       <div class="ref-card">
         <h4>Confidence Interval</h4>
-        <div class="ref-math">$$\text{CI}_{1-\alpha} = \bar{X} \pm t_{\text{crit}} \cdot s_{\bar{X}}$$</div>
+        <div class="ref-math">$$\text{CI} = M \pm S_M(t_{\text{crit}})$$</div>
       </div>
       <div class="ref-card" style="grid-column: span 2;">
         <h4>Cohen's d (Effect Size)</h4>
-        <div class="ref-math">$$d = \frac{\bar{X} - \mu}{s}$$</div>
+        <div class="ref-math">$$d = \frac{M - \mu}{S}$$</div>
       </div>
     </div>
   </div>

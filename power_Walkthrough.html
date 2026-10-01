@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Statistical Power and Effect Size Walkthrough</title>
+  <style>
+    :root {
+      --bg: #090d16;
+      --card: #131b2e;
+      --card-inner: #1a243b;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --accent: #60a5fa;
+      --null-col: #38bdf8;
+      --alt-col: #2dd4bf;
+      --beta-col: rgba(248, 113, 113, 0.45);
+      --power-col: rgba(52, 211, 153, 0.35);
+      --crit-col: #f87171;
+      --border: #22304d;
+    }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+      color: var(--text);
+      background-color: var(--bg);
+      margin: 0;
+      padding: 24px 16px;
+    }
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    header {
+      margin-bottom: 24px;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 16px;
+    }
+    h1 {
+      margin: 0 0 8px 0;
+      font-size: 1.75rem;
+      color: var(--text);
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      background: #1e293b;
+      color: #93c5fd;
+      border: 1px solid #334155;
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    }
+    .def-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .def-item {
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px 14px;
+    }
+    .def-item dt {
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+    .def-item dd {
+      margin: 0;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .conventions-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin-top: 12px;
+    }
+    .conventions-table th, .conventions-table td {
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      text-align: left;
+    }
+    .conventions-table th {
+      background: var(--card-inner);
+      color: var(--text);
+    }
+    .canvas-container {
+      position: relative;
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 16px;
+    }
+    canvas {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      font-size: 0.85rem;
+      margin-top: 10px;
+      justify-content: center;
+      color: var(--muted);
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .legend-box {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+    }
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+    .control-group label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+    .num-input {
+      width: 72px;
+      padding: 3px 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-align: right;
+      color: var(--text);
+      background: #0b1120;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+    }
+    .num-input:focus {
+      outline: 2px solid var(--accent);
+      border-color: transparent;
+    }
+    .control-group select {
+      color: var(--text);
+      background: #0b1120;
+      border: 1px solid var(--border);
+    }
+    .control-group input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 800px) {
+      .metrics { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 500px) {
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+    }
+    .metric-card {
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px;
+      text-align: center;
+    }
+    .metric-value {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .metric-label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    details {
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    summary {
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--accent);
+    }
+    details[open] summary {
+      margin-bottom: 8px;
+    }
+    .walkthrough-step {
+      border-left: 4px solid var(--accent);
+      padding-left: 16px;
+      margin-bottom: 24px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <span class="badge">Psy 5480: Experimental Design</span>
+    <h1>Interactive Lab: Statistical Power and Effect Size Walkthrough</h1>
+    <p style="margin: 0; color: var(--muted);">Explore the interplay among alpha, sample size, standardized effect size, the noncentrality parameter, and power.</p>
+  </header>
+
+  <div class="card">
+    <h2 style="margin-top: 0; font-size: 1.25rem;">Core Decision and Effect Parameters</h2>
+    <div class="def-grid">
+      <div class="def-item">
+        <dt>Type I Error (&alpha;)</dt>
+        <dd>Rejecting H₀ when H₀ is true. Conventional alpha criteria include .05 or .01.</dd>
+      </div>
+      <div class="def-item">
+        <dt>Type II Error (&beta;)</dt>
+        <dd>Failing to reject H₀ when H₀ is false. Retaining a false baseline.</dd>
+      </div>
+      <div class="def-item">
+        <dt>Power (1 &minus; &beta;)</dt>
+        <dd>Correct decision: rejecting H₀ when H₀ is false. Probability of detecting a true effect.</dd>
+      </div>
+      <div class="def-item">
+        <dt>Standardized Effect Size (d)</dt>
+        <dd>Difference between population means scaled by standard deviation: d = (μ₁ − μ₂) / σ. In samples: d = (M − μ) / S.</dd>
+      </div>
+      <div class="def-item">
+        <dt>Noncentrality Parameter (&delta;)</dt>
+        <dd>Combines effect size and sample size into a single metric representing the distribution shift: &delta; = d&radic;n (one-sample and dependent-samples designs; for two independent groups of n each, &delta; = d&radic;(n/2)).</dd>
+      </div>
+      <div class="def-item">
+        <dt>Critical Cutoff (t<sub>crit</sub> / z<sub>crit</sub>)</dt>
+        <dd>Cuts off the rejection region on the sampling distribution under H₀ at the designated &alpha; level.</dd>
+      </div>
+    </div>
+
+    <div style="margin-top: 16px;">
+      <span style="font-weight: 600; font-size: 0.9rem; color: var(--text);">Cohen's Reference Conventions for Effect Size (d)</span>
+      <table class="conventions-table">
+        <thead>
+          <tr>
+            <th>Verbal Description</th>
+            <th>Effect Size (d)</th>
+            <th>Practical Interpretation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Small</td>
+            <td>&plusmn;0.2</td>
+            <td>Subtle shift; requires large sample size for adequate detection power.</td>
+          </tr>
+          <tr>
+            <td>Medium</td>
+            <td>&plusmn;0.5</td>
+            <td>Noticeable effect typical of applied experimental manipulations.</td>
+          </tr>
+          <tr>
+            <td>Large</td>
+            <td>&plusmn;0.8</td>
+            <td>Substantial separation between population distributions.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 style="margin-top: 0; font-size: 1.25rem;">Interactive Power Simulation</h2>
+    
+    <div class="controls">
+      <div class="control-group">
+        <label for="alphaInput">
+          Significance Level (&alpha;)
+          <input type="number" id="alphaInput" class="num-input" min="0.001" max="0.20" step="0.001" value="0.050">
+        </label>
+        <input type="range" id="alphaSlider" min="0.001" max="0.20" step="0.001" value="0.050">
+      </div>
+
+      <div class="control-group">
+        <label for="dInput">
+          Effect Size (d)
+          <input type="number" id="dInput" class="num-input" min="0.0" max="2.0" step="0.01" value="0.50">
+        </label>
+        <input type="range" id="dSlider" min="0.0" max="2.0" step="0.01" value="0.50">
+      </div>
+
+      <div class="control-group">
+        <label for="nInput">
+          Sample Size (n)
+          <input type="number" id="nInput" class="num-input" min="2" max="200" step="1" value="25">
+        </label>
+        <input type="range" id="nSlider" min="2" max="200" step="1" value="25">
+      </div>
+
+      <div class="control-group">
+        <label for="tailSelect">
+          Test Direction
+        </label>
+        <select id="tailSelect" style="width: 100%; padding: 6px; border-radius: 4px; font-weight: 600;">
+          <option value="2">Two-Tailed Test (α/2 in tails)</option>
+          <option value="1">One-Tailed Test (α in single tail)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="metrics">
+      <div class="metric-card">
+        <div class="metric-label">Critical Cutoff</div>
+        <div class="metric-value" id="critValMetric">1.960</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Noncentrality (&delta;)</div>
+        <div class="metric-value" id="deltaMetric">2.50</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Type II Error (&beta;)</div>
+        <div class="metric-value" id="betaMetric">0.295</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Power (1 &minus; &beta;)</div>
+        <div class="metric-value" id="powerMetric">0.705</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Standard Error (S<sub>M</sub>)</div>
+        <div class="metric-value" id="seMetric">0.200</div>
+      </div>
+    </div>
+
+    <div class="canvas-container">
+      <canvas id="distCanvas" width="800" height="340"></canvas>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-box" style="background: var(--null-col);"></div> H₀ Sampling Distribution</div>
+        <div class="legend-item"><div class="legend-box" style="background: var(--alt-col);"></div> H₁ Comparison Distribution</div>
+        <div class="legend-item"><div class="legend-box" style="background: var(--beta-col);"></div> Retain False H₀ (&beta;)</div>
+        <div class="legend-item"><div class="legend-box" style="background: var(--power-col);"></div> Correct Decision (1 &minus; &beta;)</div>
+        <div class="legend-item"><div class="legend-box" style="background: var(--crit-col);"></div> Critical Boundary</div>
+      </div>
+    </div>
+    <p style="font-size: 0.8rem; color: var(--muted); margin: 0;">
+      <strong>Notes on this simulation:</strong> The horizontal axis shows sample means in units of &sigma; (H₀ mean = 0, H₁ mean = d). Cutoffs and power are computed with the normal (z) distribution as an approximation to the t test, so for small samples a true t test has a larger cutoff and somewhat lower power than shown (for example, n = 25, d = 0.50, two-tailed &alpha; = .05 gives about .70 here versus about .67 for a one-sample t test). The simulator models a positive effect (d &ge; 0); for two-tailed tests a negative effect of the same size gives the same power.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2 style="margin-top: 0; font-size: 1.25rem;">Lab Guided Reflection</h2>
+
+    <div class="walkthrough-step">
+      <h3>1. Significance Criterion Variations (&alpha;)</h3>
+      <p>Adjust alpha upward and downward while holding d and n constant.</p>
+      <p>What does tightening &alpha; from .05 to .01 do to the critical value cutoff, beta, and power?</p>
+      <details>
+        <summary>Check Answers for Alpha Criterion</summary>
+        <p><strong>Decreasing &alpha; (e.g., .05 to .01):</strong> To minimize Type I error risk, the critical cutoff shifts further into the tail of H₀. This larger cutoff intersects deeper into the H₁ distribution, increasing &beta; (Type II error) and decreasing statistical power.</p>
+        <p><strong>Increasing &alpha;:</strong> Moves the critical threshold inward, shrinking the &beta; region and raising power at the cost of a higher false positive risk.</p>
+      </details>
+    </div>
+
+    <div class="walkthrough-step">
+      <h3>2. Effect Size Variations (Cohen's d)</h3>
+      <p>Adjust Cohen's d across benchmarks (0.2, 0.5, 0.8).</p>
+      <p>What does altering d do to the distance between distributions, noncentrality parameter &delta;, and test power?</p>
+      <details>
+        <summary>Check Answers for Effect Size</summary>
+        <p><strong>Increasing d:</strong> Directly scales the shift between the H₀ and H₁ population means. This drives up the noncentrality parameter (&delta; = d&radic;n), pushing the H₁ distribution past the critical cutoff and dramatically boosting power.</p>
+        <p><strong>Independence of sample size:</strong> Cohen's d reflects the underlying magnitude of effect rather than sample size. A small effect with high n can achieve high statistical significance without possessing substantial clinical or practical significance.</p>
+      </details>
+    </div>
+
+    <div class="walkthrough-step">
+      <h3>3. Sample Size Variations (n) and the Noncentrality Shift</h3>
+      <p>Adjust sample size n to observe changes in the standard error (S<sub>M</sub>) and noncentrality parameter (&delta;).</p>
+      <p>Why does increasing n elevate statistical power without altering true effect size d?</p>
+      <details>
+        <summary>Check Answers for Sample Size</summary>
+        <p><strong>Mechanism:</strong> Increasing n reduces standard error (S<sub>M</sub> = S / &radic;n), making both sampling distributions narrower. On the standardized scale, &delta; = d&radic;n increases, driving the H₁ distribution further into the rejection region.</p>
+        <p><strong>Required Sample Size for Power = 0.8:</strong> Using the lecture formula n = (&delta; / d)², where &delta;<sub>power=0.8</sub> = 2.80 for a two-tailed test at &alpha; = .05, researchers solve directly for the necessary n (rounding up) to achieve the target level of power. For example, d = 0.50 gives n = (2.80 / 0.50)&sup2; = 31.4, so n = 32.</p>
+      </details>
+    </div>
+
+    <div class="walkthrough-step">
+      <h3>4. Test Directionality (One-Tailed vs. Two-Tailed)</h3>
+      <p>Switch between two-tailed and one-tailed tests.</p>
+      <p>How does directionality impact critical cutoffs and power?</p>
+      <details>
+        <summary>Check Answers for Test Directionality</summary>
+        <p><strong>One-Tailed:</strong> Allocates the full &alpha; area into a single tail, placing the critical cutoff closer to zero (e.g., 1.645 instead of 1.96 at &alpha; = .05). This lowers &beta; and raises power for effects predicted in that specific direction.</p>
+        <p><strong>Two-Tailed:</strong> Splits the risk (&alpha; / 2 in each tail), requiring a more extreme sample mean to reject H₀, protecting against effects in the unpredicted direction.</p>
+      </details>
+    </div>
+  </div>
+</div>
+
+<script>
+  function standardNormalCdf(x) {
+    const b1 = 0.319381530;
+    const b2 = -0.356563782;
+    const b3 = 1.781477937;
+    const b4 = -1.821255978;
+    const b5 = 1.330274429;
+    const p = 0.2316419;
+    const c = 0.39894228;
+    if (x >= 0.0) {
+      let t = 1.0 / (1.0 + p * x);
+      return (1.0 - c * Math.exp(-x * x / 2.0) * t * (t * (t * (t * (t * b5 + b4) + b3) + b2) + b1));
+    } else {
+      let t = 1.0 / (1.0 - p * x);
+      return (c * Math.exp(-x * x / 2.0) * t * (t * (t * (t * (t * b5 + b4) + b3) + b2) + b1));
+    }
+  }
+
+  function invNormalCdf(p) {
+    let a1 = -39.69683028665376, a2 = 220.9460984245205, a3 = -275.9285104469687;
+    let a4 = 138.3577518672690, a5 = -30.66479806614716, a6 = 2.506628277459239;
+    let b1 = -54.47609879822406, b2 = 161.5858368580409, b3 = -155.6989798598866;
+    let b4 = 66.80131188771972, b5 = -13.28068155288572;
+    let c1 = -0.007784894002430293, c2 = -0.3223964580411365, c3 = -2.400758277161838;
+    let c4 = -2.549732539343734, c5 = 4.374664141464968, c6 = 2.938163982698783;
+    let d1 = 0.007784695709041462, d2 = 0.3224671290700398, d3 = 2.445134137142996;
+    let d4 = 3.754408661907416;
+    let q;
+    if (p <= 0 || p >= 1) return 0;
+    if (p < 0.02425) {
+      q = Math.sqrt(-2 * Math.log(p));
+      return (((((c1 * q + c2) * q + c3) * q + c4) * q + c5) * q + c6) /
+             ((((d1 * q + d2) * q + d3) * q + d4) * q + 1);
+    } else if (p <= 0.97575) {
+      q = p - 0.5;
+      let r = q * q;
+      return (((((a1 * r + a2) * r + a3) * r + a4) * r + a5) * r + a6) * q /
+             (((((b1 * r + b2) * r + b3) * r + b4) * r + b5) * r + 1);
+    } else {
+      q = Math.sqrt(-2 * Math.log(1 - p));
+      return -(((((c1 * q + c2) * q + c3) * q + c4) * q + c5) * q + c6) /
+              ((((d1 * q + d2) * q + d3) * q + d4) * q + 1);
+    }
+  }
+
+  function gaussian(x, mean, sigma) {
+    let factor = 1 / (sigma * Math.sqrt(2 * Math.PI));
+    let exponent = -0.5 * Math.pow((x - mean) / sigma, 2);
+    return factor * Math.exp(exponent);
+  }
+
+  const alphaSlider = document.getElementById("alphaSlider");
+  const alphaInput = document.getElementById("alphaInput");
+  const dSlider = document.getElementById("dSlider");
+  const dInput = document.getElementById("dInput");
+  const nSlider = document.getElementById("nSlider");
+  const nInput = document.getElementById("nInput");
+  const tailSelect = document.getElementById("tailSelect");
+
+  const critValMetric = document.getElementById("critValMetric");
+  const deltaMetric = document.getElementById("deltaMetric");
+  const betaMetric = document.getElementById("betaMetric");
+  const powerMetric = document.getElementById("powerMetric");
+  const seMetric = document.getElementById("seMetric");
+
+  const canvas = document.getElementById("distCanvas");
+  const ctx = canvas.getContext("2d");
+
+  function syncAndRender(source) {
+    if (source === "alphaSlider") {
+      alphaInput.value = parseFloat(alphaSlider.value).toFixed(3);
+    } else if (source === "alphaInput") {
+      alphaSlider.value = alphaInput.value;
+    } else if (source === "dSlider") {
+      dInput.value = parseFloat(dSlider.value).toFixed(2);
+    } else if (source === "dInput") {
+      dSlider.value = dInput.value;
+    } else if (source === "nSlider") {
+      nInput.value = parseInt(nSlider.value, 10);
+    } else if (source === "nInput") {
+      nSlider.value = nInput.value;
+    }
+
+    render();
+  }
+
+  function render() {
+    let alpha = parseFloat(alphaInput.value);
+    if (isNaN(alpha) || alpha <= 0) alpha = 0.001;
+    if (alpha >= 0.5) alpha = 0.499;
+
+    let d = parseFloat(dInput.value);
+    if (isNaN(d) || d < 0) d = 0;
+
+    let n = parseInt(nInput.value, 10);
+    if (isNaN(n) || n < 2) n = 2;
+
+    const tails = parseInt(tailSelect.value, 10);
+
+    const se = 1 / Math.sqrt(n);
+    const delta = d * Math.sqrt(n);
+
+    const critZ = tails === 2 ? invNormalCdf(1 - alpha / 2) : invNormalCdf(1 - alpha);
+    const critRaw = critZ * se;
+    const meanAlt = d;
+
+    // Power = probability that the H1 sampling distribution falls in the rejection region(s).
+    // Two-tailed tests have a rejection region in BOTH tails.
+    const upperPower = 1 - standardNormalCdf(critZ - delta);
+    const lowerPower = tails === 2 ? standardNormalCdf(-critZ - delta) : 0;
+    const power = upperPower + lowerPower;
+    const beta = 1 - power;
+
+    critValMetric.textContent = critZ.toFixed(3);
+    deltaMetric.textContent = delta.toFixed(2);
+    betaMetric.textContent = beta.toFixed(3);
+    powerMetric.textContent = power.toFixed(3);
+    seMetric.textContent = se.toFixed(3);
+
+    const w = canvas.width;
+    const h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    const minX = Math.min(-1.0, -3.5 * se);
+    const maxX = Math.max(2.5, d + 3.5 * se);
+    const baseline = h - 40;
+    const plotHeight = h - 100;
+    const maxDensity = gaussian(0, 0, se);
+
+    function toCanvasX(val) {
+      return 40 + ((val - minX) / (maxX - minX)) * (w - 80);
+    }
+    function toCanvasY(density) {
+      return baseline - (density / maxDensity) * plotHeight;
+    }
+
+    const BETA_FILL = "rgba(248, 113, 113, 0.45)";
+    const POWER_FILL = "rgba(52, 211, 153, 0.35)";
+
+    function shadeUnderH1(a, b, color) {
+      a = Math.max(a, minX);
+      b = Math.min(b, maxX);
+      if (b <= a) return;
+      const step = (maxX - minX) / 400;
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(toCanvasX(a), baseline);
+      for (let x = a; x < b; x += step) {
+        ctx.lineTo(toCanvasX(x), toCanvasY(gaussian(x, meanAlt, se)));
+      }
+      ctx.lineTo(toCanvasX(b), toCanvasY(gaussian(b, meanAlt, se)));
+      ctx.lineTo(toCanvasX(b), baseline);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    if (tails === 2) {
+      shadeUnderH1(minX, -critRaw, POWER_FILL);
+      shadeUnderH1(-critRaw, critRaw, BETA_FILL);
+      shadeUnderH1(critRaw, maxX, POWER_FILL);
+    } else {
+      shadeUnderH1(minX, critRaw, BETA_FILL);
+      shadeUnderH1(critRaw, maxX, POWER_FILL);
+    }
+
+    // Axis line, tick marks, and axis title
+    ctx.strokeStyle = "#334155";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(40, baseline);
+    ctx.lineTo(w - 40, baseline);
+    ctx.stroke();
+
+    ctx.font = "11px system-ui";
+    ctx.fillStyle = "#94a3b8";
+    ctx.textAlign = "center";
+    ctx.lineWidth = 1;
+    for (let t = Math.ceil(minX * 2) / 2; t <= maxX; t += 0.5) {
+      const px = toCanvasX(t);
+      ctx.beginPath();
+      ctx.moveTo(px, baseline);
+      ctx.lineTo(px, baseline + 5);
+      ctx.stroke();
+      ctx.fillText(t.toFixed(1), px, baseline + 18);
+    }
+    ctx.fillText("Sample mean (in \u03c3 units; H\u2080 mean = 0)", w / 2, h - 6);
+
+    // H0 curve
+    ctx.strokeStyle = "#38bdf8";
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    for (let x = minX; x <= maxX; x += (maxX - minX) / 300) {
+      const cx = toCanvasX(x);
+      const cy = toCanvasY(gaussian(x, 0, se));
+      if (x === minX) ctx.moveTo(cx, cy);
+      else ctx.lineTo(cx, cy);
+    }
+    ctx.stroke();
+
+    // H1 curve
+    ctx.strokeStyle = "#2dd4bf";
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    for (let x = minX; x <= maxX; x += (maxX - minX) / 300) {
+      const cx = toCanvasX(x);
+      const cy = toCanvasY(gaussian(x, meanAlt, se));
+      if (x === minX) ctx.moveTo(cx, cy);
+      else ctx.lineTo(cx, cy);
+    }
+    ctx.stroke();
+
+    // Critical boundary line(s) with labels
+    ctx.font = "bold 13px system-ui";
+    function drawCritLine(xVal, label, preferredAlign) {
+      const px = toCanvasX(xVal);
+      ctx.strokeStyle = "#f87171";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(px, 26);
+      ctx.lineTo(px, baseline);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      const textW = ctx.measureText(label).width;
+      let align = preferredAlign;
+      if (align === "start" && px + 4 + textW > w) align = "end";
+      if (align === "end" && px - 4 - textW < 0) align = "start";
+      ctx.fillStyle = "#f87171";
+      ctx.textAlign = align;
+      ctx.fillText(label, align === "start" ? px + 4 : px - 4, 18);
+    }
+
+    const tailTag = tails === 2 ? "(\u03b1/2)" : "(\u03b1)";
+    drawCritLine(critRaw, "z = " + (tails === 2 ? "+" : "") + critZ.toFixed(3) + " " + tailTag, "start");
+    if (tails === 2) {
+      drawCritLine(-critRaw, "z = \u2212" + critZ.toFixed(3) + " " + tailTag, "end");
+    }
+
+    // Distribution labels
+    ctx.textAlign = "start";
+    ctx.font = "bold 13px system-ui";
+    ctx.fillStyle = "#38bdf8";
+    ctx.fillText("H\u2080", toCanvasX(0) - 9, toCanvasY(gaussian(0, 0, se)) - 10);
+
+    ctx.fillStyle = "#2dd4bf";
+    ctx.fillText("H\u2081 (d = " + d.toFixed(2) + ")", toCanvasX(meanAlt) - 20, toCanvasY(gaussian(meanAlt, meanAlt, se)) - 10);
+  }
+
+  alphaSlider.addEventListener("input", () => syncAndRender("alphaSlider"));
+  alphaInput.addEventListener("input", () => syncAndRender("alphaInput"));
+
+  dSlider.addEventListener("input", () => syncAndRender("dSlider"));
+  dInput.addEventListener("input", () => syncAndRender("dInput"));
+
+  nSlider.addEventListener("input", () => syncAndRender("nSlider"));
+  nInput.addEventListener("input", () => syncAndRender("nInput"));
+
+  tailSelect.addEventListener("change", render);
+
+  render();
+</script>
+</body>
+</html>

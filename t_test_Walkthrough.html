@@ -93,13 +93,13 @@
             </div>
             <div>
               <h3 class="text-lg font-bold text-slate-100">One Sample t Test</h3>
-              <p class="text-xs text-slate-400 mt-0.5">Evaluating against a known population parameter</p>
+              <p class="text-xs text-slate-400 mt-0.5">Evaluating against a hypothesized population parameter</p>
             </div>
 
             <div class="border-t border-slate-800 pt-3 space-y-2 text-xs">
               <div>
                 <span class="font-semibold text-slate-300">Knowns:</span>
-                <span class="text-slate-400">Population mean (μ), Sample mean (X̄ or m), Sample SD (s)</span>
+                <span class="text-slate-400">Hypothesized population mean (μ), Sample mean (M), Sample SD (S)</span>
               </div>
               <div>
                 <span class="font-semibold text-slate-300">Unknown:</span>
@@ -107,15 +107,15 @@
               </div>
               <div>
                 <span class="font-semibold text-slate-300">Research Question:</span>
-                <span class="text-slate-400">Is my sample mean significantly different than the established population?</span>
+                <span class="text-slate-400">Does the population from which the sample came differ from the hypothesized parameter?</span>
               </div>
               <div>
                 <span class="font-semibold text-slate-300">Null Hypothesis (H₀):</span>
-                <span class="font-mono text-emerald-400 font-semibold">X̄ = μ &nbsp;(or X̄ − μ = 0)</span>
+                <span class="font-mono text-emerald-400 font-semibold">μ = μ₀ &nbsp;(parameters, not statistics)</span>
               </div>
               <div>
                 <span class="font-semibold text-slate-300">Sampling Distribution:</span>
-                <span class="text-slate-400">One distribution, using the sample standard deviation (s) to estimate standard error (SE).</span>
+                <span class="text-slate-400">One distribution, using sample standard deviation (S) to estimate standard error (S<sub>M</sub> = S / √n).</span>
               </div>
             </div>
           </div>
@@ -137,23 +137,23 @@
             <div class="border-t border-slate-800 pt-3 space-y-2 text-xs">
               <div>
                 <span class="font-semibold text-slate-300">Knowns:</span>
-                <span class="text-slate-400">Sample means (X̄₁, X̄₂), Sample SD (s)</span>
+                <span class="text-slate-400">Difference scores, Mean of differences (M), Estimated variance (S²)</span>
               </div>
               <div>
                 <span class="font-semibold text-slate-300">Unknowns:</span>
-                <span class="text-slate-400">Population mean (μ), Population SD (σ)</span>
+                <span class="text-slate-400">Population mean difference (μ<sub>D</sub>), Population variance (σ²)</span>
               </div>
               <div>
                 <span class="font-semibold text-slate-300">Research Question:</span>
-                <span class="text-slate-400">Does my sample mean change after my intervention?</span>
+                <span class="text-slate-400">Is there a systematic difference between paired scores across conditions?</span>
               </div>
               <div>
                 <span class="font-semibold text-slate-300">Null Hypothesis (H₀):</span>
-                <span class="font-mono text-sky-400 font-semibold">X̄₁ = X̄₂ &nbsp;(or X̄₁ − X̄₂ = 0)</span>
+                <span class="font-mono text-sky-400 font-semibold">μ<sub>D</sub> = 0 &nbsp;(or μ₁ − μ₂ = 0)</span>
               </div>
               <div>
                 <span class="font-semibold text-slate-300">Sampling Distribution:</span>
-                <span class="text-slate-400">One sampling distribution of difference scores, using the SD of differences to estimate SE.</span>
+                <span class="text-slate-400">One distribution of means of difference scores, using S<sub>M</sub> = S / √n with df = n − 1.</span>
               </div>
             </div>
           </div>
@@ -175,15 +175,15 @@
             <div class="border-t border-slate-800 pt-3 space-y-2 text-xs">
               <div>
                 <span class="font-semibold text-slate-300">Knowns:</span>
-                <span class="text-slate-400">Sample means (X̄₁, X̄₂), Sample SDs (s₁, s₂)</span>
+                <span class="text-slate-400">Sample means (M₁, M₂), Sample variances (S₁², S₂²)</span>
               </div>
               <div>
                 <span class="font-semibold text-slate-300">Unknowns:</span>
-                <span class="text-slate-400">Population means (μ₁, μ₂), Population SDs (σ₁, σ₂)</span>
+                <span class="text-slate-400">Population means (μ₁, μ₂), Population variances (σ₁², σ₂²)</span>
               </div>
               <div>
                 <span class="font-semibold text-slate-300">Research Question:</span>
-                <span class="text-slate-400">Are our two samples significantly different, suggesting they originate from two different populations?</span>
+                <span class="text-slate-400">Is there a significant difference in the population means between the two independent groups?</span>
               </div>
               <div>
                 <span class="font-semibold text-slate-300">Null Hypothesis (H₀):</span>
@@ -191,7 +191,7 @@
               </div>
               <div>
                 <span class="font-semibold text-slate-300">Sampling Distributions:</span>
-                <span class="text-slate-400">Three total distributions: two estimating group SEs, plus one distribution of difference scores.</span>
+                <span class="text-slate-400">Distribution of differences between means, using pooled variance S<sub>Pooled</sub>² and standard error S<sub>Difference</sub>.</span>
               </div>
             </div>
           </div>
@@ -301,24 +301,24 @@
             <div class="p-3 bg-[#141e33] rounded-lg border border-slate-800">
               <span class="font-bold text-emerald-400 block mb-1">One Sample t Test</span>
               <p class="text-slate-300">
-                Uses <strong>one sampling distribution</strong>. The standard deviation of the single sample estimates the standard error of the mean (SE = s / √n).
+                Uses <strong>one sampling distribution of means</strong>. The unbiased sample standard deviation estimates the standard error of the mean (S<sub>M</sub> = S / √n).
               </p>
             </div>
 
             <div class="p-3 bg-[#141e33] rounded-lg border border-slate-800">
               <span class="font-bold text-sky-400 block mb-1">Dependent Samples t Test</span>
               <p class="text-slate-300">
-                Uses <strong>one sampling distribution of difference scores</strong>. Differences (D = X₁ − X₂) are calculated per subject, collapsing pairs into a single distribution to estimate SE.
+                Uses a <strong>sampling distribution of means of difference scores</strong>. Differences (X₂ − X₁) yield sample variance S² = SS / df, providing S<sub>M</sub> = S / √n with df = n − 1.
               </p>
             </div>
 
             <div class="p-3 bg-[#141e33] rounded-lg border border-slate-800">
               <span class="font-bold text-purple-400 block mb-1">Independent Samples t Test</span>
               <p class="text-slate-300">
-                Involves <strong>three sampling distributions</strong>: one for sample 1 estimating its SE, one for sample 2 estimating its SE, and a third distribution of difference scores between group means.
+                Uses the <strong>sampling distribution of the difference between two means</strong>. Standard error of the difference is S<sub>Difference</sub> = √(S<sub>M₁</sub>² + S<sub>M₂</sub>²).
               </p>
               <p class="text-slate-400 mt-1 font-medium">
-                The <strong>Variance Sum Law</strong> makes this standard error calculation direct: the variance of the difference distribution equals the sum of the individual sampling variances.
+                When variances are assumed equal, S<sub>M₁</sub>² and S<sub>M₂</sub>² are calculated using the pooled variance estimate S<sub>Pooled</sub>² with df<sub>Total</sub> = df₁ + df₂.
               </p>
             </div>
           </div>
@@ -344,7 +344,7 @@
             <h3 class="font-bold text-emerald-300 text-sm uppercase tracking-wide">Assumption Met: p &gt; .05</h3>
           </div>
           <p class="text-xs text-emerald-200 leading-relaxed">
-            Variances of the two groups do not differ significantly. Homogeneity of variance holds. Proceed with standard pooled variance and conventional degrees of freedom (df = n₁ + n₂ − 2).
+            Variances of the two groups do not differ significantly. Homogeneity of variance holds. Proceed with standard pooled variance and conventional degrees of freedom (df<sub>Total</sub> = df₁ + df₂).
           </p>
         </div>
 
@@ -428,12 +428,12 @@
             <div class="text-center py-2 text-slate-200 text-sm">
               t' = 
               <span class="math_fraction">
-                <span class="math_numerator">(X̄₁ − X̄₂)</span>
-                <span class="math_denominator">√[ (s₁² / n₁) + (s₂² / n₂) ]</span>
+                <span class="math_numerator">(M₁ − M₂)</span>
+                <span class="math_denominator">√[ (S₁² / n₁) + (S₂² / n₂) ]</span>
               </span>
             </div>
             <p class="text-slate-400 text-[11px] font-sans">
-              Replaces the pooled variance estimate with direct sample variance estimates per group, correcting denominator scaling.
+              Replaces the pooled variance estimate (S<sub>Pooled</sub>²) with unpooled individual sample variances (S₁², S₂²), correcting denominator scaling.
             </p>
           </div>
 
@@ -443,12 +443,12 @@
             <div class="text-center py-2 text-slate-200 text-sm">
               df' = 
               <span class="math_fraction">
-                <span class="math_numerator">[ (s₁² / n₁) + (s₂² / n₂) ]²</span>
-                <span class="math_denominator">[ (s₁² / n₁)² / (n₁ − 1) ] + [ (s₂² / n₂)² / (n₂ − 1) ]</span>
+                <span class="math_numerator">[ (S₁² / n₁) + (S₂² / n₂) ]²</span>
+                <span class="math_denominator">[ (S₁² / n₁)² / (n₁ − 1) ] + [ (S₂² / n₂)² / (n₂ − 1) ]</span>
               </span>
             </div>
             <p class="text-slate-400 text-[11px] font-sans">
-              Adjusts degrees of freedom to a fractional value, effectively raising the critical threshold cutoff to prevent false positives.
+              Adjusts degrees of freedom to a fractional cutoff, elevating critical t thresholds to protect nominal error rates.
             </p>
           </div>
         </div>
@@ -503,11 +503,11 @@
             <div class="grid grid-cols-1 gap-2" id="pairing-button-group">
               <button type="button" id="btn-pairing-small" onclick="setPairing('small_large')" class="text-left px-3 py-2.5 rounded-lg border text-xs font-medium transition">
                 <div class="font-bold">Small Group, Large Var</div>
-                <div class="text-[11px] opacity-80">Smallest n has largest s²</div>
+                <div class="text-[11px] opacity-80">Smallest n has largest S²</div>
               </button>
               <button type="button" id="btn-pairing-large" onclick="setPairing('large_large')" class="text-left px-3 py-2.5 rounded-lg border text-xs font-medium transition">
                 <div class="font-bold">Large Group, Large Var</div>
-                <div class="text-[11px] opacity-80">Largest n has largest s²</div>
+                <div class="text-[11px] opacity-80">Largest n has largest S²</div>
               </button>
             </div>
           </div>
@@ -601,7 +601,7 @@
           </div>
           <h4 class="text-sm font-bold text-slate-100">Homogeneity of Variance Preserved</h4>
           <p class="text-xs text-slate-300 leading-relaxed">
-            Because Levene test is non significant (p &gt; .05), sample variances are statistically equivalent. Compute standard pooled variance (s_p²) and use traditional degrees of freedom (df = n₁ + n₂ − 2). Nominal false positive rates are preserved regardless of sample size balance.
+            Because Levene's test is non-significant (p &gt; .05), population variances are assumed equal. Compute standard pooled variance (S<sub>Pooled</sub>²) and evaluate against df<sub>Total</sub> = df₁ + df₂. Nominal false positive rates are preserved regardless of sample size balance.
           </p>
         `;
         return;
