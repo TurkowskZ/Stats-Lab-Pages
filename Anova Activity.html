@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab 6 Activity: One Way ANOVA Computations</title>
+  <style>
+    :root {
+      --bg: #070503;
+      --card_bg: #100f13;
+      --primary: #93c5fd;
+      --primary_light: #172554;
+      --accent: #38bdf8;
+      --text: #f1f5f9;
+      --text_muted: #94a3b8;
+      --border: #334155;
+      --code_bg: #1e293b;
+      --success: #22c55e;
+      --error: #ef4444;
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+      color: var(--text);
+      background-color: var(--bg);
+      padding: 1.5rem;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    header {
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 1rem;
+    }
+
+    .nav_link {
+      display: inline-block;
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    .nav_link:hover {
+      text-decoration: underline;
+    }
+
+    h1 {
+      color: var(--primary);
+      font-size: 1.85rem;
+      margin-bottom: 0.5rem;
+    }
+
+    h2 {
+      color: var(--primary);
+      font-size: 1.3rem;
+      margin-top: 1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+      color: var(--accent);
+    }
+
+    p {
+      margin-bottom: 0.85rem;
+    }
+
+    .tab_bar {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    .tab_button {
+      background: var(--code_bg);
+      color: var(--text_muted);
+      border: 1px solid var(--border);
+      padding: 0.6rem 1.1rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .tab_button.active {
+      background: var(--primary_light);
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .dataset_content {
+      display: none;
+    }
+
+    .dataset_content.active {
+      display: block;
+    }
+
+    .card {
+      background: var(--card_bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 0.5rem 0.65rem;
+      text-align: center;
+    }
+
+    th {
+      background-color: var(--code_bg);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .grid_inputs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+
+    .input_card {
+      background: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .input_card label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      color: var(--text);
+    }
+
+    .input_card input {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: #ffffff;
+      padding: 0.5rem;
+      font-size: 1rem;
+      width: 100%;
+      outline: none;
+    }
+
+    .input_card input.is_correct {
+      border-color: var(--success);
+      background-color: rgba(34, 197, 94, 0.1);
+    }
+
+    .input_card input.is_incorrect {
+      border-color: var(--error);
+      background-color: rgba(239, 68, 68, 0.1);
+    }
+
+    .status_badge {
+      font-size: 0.8rem;
+      margin-top: 0.35rem;
+      min-height: 1.2rem;
+      font-weight: 600;
+    }
+
+    .status_badge.correct {
+      color: var(--success);
+    }
+
+    .status_badge.incorrect {
+      color: var(--error);
+    }
+
+    .btn_check {
+      background: var(--accent);
+      color: #070503;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 700;
+      margin: 1rem 0;
+    }
+
+    .btn_check:hover {
+      background: #7dd3fc;
+    }
+
+    .summary_box {
+      background: var(--code_bg);
+      border-left: 4px solid var(--accent);
+      padding: 0.75rem 1rem;
+      margin: 1rem 0;
+      font-size: 0.95rem;
+    }
+
+    .question_block {
+      background: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+
+    .question_block select {
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 0.5rem;
+      border-radius: 4px;
+      margin-top: 0.5rem;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a href="Logic_of_Anova.html" class="nav_link">&larr; Back to ANOVA Logic Explainer</a>
+      <h1>Laboratory 6: Practice Worksheets</h1>
+      <p style="color: var(--text_muted);">
+        Enter your step by step values below. Use the verification buttons to check your work without exposing answers.
+      </p>
+    </header>
+
+    <div class="tab_bar">
+      <button class="tab_button active" onclick="showTab(1)">Dataset 1: Caffeine Study</button>
+      <button class="tab_button" onclick="showTab(2)">Dataset 2: Scaled Spread</button>
+      <button class="tab_button" onclick="showTab(3)">Dataset 3: Divergent Means</button>
+    </div>
+
+    <!-- DATASET 1 -->
+    <div id="dataset1" class="dataset_content active">
+      <section class="card">
+        <h2>Dataset 1: Sustained Attention Scores</h2>
+        <p>Three conditions with n = 9 observations per group and k = 3 total groups.</p>
+        <table>
+          <thead>
+            <tr>
+              <th>No Caffeine</th>
+              <th>Low Caffeine</th>
+              <th>High Caffeine</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>5</td><td>3</td></tr>
+            <tr><td>4</td><td>2</td><td>6</td></tr>
+            <tr><td>7</td><td>8</td><td>9</td></tr>
+            <tr><td>4</td><td>8</td><td>6</td></tr>
+            <tr><td>1</td><td>2</td><td>3</td></tr>
+            <tr><td>10</td><td>8</td><td>12</td></tr>
+            <tr><td>4</td><td>5</td><td>6</td></tr>
+            <tr><td>1</td><td>2</td><td>3</td></tr>
+            <tr><td>7</td><td>8</td><td>9</td></tr>
+          </tbody>
+        </table>
+        <div class="summary_box">
+          <strong>Known Sample Variances (Provided in Workbook):</strong><br>
+          s<sub>1</sub><sup>2</sup> (No Caffeine) = 10.00 &nbsp;|&nbsp;
+          s<sub>2</sub><sup>2</sup> (Low Caffeine) = 7.75 &nbsp;|&nbsp;
+          s<sub>3</sub><sup>2</sup> (High Caffeine) = 10.00
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Enter Your Calculated Values</h2>
+        
+        <h3>Phase 1: Means and Error Variance</h3>
+        <div class="grid_inputs">
+          <div class="input_card">
+            <label>Group 1 Mean (No Caffeine)</label>
+            <input type="number" step="any" id="d1_m1" placeholder="Mean Goes Here">
+            <div id="d1_m1_msg" class="status_badge"></div>
+          </div>
+          <div class="input_card">
+            <label>Group 2 Mean (Low Caffeine)</label>
+            <input type="number" step="any" id="d1_m2" placeholder="Mean Goes Here">
+            <div id="d1_m2_msg" class="status_badge"></div>
+          </div>
+          <div class="input_card">
+            <label>Group 3 Mean (High Caffeine)</label>
+            <input type="number" step="any" id="d1_m3" placeholder="Mean Goes Here">
+            <div id="d1_m3_msg" class="status_badge"></div>
+          </div>
+          <div class="input_card">
+            <label>Grand Mean (x̄)</label>
+            <input type="number" step="any" id="d1_gm" placeholder="Average of all means">
+            <div id="d1_gm_msg" class="status_badge"></div>
+          </div>
+          <div class="input_card">
+            <label>MS Error (Average of group variances)</label>
+            <input type="number" step="any" id="d1_mse" placeholder="MS error">
+            <div id="d1_mse_msg" class="status_badge"></div>
+          </div>
+        </div>
+
+        <h3>Phase 2: Mean Square Treatment</h3>
+        <div class="grid_inputs">
+          <div class="input_card">
+            <label>1a. (Group 1 Mean &minus; Grand Mean)<sup>2</sup></label>
+            <input type="number" step="any" id="d1_d1" placeholder="Squared difference">
+            <div id="d1_d1_msg" class="status_badge"></div>
+          </div>
+          <div class="input_card">
+            <label>1b. (Group 2 Mean &minus; Grand Mean)<sup>2</sup></label>
+            <input type="number" step="any" id="d1_d2" placeholder="Squared difference">
+            <div id="d1_d2_msg" class="status_badge"></div>
+          </div>
+          <div class="input_card">
+            <label>1c. (Group 3 Mean &minus; Grand Mean)<sup>2</sup></label>
+            <input type="number" step="any" id="d1_d3" placeholder="Squared difference">
+            <div id="d1_d3_msg" class="status_badge"></div>
+          </div>
+          <div class="input_card">
+            <label>2. Sum of Squared Mean Differences</label>
+            <input type="number" step="any" id="d1_sum" placeholder="Sum of steps 1a to 1c">
+            <div id="d1_sum_msg" class="status_badge"></div>
+          </div>
+          <div class="input_card">
+            <label>3. Variance of Group Means (s<sub>x̄</sub><sup>2</sup> = Sum / [k &minus; 1])</label>
+            <input type="number" step="any" id="d1_sm" placeholder="Divide sum by 2">
+            <div id="d1_sm_msg" class="status_badge"></div>
+          </div>
+          <div class="input_card">
+            <label>4. MS Treatment (n &times; s<sub>x̄</sub><sup>2</sup>)</label>
+            <input type="number" step="any" id="d1_mst" placeholder="Multiply by n">
+            <div id="d1_mst_msg" class="status_badge"></div>
+          </div>
+        </div>
+
+        <h3>Phase 3: Omnibus Test</h3>
+        <div class="grid_inputs">
+          <div class="input_card">
+            <label>F Ratio (MS Treatment / MS Error)</label>
+            <input type="number" step="any" id="d1_f" placeholder="F statistic">
+            <div id="d1_f_msg" class="status_badge"></div>
+          </div>
+        </div>
+
+        <button class="btn_check" onclick="verifyDataset1()">Verify Dataset 1 Calculations</button>
+
+        <div class="question_block">
+          <label><strong>Conceptual Assessment:</strong> Is MS Treatment notably larger than MS Error?</label>
+          <select id="d1_q1">
+            <option value="">Select an evaluation...</option>
+            <option value="close">MS Treatment is roughly equal to MS Error (F is close to 1.0)</option>
+            <option value="greater">MS Treatment is far larger than MS Error (F is very large)</option>
+          </select>
+          <button class="btn_check" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="checkD1Concept()">Check Interpretation</button>
+          <div id="d1_q1_msg" class="status_badge"></div>
+        </div>
+      </section>
+    </div>
+
+    <!-- DATASET 2 -->
+    <div id="dataset2" class="dataset_content">
+      <section class="card">
+        <h2>Dataset 2: Scaled Dataset</h2>
+        <p>Three conditions with n = 9 observations per group and k = 3 total groups.</p>
+        <table>
+          <thead>
+            <tr>
+              <th>No Caffeine</th>
+              <th>Low Caffeine</th>
+              <th>High Caffeine</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>2</td><td>10</td><td>6</td></tr>
+            <tr><td>8</td><td>4</td><td>12</td></tr>
+            <tr><td>14</td><td>16</td><td>18</td></tr>
+            <tr><td>8</td><td>16</td><td>12</td></tr>
+            <tr><td>2</td><td>4</td><td>6</td></tr>
+            <tr><td>20</td><td>16</td><td>24</td></tr>
+            <tr><td>8</td><td>10</td><td>12</td></tr>
+            <tr><td>2</td><td>4</td><td>6</td></tr>
+            <tr><td>14</td><td>16</td><td>18</td></tr>
+          </tbody>
+        </table>
+        <div class="summary_box">
+          <strong>Known Sample Variances (Provided in Workbook):</strong><br>
+          s<sub>1</sub><sup>2</sup> = 40.00 &nbsp;|&nbsp;
+          s<sub>2</sub><sup>2</sup> = 31.00 &nbsp;|&nbsp;
+          s<sub>3</sub><sup>2</sup> = 40.00
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Enter Your Calculated Values</h2>
+        
+        <h3>Phase 1: Means and Error Variance</h3>
+        <div class="grid_inputs">
+          <div class="input_card">
+            <label>Group 1 Mean</label>
+            <input type="number" step="any" id="d2_m1" placeholder="Mean Goes Here">
+            <div id="d2_m1_msg" class="status_badge"></div>
+          </div>
+          <div class="input_card">
+            <label>Group 2 Mean</label>
+            <input type="number" step="any" id="d2_m2" placeholder="Mean Goes Here">
+            <div id="d2_m2_msg" class="status_badge"></div>
+          </div>
+          <div class="input_card">
+            <label>Group 3 Mean</label>
+            <input type="number" step="any" id="d2_m3" placeholder="Mean Goes Here">
+            <div id="d2_m3_msg" class="status_badge"></div>
+          </div>
+          <div class="input_card">
+            <label>Grand Mean (x̄)</label>
+            <input type="number" step="any" id="d2_gm" placeholder="Average of means">
+            <div id="d2_gm_msg" class="status_badge"></div>
+          </div>
+          <div class="input_card">
+            <label>MS Error (Average of group variances)</label>
+            <input type="number" step="any" id="d2_mse" placeholder="MS error">
+            <div id="d2_mse_msg" class="status_badge"></div>
+          </div>
+        </div>
+
+        <h3>Phase 2: Mean Square Treatment</h3>
+        <div class="grid_inputs">
+          <div class="input_card">
+            <label>1a. (Group 1 Mean &minus; Grand Mean)<sup>2</sup></label>
+            <input type="number" step="any" id="d2_d1" placeholder="Squared difference">
+            <div id="d2_d1_msg" class="status_badge"></div>
+          </div>
+          <div class="input_card">
+            <label>1b. (Group 2 Mean &minus; Grand Mean)<sup>2</sup></label>
+            <input type="number" step="any" id="d2_d2" placeholder="Squared difference">
+            <div id="d2_d2_msg" class="status_badge"></div>
+          </div>
+          <div class="input_card">
+            <label>1c. (Group 3 Mean &minus; Grand Mean)<sup>2</sup></label>
+            <input type="number" step="any" id="d2_d3" placeholder="Squared difference">
+            <div id="d2_d3_msg" class="status_badge"></div>
+          </div>
+          <div class="input_card">
+            <label>2. Sum of Squared Mean Differences</label>
+            <input type="number" step="any" id="d2_sum" placeholder="Sum of steps 1a to 1c">
+            <div id="d2_sum_msg" class="status_badge"></div>
+          </div>
+          <div class="input_card">
+            <label>3. Variance of Group Means (s<sub>x̄</sub><sup>2</sup>)</label>
+            <input type="number" step="any" id="d2_sm" placeholder="Divide sum by 2">
+            <div id="d2_sm_msg" class="status_badge"></div>
+          </div>
+          <div class="input_card">
+            <label>4. MS Treatment (n &times; s<sub>x̄</sub><sup>2</sup>)</label>
+            <input type="number" step="any" id="d2_mst" placeholder="Multiply by n">
+            <div id="d2_mst_msg" class="status_badge"></div>
+          </div>
+        </div>
+
+        <h3>Phase 3: Omnibus Test</h3>
+        <div class="grid_inputs">
+          <div class="input_card">
+            <label>F Ratio (MS Treatment / MS Error)</label>
+            <input type="number" step="any" id="d2_f" placeholder="F statistic">
+            <div id="d2_f_msg" class="status_badge"></div>
+          </div>
+        </div>
+
+        <button class="btn_check" onclick="verifyDataset2()">Verify Dataset 2 Calculations</button>
+
+        <div class="question_block">
+          <label><strong>Conceptual Assessment:</strong> What conclusion follows from comparing MS Treatment (36) to MS Error (37)?</label>
+          <select id="d2_q1">
+            <option value="">Select an evaluation...</option>
+            <option value="true">MS Treatment is roughly equal to MS Error; group differences add little beyond individual participant variance.</option>
+            <option value="false">MS Treatment dominates MS Error; treatment effects account for almost all variance.</option>
+          </select>
+          <button class="btn_check" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="checkD2Concept()">Check Interpretation</button>
+          <div id="d2_q1_msg" class="status_badge"></div>
+        </div>
+      </section>
+    </div>
+
+    <!-- DATASET 3 -->
+    <div id="dataset3" class="dataset_content">
+      <section class="card">
+        <h2>Dataset 3: Divergent Treatment Means</h2>
+        <p>Three conditions with n = 9 observations per group and k = 3 total groups.</p>
+        <table>
+          <thead>
+            <tr>
+              <th>No Caffeine</th>
+              <th>Low Caffeine</th>
+              <th>High Caffeine</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>0</td><td>10</td><td>10</td></tr>
+            <tr><td>6</td><td>4</td><td>16</td></tr>
+            <tr><td>12</td><td>16</td><td>22</td></tr>
+            <tr><td>6</td><td>16</td><td>16</td></tr>
+            <tr><td>0</td><td>4</td><td>10</td></tr>
+            <tr><td>18</td><td>16</td><td>28</td></tr>
+            <tr><td>6</td><td>10</td><td>16</td></tr>
+            <tr><td>0</td><td>4</td><td>10</td></tr>
+            <tr><td>12</td><td>16</td><td>22</td></tr>
+          </tbody>
+        </table>
+        <div class="summary_box">
+          <strong>Known Sample Variances (Provided in Workbook):</strong><br>
+          s<sub>1</sub><sup>2</sup> = 40.00 &nbsp;|&nbsp;
+          s<sub>2</sub><sup>2</sup> = 31.00 &nbsp;|&nbsp;
+          s<sub>3</sub><sup>2</sup> = 40.00
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Enter Your Calculated Values</h2>
+        
+        <h3>Phase 1: Means and Error Variance</h3>
+        <div class="grid_inputs">
+          <div class="input_card">
+            <label>Group 1 Mean</label>
+            <input type="number" step="any" id="d3_m1" placeholder="Mean Goes Here">
+            <div id="d3_m1_msg" class="status_badge"></div>
+          </div>
+          <div class="input_card">
+            <label>Group 2 Mean</label>
+            <input type="number" step="any" id="d3_m2" placeholder="Mean Goes Here">
+            <div id="d3_m2_msg" class="status_badge"></div>
+          </div>
+          <div class="input_card">
+            <label>Group 3 Mean</label>
+            <input type="number" step="any" id="d3_m3" placeholder="Mean Goes Here">
+            <div id="d3_m3_msg" class="status_badge"></div>
+          </div>
+          <div class="input_card">
+            <label>Grand Mean (x̄)</label>
+            <input type="number" step="any" id="d3_gm" placeholder="Average of means">
+            <div id="d3_gm_msg" class="status_badge"></div>
+          </div>
+          <div class="input_card">
+            <label>MS Error (Average of group variances)</label>
+            <input type="number" step="any" id="d3_mse" placeholder="MS error">
+            <div id="d3_mse_msg" class="status_badge"></div>
+          </div>
+        </div>
+
+        <h3>Phase 2: Mean Square Treatment</h3>
+        <div class="grid_inputs">
+          <div class="input_card">
+            <label>1a. (Group 1 Mean &minus; Grand Mean)<sup>2</sup></label>
+            <input type="number" step="any" id="d3_d1" placeholder="Squared difference">
+            <div id="d3_d1_msg" class="status_badge"></div>
+          </div>
+          <div class="input_card">
+            <label>1b. (Group 2 Mean &minus; Grand Mean)<sup>2</sup></label>
+            <input type="number" step="any" id="d3_d2" placeholder="Squared difference">
+            <div id="d3_d2_msg" class="status_badge"></div>
+          </div>
+          <div class="input_card">
+            <label>1c. (Group 3 Mean &minus; Grand Mean)<sup>2</sup></label>
+            <input type="number" step="any" id="d3_d3" placeholder="Squared difference">
+            <div id="d3_d3_msg" class="status_badge"></div>
+          </div>
+          <div class="input_card">
+            <label>2. Sum of Squared Mean Differences</label>
+            <input type="number" step="any" id="d3_sum" placeholder="Sum of steps 1a to 1c">
+            <div id="d3_sum_msg" class="status_badge"></div>
+          </div>
+          <div class="input_card">
+            <label>3. Variance of Group Means (s<sub>x̄</sub><sup>2</sup>)</label>
+            <input type="number" step="any" id="d3_sm" placeholder="Divide sum by 2">
+            <div id="d3_sm_msg" class="status_badge"></div>
+          </div>
+          <div class="input_card">
+            <label>4. MS Treatment (n &times; s<sub>x̄</sub><sup>2</sup>)</label>
+            <input type="number" step="any" id="d3_mst" placeholder="Multiply by n">
+            <div id="d3_mst_msg" class="status_badge"></div>
+          </div>
+        </div>
+
+        <h3>Phase 3: Omnibus Test</h3>
+        <div class="grid_inputs">
+          <div class="input_card">
+            <label>F Ratio (MS Treatment / MS Error)</label>
+            <input type="number" step="any" id="d3_f" placeholder="F statistic">
+            <div id="d3_f_msg" class="status_badge"></div>
+          </div>
+        </div>
+
+        <button class="btn_check" onclick="verifyDataset3()">Verify Dataset 3 Calculations</button>
+
+        <div class="question_block">
+          <label><strong>Comparison Analysis:</strong> What remained identical between Dataset 2 and Dataset 3, and what caused the dramatic jump in the F ratio?</label>
+          <select id="d3_q1">
+            <option value="">Select an evaluation...</option>
+            <option value="correct">MS Error remained exactly 37.00; the wider separation among sample means drove MS Treatment up to 228.00.</option>
+            <option value="incorrect">The sample means stayed the same, but the within group variances collapsed to near zero.</option>
+          </select>
+          <button class="btn_check" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="checkD3Concept()">Check Interpretation</button>
+          <div id="d3_q1_msg" class="status_badge"></div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    function showTab(num) {
+      const tabs = document.querySelectorAll(".tab_button");
+      const contents = document.querySelectorAll(".dataset_content");
+
+      tabs.forEach((tab, idx) => {
+        if (idx === num - 1) {
+          tab.classList.add("active");
+        } else {
+          tab.classList.remove("active");
+        }
+      });
+
+      contents.forEach((content, idx) => {
+        if (idx === num - 1) {
+          content.classList.add("active");
+        } else {
+          content.classList.remove("active");
+        }
+      });
+    }
+
+    function checkValue(id, target, customTolerance) {
+      const el = document.getElementById(id);
+      const msg = document.getElementById(id + "_msg");
+      const rawVal = parseFloat(el.value);
+
+      if (isNaN(rawVal)) {
+        el.className = "";
+        msg.textContent = "Please enter a value";
+        msg.className = "status_badge";
+        return;
+      }
+
+      const tol = customTolerance !== undefined ? customTolerance : Math.max(0.12, Math.abs(target) * 0.025);
+
+      if (Math.abs(rawVal - target) <= tol) {
+        el.className = "is_correct";
+        msg.textContent = "Correct";
+        msg.className = "status_badge correct";
+      } else {
+        el.className = "is_incorrect";
+        msg.textContent = "Incorrect. Check your math";
+        msg.className = "status_badge incorrect";
+      }
+    }
+
+    function verifyDataset1() {
+      checkValue("d1_m1", 4.33333);
+      checkValue("d1_m2", 5.33333);
+      checkValue("d1_m3", 6.33333);
+      checkValue("d1_gm", 5.33333);
+      checkValue("d1_mse", 9.25);
+      checkValue("d1_d1", 1.0);
+      checkValue("d1_d2", 0.0);
+      checkValue("d1_d3", 1.0);
+      checkValue("d1_sum", 2.0);
+      checkValue("d1_sm", 1.0);
+      checkValue("d1_mst", 9.0);
+      checkValue("d1_f", 0.97297);
+    }
+
+    function checkD1Concept() {
+      const choice = document.getElementById("d1_q1").value;
+      const msg = document.getElementById("d1_q1_msg");
+      if (choice === "close") {
+        msg.textContent = "Correct. MS Treatment (9) is roughly equal to MS Error (9.25), resulting in an F close to 1.0.";
+        msg.className = "status_badge correct";
+      } else if (choice === "greater") {
+        msg.textContent = "Incorrect. Compare MS Treatment (9) with MS Error (9.25). They are nearly the same.";
+        msg.className = "status_badge incorrect";
+      } else {
+        msg.textContent = "Please make a selection.";
+        msg.className = "status_badge";
+      }
+    }
+
+    function verifyDataset2() {
+      checkValue("d2_m1", 8.66667);
+      checkValue("d2_m2", 10.66667);
+      checkValue("d2_m3", 12.66667);
+      checkValue("d2_gm", 10.66667);
+      checkValue("d2_mse", 37.0);
+      checkValue("d2_d1", 4.0);
+      checkValue("d2_d2", 0.0);
+      checkValue("d2_d3", 4.0);
+      checkValue("d2_sum", 8.0);
+      checkValue("d2_sm", 4.0);
+      checkValue("d2_mst", 36.0);
+      checkValue("d2_f", 0.97297);
+    }
+
+    function checkD2Concept() {
+      const choice = document.getElementById("d2_q1").value;
+      const msg = document.getElementById("d2_q1_msg");
+      if (choice === "true") {
+        msg.textContent = "Correct. When MS Treatment is approximately equal to MS Error, treatment differences do not explain variance above random error.";
+        msg.className = "status_badge correct";
+      } else if (choice === "false") {
+        msg.textContent = "Incorrect. Look closely at 36 versus 37. They are nearly equivalent.";
+        msg.className = "status_badge incorrect";
+      } else {
+        msg.textContent = "Please make a selection.";
+        msg.className = "status_badge";
+      }
+    }
+
+    function verifyDataset3() {
+      checkValue("d3_m1", 6.66667);
+      checkValue("d3_m2", 10.66667);
+      checkValue("d3_m3", 16.66667);
+      checkValue("d3_gm", 11.33333);
+      checkValue("d3_mse", 37.0);
+      checkValue("d3_d1", 21.77778, 0.2);
+      checkValue("d3_d2", 0.44444, 0.1);
+      checkValue("d3_d3", 28.44444, 0.2);
+      checkValue("d3_sum", 50.66667, 0.3);
+      checkValue("d3_sm", 25.33333, 0.2);
+      checkValue("d3_mst", 228.0, 1.5);
+      checkValue("d3_f", 6.16216, 0.1);
+    }
+
+    function checkD3Concept() {
+      const choice = document.getElementById("d3_q1").value;
+      const msg = document.getElementById("d3_q1_msg");
+      if (choice === "correct") {
+        msg.textContent = "Correct. Within group variance remained at 37, but the wide dispersion in condition means elevated MS Treatment to 228 and F to 6.16.";
+        msg.className = "status_badge correct";
+      } else if (choice === "incorrect") {
+        msg.textContent = "Incorrect. Look at the group variances in the summary table versus the spread of the condition means.";
+        msg.className = "status_badge incorrect";
+      } else {
+        msg.textContent = "Please make a selection.";
+        msg.className = "status_badge";
+      }
+    }
+  </script>
+</body>
+</html>
