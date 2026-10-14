@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab 7 Calculation Practice and Verification</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script>
+  <style>
+    body {
+      background-color: #0c0a09;
+      color: #f5f5f4;
+    }
+    .custom-table {
+      border-top: 2px solid #57534e;
+      border-bottom: 2px solid #57534e;
+    }
+    .custom-table th {
+      border-bottom: 1px solid #44403c;
+    }
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  </style>
+</head>
+<body class="min-h-screen font-sans selection:bg-stone-700 selection:text-white">
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="bg-stone-950 border-b border-stone-800 sticky top-0 z-30 shadow-md">
+    <div class="max-w-5xl mx-auto px-4 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <span class="text-xs font-semibold uppercase tracking-wider text-amber-500">Self Guided Statistical Practice</span>
+        <h1 class="text-xl font-bold tracking-tight text-stone-100">Lab 7 Calculation Check Suite</h1>
+      </div>
+      <nav class="flex flex-wrap gap-2 text-sm font-medium" id="nav-container">
+        <button type="button" onclick="switchTab('unequal')" id="tab-btn-unequal" class="px-3 py-1.5 rounded bg-stone-100 text-stone-950 font-semibold cursor-pointer transition">Part 1 Unequal n ANOVA</button>
+        <button type="button" onclick="switchTab('orthogonal')" id="tab-btn-orthogonal" class="px-3 py-1.5 rounded bg-stone-900 text-stone-300 hover:bg-stone-800 cursor-pointer transition">Part 2 Orthogonal</button>
+        <button type="button" onclick="switchTab('nonorthogonal')" id="tab-btn-nonorthogonal" class="px-3 py-1.5 rounded bg-stone-900 text-stone-300 hover:bg-stone-800 cursor-pointer transition">Part 3 Nonorthogonal</button>
+        <button type="button" onclick="switchTab('tukey')" id="tab-btn-tukey" class="px-3 py-1.5 rounded bg-stone-900 text-stone-300 hover:bg-stone-800 cursor-pointer transition">Part 4 Tukey HSD</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 py-8">
+
+    <!-- PART 1: UNEQUAL N ANOVA -->
+    <section id="section-unequal" style="display: block;" class="space-y-6">
+      
+      <!-- Instructions Banner -->
+      <div class="bg-stone-900 border border-stone-800 p-5 rounded-lg shadow-sm">
+        <h2 class="text-lg font-bold text-stone-100 mb-2">Part 1: One Way Omnibus ANOVA with Unequal Sample Sizes</h2>
+        <p class="text-stone-300 text-sm leading-relaxed mb-3">
+          Participants were randomly assigned to one of three conditions measuring sustained attention accuracy. Calculate your values in your spreadsheet or notebook following each numbered stage, enter your results, and click verify.
+        </p>
+        <div class="p-3 bg-stone-950 rounded border border-stone-800 text-xs text-stone-400">
+          <strong>Rounding guideline:</strong> Enter all values rounded to two decimal places (e.g. 10.86). Whole integers can be entered directly (e.g. 2).
+        </div>
+      </div>
+
+      <!-- Raw Dataset Card -->
+      <div class="bg-stone-900 border border-stone-800 p-5 rounded-lg shadow-sm">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-amber-500 mb-3">Raw Dataset</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-stone-950 p-4 rounded border border-stone-800">
+            <span class="font-bold text-stone-200 text-sm">No Caffeine Condition</span>
+            <span class="block text-xs text-stone-400 mt-0.5">Sample size: 9 participants</span>
+            <p class="font-mono text-xs text-amber-400/90 mt-2">0, 6, 12, 6, 0, 18, 6, 0, 12</p>
+          </div>
+          <div class="bg-stone-950 p-4 rounded border border-stone-800">
+            <span class="font-bold text-stone-200 text-sm">Low Caffeine Condition</span>
+            <span class="block text-xs text-stone-400 mt-0.5">Sample size: 5 participants</span>
+            <p class="font-mono text-xs text-amber-400/90 mt-2">10, 4, 16, 16, 4</p>
+          </div>
+          <div class="bg-stone-950 p-4 rounded border border-stone-800">
+            <span class="font-bold text-stone-200 text-sm">High Caffeine Condition</span>
+            <span class="block text-xs text-stone-400 mt-0.5">Sample size: 7 participants</span>
+            <p class="font-mono text-xs text-amber-400/90 mt-2">10, 16, 22, 16, 10, 28, 16</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stage 1 Inputs -->
+      <div class="bg-stone-900 border border-stone-800 p-5 rounded-lg shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <span class="text-xs font-mono text-amber-500 uppercase tracking-widest">Stage 1 of 4</span>
+            <h3 class="text-base font-bold text-stone-100">Group Means and Grand Mean</h3>
+          </div>
+          <button type="button" onclick="toggleBox('unequal-help-1')" class="text-xs text-stone-400 hover:text-stone-200 underline cursor-pointer">Show Formula Help</button>
+        </div>
+
+        <div id="unequal-help-1" style="display: none;" class="mb-4 p-3 bg-stone-950 rounded border border-stone-800 text-xs text-stone-300">
+          Formula for grand mean: $\bar{X}_{..} = \frac{\sum \sum X_{ij}}{N}$ where $N = n_1 + n_2 + n_3$.
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-stone-300 mb-1">Mean 1: No Caffeine $(\bar{X}_1)$</label>
+            <input type="number" step="any" id="u-m1" placeholder="Enter value" class="w-full px-3 py-2 text-sm bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+            <span id="u-m1-status" class="text-xs block mt-1"></span>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-stone-300 mb-1">Mean 2: Low Caffeine $(\bar{X}_2)$</label>
+            <input type="number" step="any" id="u-m2" placeholder="Enter value" class="w-full px-3 py-2 text-sm bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+            <span id="u-m2-status" class="text-xs block mt-1"></span>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-stone-300 mb-1">Mean 3: High Caffeine $(\bar{X}_3)$</label>
+            <input type="number" step="any" id="u-m3" placeholder="Enter value" class="w-full px-3 py-2 text-sm bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+            <span id="u-m3-status" class="text-xs block mt-1"></span>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-stone-300 mb-1">Grand Mean $(\bar{X}_{..})$</label>
+            <input type="number" step="any" id="u-gm" placeholder="Enter value" class="w-full px-3 py-2 text-sm bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+            <span id="u-gm-status" class="text-xs block mt-1"></span>
+          </div>
+        </div>
+
+        <div class="mt-4 pt-3 border-t border-stone-800 flex items-center justify-between">
+          <button type="button" onclick="checkStage1()" class="px-4 py-1.5 bg-stone-800 text-stone-200 text-xs font-semibold rounded hover:bg-stone-700 cursor-pointer transition">Verify Stage 1 Means</button>
+          <span id="stage1-summary" class="text-xs font-medium"></span>
+        </div>
+      </div>
+
+      <!-- Stage 2 Inputs -->
+      <div class="bg-stone-900 border border-stone-800 p-5 rounded-lg shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <span class="text-xs font-mono text-amber-500 uppercase tracking-widest">Stage 2 of 4</span>
+            <h3 class="text-base font-bold text-stone-100">Partitioning Sum of Squares</h3>
+          </div>
+          <button type="button" onclick="toggleBox('unequal-help-2')" class="text-xs text-stone-400 hover:text-stone-200 underline cursor-pointer">Show Formula Help</button>
+        </div>
+
+        <div id="unequal-help-2" style="display: none;" class="mb-4 p-3 bg-stone-950 rounded border border-stone-800 text-xs text-stone-300 space-y-1">
+          <p>$SS_{treatment} = \sum n_j (\bar{X}_j - \bar{X}_{..})^2$</p>
+          <p>$SS_{error} = \sum \sum (X_{ij} - \bar{X}_j)^2$</p>
+          <p>$SS_{total} = \sum \sum (X_{ij} - \bar{X}_{..})^2 = SS_{treatment} + SS_{error}$</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-stone-300 mb-1">Treatment Sum of Squares $(SS_{treatment})$</label>
+            <input type="number" step="any" id="u-sstreat" placeholder="Enter value" class="w-full px-3 py-2 text-sm bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+            <span id="u-sstreat-status" class="text-xs block mt-1"></span>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-stone-300 mb-1">Error Sum of Squares $(SS_{error})$</label>
+            <input type="number" step="any" id="u-sserror" placeholder="Enter value" class="w-full px-3 py-2 text-sm bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+            <span id="u-sserror-status" class="text-xs block mt-1"></span>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-stone-300 mb-1">Total Sum of Squares $(SS_{total})$</label>
+            <input type="number" step="any" id="u-sstotal" placeholder="Enter value" class="w-full px-3 py-2 text-sm bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+            <span id="u-sstotal-status" class="text-xs block mt-1"></span>
+          </div>
+        </div>
+
+        <div class="mt-4 pt-3 border-t border-stone-800 flex items-center justify-between">
+          <button type="button" onclick="checkStage2()" class="px-4 py-1.5 bg-stone-800 text-stone-200 text-xs font-semibold rounded hover:bg-stone-700 cursor-pointer transition">Verify Stage 2 Sum of Squares</button>
+          <span id="stage2-summary" class="text-xs font-medium"></span>
+        </div>
+      </div>
+
+      <!-- Stage 3 Inputs -->
+      <div class="bg-stone-900 border border-stone-800 p-5 rounded-lg shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <span class="text-xs font-mono text-amber-500 uppercase tracking-widest">Stage 3 of 4</span>
+            <h3 class="text-base font-bold text-stone-100">Degrees of Freedom and Mean Squares</h3>
+          </div>
+          <button type="button" onclick="toggleBox('unequal-help-3')" class="text-xs text-stone-400 hover:text-stone-200 underline cursor-pointer">Show Formula Help</button>
+        </div>
+
+        <div id="unequal-help-3" style="display: none;" class="mb-4 p-3 bg-stone-950 rounded border border-stone-800 text-xs text-stone-300 space-y-1">
+          <p>$df_{treatment} = k - 1$ where $k = 3$</p>
+          <p>$df_{error} = N - k$ where $N = 21$</p>
+          <p>$MS_{treatment} = \frac{SS_{treatment}}{df_{treatment}}$ and $MS_{error} = \frac{SS_{error}}{df_{error}}$</p>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-stone-300 mb-1">$df_{treatment}$</label>
+            <input type="number" id="u-dftreat" placeholder="Enter integer" class="w-full px-3 py-2 text-sm bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+            <span id="u-dftreat-status" class="text-xs block mt-1"></span>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-stone-300 mb-1">$df_{error}$</label>
+            <input type="number" id="u-dferror" placeholder="Enter integer" class="w-full px-3 py-2 text-sm bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+            <span id="u-dferror-status" class="text-xs block mt-1"></span>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-stone-300 mb-1">Mean Square Treatment $(MS_{treatment})$</label>
+            <input type="number" step="any" id="u-mstreat" placeholder="Enter value" class="w-full px-3 py-2 text-sm bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+            <span id="u-mstreat-status" class="text-xs block mt-1"></span>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-stone-300 mb-1">Mean Square Error $(MS_{error})$</label>
+            <input type="number" step="any" id="u-mserror" placeholder="Enter value" class="w-full px-3 py-2 text-sm bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+            <span id="u-mserror-status" class="text-xs block mt-1"></span>
+          </div>
+        </div>
+
+        <div class="mt-4 pt-3 border-t border-stone-800 flex items-center justify-between">
+          <button type="button" onclick="checkStage3()" class="px-4 py-1.5 bg-stone-800 text-stone-200 text-xs font-semibold rounded hover:bg-stone-700 cursor-pointer transition">Verify Stage 3 Mean Squares</button>
+          <span id="stage3-summary" class="text-xs font-medium"></span>
+        </div>
+      </div>
+
+      <!-- Stage 4 Inputs -->
+      <div class="bg-stone-900 border border-stone-800 p-5 rounded-lg shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <span class="text-xs font-mono text-amber-500 uppercase tracking-widest">Stage 4 of 4</span>
+            <h3 class="text-base font-bold text-stone-100">Omnibus Test Statistic, Decision, and Effect Sizes</h3>
+          </div>
+          <button type="button" onclick="toggleBox('unequal-help-4')" class="text-xs text-stone-400 hover:text-stone-200 underline cursor-pointer">Show Formula Help</button>
+        </div>
+
+        <div id="unequal-help-4" style="display: none;" class="mb-4 p-3 bg-stone-950 rounded border border-stone-800 text-xs text-stone-300 space-y-1">
+          <p>$F = \frac{MS_{treatment}}{MS_{error}}$</p>
+          <p>Eta squared: $\eta^2 = \frac{SS_{treatment}}{SS_{total}}$</p>
+          <p>Cohen $d$: $d = \sqrt{\frac{1}{df_{treatment}} \cdot \frac{\sum (\bar{X}_j - \bar{X}_{..})^2}{MS_{error}}}$</p>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-stone-300 mb-1">Calculated $F$ Ratio</label>
+            <input type="number" step="any" id="u-fratio" placeholder="Enter value" class="w-full px-3 py-2 text-sm bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+            <span id="u-fratio-status" class="text-xs block mt-1"></span>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-stone-300 mb-1">Critical $F$ $(\alpha = .05)$</label>
+            <input type="number" step="any" id="u-fcrit" placeholder="Enter value" class="w-full px-3 py-2 text-sm bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+            <span id="u-fcrit-status" class="text-xs block mt-1"></span>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-stone-300 mb-1">Eta Squared $(\eta^2)$</label>
+            <input type="number" step="any" id="u-eta" placeholder="Enter value" class="w-full px-3 py-2 text-sm bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+            <span id="u-eta-status" class="text-xs block mt-1"></span>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-stone-300 mb-1">Cohen $d$</label>
+            <input type="number" step="any" id="u-cohend" placeholder="Enter value" class="w-full px-3 py-2 text-sm bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+            <span id="u-cohend-status" class="text-xs block mt-1"></span>
+          </div>
+        </div>
+
+        <div class="mt-4 pt-4 border-t border-stone-800">
+          <label class="block text-xs font-medium text-stone-300 mb-1">Statistical Hypothesis Decision at $\alpha = .05$</label>
+          <div class="flex flex-wrap items-center gap-4">
+            <select id="u-decision" class="px-3 py-2 text-sm bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+              <option value="">Select your decision</option>
+              <option value="reject">Reject the null hypothesis</option>
+              <option value="fail">Fail to reject the null hypothesis</option>
+            </select>
+            <button type="button" onclick="checkStage4()" class="px-4 py-2 bg-stone-800 text-stone-200 text-xs font-semibold rounded hover:bg-stone-700 cursor-pointer transition">Verify Stage 4 Decisions</button>
+            <span id="stage4-summary" class="text-xs font-medium"></span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- PART 2: ORTHOGONAL CONTRASTS -->
+    <section id="section-orthogonal" style="display: none;" class="space-y-6">
+      
+      <div class="bg-stone-900 border border-stone-800 p-5 rounded-lg shadow-sm">
+        <h2 class="text-lg font-bold text-stone-100 mb-2">Part 2: Planned Orthogonal Linear Contrasts</h2>
+        <p class="text-stone-300 text-sm leading-relaxed mb-3">
+          This section uses the equal sample size dataset from your walkthrough ($n = 9$ per condition, $MS_{error} = 37.00$, $df_{error} = 24$, Group Means: $\bar{X}_1 = 6.67$, $\bar{X}_2 = 10.67$, $\bar{X}_3 = 16.67$)[cite: 1].
+        </p>
+        <div class="p-3 bg-stone-950 rounded border border-stone-800 text-xs text-stone-400 space-y-1">
+          <p><strong>Contrast 1 question:</strong> Does No Caffeine differ from the combined average of Low and High Caffeine? (Weights: $a_1 = 1.0$, $a_2 = -0.5$, $a_3 = -0.5$)</p>
+          <p><strong>Contrast 2 question:</strong> Does Low Caffeine differ from High Caffeine? (Weights: $a_1 = 0.0$, $a_2 = 0.5$, $a_3 = -0.5$)</p>
+        </div>
+      </div>
+
+      <div class="bg-stone-900 border border-stone-800 p-5 rounded-lg shadow-sm overflow-x-auto">
+        <table class="w-full text-left text-xs custom-table">
+          <thead>
+            <tr class="text-stone-400 bg-stone-950">
+              <th class="py-3 px-3">Computation Step</th>
+              <th class="py-3 px-3">Theoretical Formula</th>
+              <th class="py-3 px-3">Contrast 1 Value</th>
+              <th class="py-3 px-3">Contrast 2 Value</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-stone-800">
+            <tr>
+              <td class="py-3 px-3 font-semibold text-stone-200">1. Sum of weights $\sum a_j$</td>
+              <td class="py-3 px-3 font-mono text-stone-400">Must equal 0</td>
+              <td class="py-3 px-3">
+                <input type="number" id="orth-c1-sum" placeholder="Sum" class="w-24 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+                <span id="orth-c1-sum-st"></span>
+              </td>
+              <td class="py-3 px-3">
+                <input type="number" id="orth-c2-sum" placeholder="Sum" class="w-24 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+                <span id="orth-c2-sum-st"></span>
+              </td>
+            </tr>
+            <tr>
+              <td class="py-3 px-3 font-semibold text-stone-200">2. Contrast Value $\Psi$</td>
+              <td class="py-3 px-3 font-mono text-stone-400">\sum a_j \bar{X}_j</td>
+              <td class="py-3 px-3">
+                <input type="number" step="any" id="orth-c1-psi" placeholder="Value" class="w-24 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+                <span id="orth-c1-psi-st"></span>
+              </td>
+              <td class="py-3 px-3">
+                <input type="number" step="any" id="orth-c2-psi" placeholder="Value" class="w-24 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+                <span id="orth-c2-psi-st"></span>
+              </td>
+            </tr>
+            <tr>
+              <td class="py-3 px-3 font-semibold text-stone-200">3. Sum of Squared Weights</td>
+              <td class="py-3 px-3 font-mono text-stone-400">\sum a_j^2</td>
+              <td class="py-3 px-3">
+                <input type="number" step="any" id="orth-c1-sqw" placeholder="Value" class="w-24 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+                <span id="orth-c1-sqw-st"></span>
+              </td>
+              <td class="py-3 px-3">
+                <input type="number" step="any" id="orth-c2-sqw" placeholder="Value" class="w-24 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+                <span id="orth-c2-sqw-st"></span>
+              </td>
+            </tr>
+            <tr>
+              <td class="py-3 px-3 font-semibold text-stone-200">4. Contrast Sum of Squares</td>
+              <td class="py-3 px-3 font-mono text-stone-400">\frac{n \Psi^2}{\sum a_j^2}</td>
+              <td class="py-3 px-3">
+                <input type="number" step="any" id="orth-c1-ss" placeholder="Value" class="w-24 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+                <span id="orth-c1-ss-st"></span>
+              </td>
+              <td class="py-3 px-3">
+                <input type="number" step="any" id="orth-c2-ss" placeholder="Value" class="w-24 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+                <span id="orth-c2-ss-st"></span>
+              </td>
+            </tr>
+            <tr>
+              <td class="py-3 px-3 font-semibold text-stone-200">5. Calculated $F$ Ratio</td>
+              <td class="py-3 px-3 font-mono text-stone-400">\frac{SS_{contrast}}{MS_{error}}</td>
+              <td class="py-3 px-3">
+                <input type="number" step="any" id="orth-c1-f" placeholder="Value" class="w-24 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+                <span id="orth-c1-f-st"></span>
+              </td>
+              <td class="py-3 px-3">
+                <input type="number" step="any" id="orth-c2-f" placeholder="Value" class="w-24 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+                <span id="orth-c2-f-st"></span>
+              </td>
+            </tr>
+            <tr>
+              <td class="py-3 px-3 font-semibold text-stone-200">6. Calculated $t$ Statistic</td>
+              <td class="py-3 px-3 font-mono text-stone-400">\sqrt{F}</td>
+              <td class="py-3 px-3">
+                <input type="number" step="any" id="orth-c1-t" placeholder="Value" class="w-24 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+                <span id="orth-c1-t-st"></span>
+              </td>
+              <td class="py-3 px-3">
+                <input type="number" step="any" id="orth-c2-t" placeholder="Value" class="w-24 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+                <span id="orth-c2-t-st"></span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="mt-5 flex items-center justify-between">
+          <button type="button" onclick="checkOrthogonalAll()" class="px-4 py-2 bg-stone-800 text-stone-200 text-xs font-semibold rounded hover:bg-stone-700 cursor-pointer transition">Check Orthogonal Calculations</button>
+          <span id="orth-summary" class="text-xs font-medium"></span>
+        </div>
+      </div>
+
+      <div class="bg-stone-900 border border-stone-800 p-5 rounded-lg shadow-sm">
+        <h3 class="text-sm font-bold text-stone-200 mb-2">Orthogonal Additivity Verification</h3>
+        <p class="text-xs text-stone-400 leading-relaxed mb-3">
+          Because these two contrasts are orthogonal, their individual sums of squares partition the between group variance completely with zero redundancy[cite: 1].
+        </p>
+        <div class="p-3 bg-stone-950 rounded border border-stone-800 font-mono text-xs text-stone-300">
+          SS(Contrast 1) + SS(Contrast 2) = 294.00 + 162.00 = 456.00 = SS(Treatment)
+        </div>
+      </div>
+
+    </section>
+
+    <!-- PART 3: NONORTHOGONAL CONTRASTS -->
+    <section id="section-nonorthogonal" style="display: none;" class="space-y-6">
+      
+      <div class="bg-stone-900 border border-stone-800 p-5 rounded-lg shadow-sm">
+        <h2 class="text-lg font-bold text-stone-100 mb-2">Part 3: Nonorthogonal Planned Contrasts</h2>
+        <p class="text-stone-300 text-sm leading-relaxed mb-3">
+          Nonorthogonal contrasts test specific planned theoretical hypotheses whose contrast weights have nonzero cross products ($\sum a_{1j} a_{2j} \neq 0$)[cite: 1]. Compute the statistics for each contrast and indicate whether it reaches significance at $\alpha = .05$ ($F_{crit} = 4.26$, $t_{crit} = 2.06$).
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+          <div class="p-3 bg-stone-950 rounded border border-stone-800">
+            <span class="font-bold text-stone-200">Contrast A (No vs Low)</span>
+            <p class="text-stone-400 mt-1">Weights: $a = [0.5, -0.5, 0.0]$</p>
+          </div>
+          <div class="p-3 bg-stone-950 rounded border border-stone-800">
+            <span class="font-bold text-stone-200">Contrast B (No vs High)</span>
+            <p class="text-stone-400 mt-1">Weights: $a = [0.5, 0.0, -0.5]$</p>
+          </div>
+          <div class="p-3 bg-stone-950 rounded border border-stone-800">
+            <span class="font-bold text-stone-200">Contrast C (Low vs Both)</span>
+            <p class="text-stone-400 mt-1">Weights: $a = [0.5, -1.0, 0.5]$</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-stone-900 border border-stone-800 p-5 rounded-lg shadow-sm overflow-x-auto">
+        <table class="w-full text-left text-xs custom-table">
+          <thead>
+            <tr class="text-stone-400 bg-stone-950">
+              <th class="py-3 px-3">Contrast Comparison</th>
+              <th class="py-3 px-3">Psi $(\Psi)$</th>
+              <th class="py-3 px-3">Sum $a_j^2$</th>
+              <th class="py-3 px-3">$SS_{contrast}$</th>
+              <th class="py-3 px-3">$F$ Ratio</th>
+              <th class="py-3 px-3">$t$ Value</th>
+              <th class="py-3 px-3">Significant at $\alpha = .05$?</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-stone-800">
+            <tr>
+              <td class="py-3 px-3 font-semibold text-stone-200">Contrast A: No vs Low</td>
+              <td class="py-3 px-3"><input type="number" step="any" id="non-c1-psi" placeholder="Value" class="w-20 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none"></td>
+              <td class="py-3 px-3"><input type="number" step="any" id="non-c1-sq" placeholder="Value" class="w-20 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none"></td>
+              <td class="py-3 px-3"><input type="number" step="any" id="non-c1-ss" placeholder="Value" class="w-20 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none"></td>
+              <td class="py-3 px-3"><input type="number" step="any" id="non-c1-f" placeholder="Value" class="w-20 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none"></td>
+              <td class="py-3 px-3"><input type="number" step="any" id="non-c1-t" placeholder="Value" class="w-20 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none"></td>
+              <td class="py-3 px-3">
+                <select id="non-c1-sig" class="px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+                  <option value="">Select</option>
+                  <option value="no">Not Significant</option>
+                  <option value="yes">Significant</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td class="py-3 px-3 font-semibold text-stone-200">Contrast B: No vs High</td>
+              <td class="py-3 px-3"><input type="number" step="any" id="non-c2-psi" placeholder="Value" class="w-20 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none"></td>
+              <td class="py-3 px-3"><input type="number" step="any" id="non-c2-sq" placeholder="Value" class="w-20 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none"></td>
+              <td class="py-3 px-3"><input type="number" step="any" id="non-c2-ss" placeholder="Value" class="w-20 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none"></td>
+              <td class="py-3 px-3"><input type="number" step="any" id="non-c2-f" placeholder="Value" class="w-20 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none"></td>
+              <td class="py-3 px-3"><input type="number" step="any" id="non-c2-t" placeholder="Value" class="w-20 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none"></td>
+              <td class="py-3 px-3">
+                <select id="non-c2-sig" class="px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+                  <option value="">Select</option>
+                  <option value="no">Not Significant</option>
+                  <option value="yes">Significant</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td class="py-3 px-3 font-semibold text-stone-200">Contrast C: Low vs Both</td>
+              <td class="py-3 px-3"><input type="number" step="any" id="non-c3-psi" placeholder="Value" class="w-20 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none"></td>
+              <td class="py-3 px-3"><input type="number" step="any" id="non-c3-sq" placeholder="Value" class="w-20 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none"></td>
+              <td class="py-3 px-3"><input type="number" step="any" id="non-c3-ss" placeholder="Value" class="w-20 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none"></td>
+              <td class="py-3 px-3"><input type="number" step="any" id="non-c3-f" placeholder="Value" class="w-20 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none"></td>
+              <td class="py-3 px-3"><input type="number" step="any" id="non-c3-t" placeholder="Value" class="w-20 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none"></td>
+              <td class="py-3 px-3">
+                <select id="non-c3-sig" class="px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+                  <option value="">Select</option>
+                  <option value="no">Not Significant</option>
+                  <option value="yes">Significant</option>
+                </select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="mt-5 flex items-center justify-between">
+          <button type="button" onclick="checkNonorthogonalAll()" class="px-4 py-2 bg-stone-800 text-stone-200 text-xs font-semibold rounded hover:bg-stone-700 cursor-pointer transition">Verify Nonorthogonal Entries</button>
+          <span id="non-summary" class="text-xs font-medium"></span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- PART 4: TUKEY HSD -->
+    <section id="section-tukey" style="display: none;" class="space-y-6">
+      
+      <div class="bg-stone-900 border border-stone-800 p-5 rounded-lg shadow-sm">
+        <h2 class="text-lg font-bold text-stone-100 mb-2">Part 4: Post Hoc Tukey Honestly Significant Difference (HSD)</h2>
+        <p class="text-stone-300 text-sm leading-relaxed mb-3">
+          Tukey HSD tests all pairwise mean comparisons against a single critical difference threshold ($D_t$)[cite: 1].
+        </p>
+        <div class="p-3 bg-stone-950 rounded border border-stone-800 text-xs text-stone-400 space-y-1">
+          <p><strong>Parameters:</strong> Studentized range critical value for $r = 3$ means, $df = 24$, $\alpha = .05$ is $q_t = 3.53$[cite: 1]. Sample size per group is $n = 9$, and $MS_{error} = 37.00$[cite: 1].</p>
+        </div>
+      </div>
+
+      <!-- Step 1: Dt calculation -->
+      <div class="bg-stone-900 border border-stone-800 p-5 rounded-lg shadow-sm">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-amber-500 mb-2">Step 1: Calculate the Critical Difference $(D_t)$</h3>
+        <p class="text-xs text-stone-400 mb-3">
+          Formula: $D_t = q_t \sqrt{\frac{MS_{error}}{n}} = 3.53 \sqrt{\frac{37}{9}}$[cite: 1]
+        </p>
+        <div class="flex items-center gap-3">
+          <input type="number" step="any" id="tukey-dt" placeholder="Enter calculated Dt" class="w-48 px-3 py-2 text-sm bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+          <button type="button" onclick="checkTukeyDtVal()" class="px-4 py-2 bg-stone-800 text-stone-200 text-xs font-semibold rounded hover:bg-stone-700 cursor-pointer transition">Verify Dt</button>
+          <span id="tukey-dt-status" class="text-xs font-medium"></span>
+        </div>
+      </div>
+
+      <!-- Step 2: Pairwise evaluation -->
+      <div class="bg-stone-900 border border-stone-800 p-5 rounded-lg shadow-sm overflow-x-auto">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-amber-500 mb-3">Step 2: Evaluate Absolute Mean Differences Against $D_t$</h3>
+        
+        <table class="w-full text-left text-xs custom-table">
+          <thead>
+            <tr class="text-stone-400 bg-stone-950">
+              <th class="py-3 px-3">Pairwise Comparison</th>
+              <th class="py-3 px-3">Condition Means</th>
+              <th class="py-3 px-3">Absolute Mean Difference $|\bar{X}_i - \bar{X}_j|$</th>
+              <th class="py-3 px-3">Exceeds $D_t$?</th>
+              <th class="py-3 px-3">Pairwise Conclusion</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-stone-800">
+            <tr>
+              <td class="py-3 px-3 font-semibold text-stone-200">No Caffeine vs Low Caffeine</td>
+              <td class="py-3 px-3 text-stone-400">6.67 vs 10.67</td>
+              <td class="py-3 px-3">
+                <input type="number" step="any" id="tukey-d1" placeholder="Enter difference" class="w-32 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+                <span id="tukey-d1-st"></span>
+              </td>
+              <td class="py-3 px-3">
+                <select id="tukey-ex1" class="px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+                  <option value="">Select</option>
+                  <option value="no">No</option>
+                  <option value="yes">Yes</option>
+                </select>
+              </td>
+              <td class="py-3 px-3">
+                <select id="tukey-sig1" class="px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+                  <option value="">Select</option>
+                  <option value="no">Not Significant</option>
+                  <option value="yes">Significant</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td class="py-3 px-3 font-semibold text-stone-200">High Caffeine vs No Caffeine</td>
+              <td class="py-3 px-3 text-stone-400">16.67 vs 6.67</td>
+              <td class="py-3 px-3">
+                <input type="number" step="any" id="tukey-d2" placeholder="Enter difference" class="w-32 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+                <span id="tukey-d2-st"></span>
+              </td>
+              <td class="py-3 px-3">
+                <select id="tukey-ex2" class="px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+                  <option value="">Select</option>
+                  <option value="no">No</option>
+                  <option value="yes">Yes</option>
+                </select>
+              </td>
+              <td class="py-3 px-3">
+                <select id="tukey-sig2" class="px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+                  <option value="">Select</option>
+                  <option value="no">Not Significant</option>
+                  <option value="yes">Significant</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td class="py-3 px-3 font-semibold text-stone-200">High Caffeine vs Low Caffeine</td>
+              <td class="py-3 px-3 text-stone-400">16.67 vs 10.67</td>
+              <td class="py-3 px-3">
+                <input type="number" step="any" id="tukey-d3" placeholder="Enter difference" class="w-32 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+                <span id="tukey-d3-st"></span>
+              </td>
+              <td class="py-3 px-3">
+                <select id="tukey-ex3" class="px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+                  <option value="">Select</option>
+                  <option value="no">No</option>
+                  <option value="yes">Yes</option>
+                </select>
+              </td>
+              <td class="py-3 px-3">
+                <select id="tukey-sig3" class="px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
+                  <option value="">Select</option>
+                  <option value="no">Not Significant</option>
+                  <option value="yes">Significant</option>
+                </select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="mt-5 flex items-center justify-between">
+          <button type="button" onclick="checkTukeyPairwiseAll()" class="px-4 py-2 bg-stone-800 text-stone-200 text-xs font-semibold rounded hover:bg-stone-700 cursor-pointer transition">Verify Pairwise Comparisons</button>
+          <span id="tukey-pairwise-summary" class="text-xs font-medium"></span>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <script>
+    function switchTab(tabKey) {
+      const tabs = ['unequal', 'orthogonal', 'nonorthogonal', 'tukey'];
+      
+      tabs.forEach(function(t) {
+        var sec = document.getElementById('section-' + t);
+        var btn = document.getElementById('tab-btn-' + t);
+        
+        if (sec) {
+          sec.style.display = 'none';
+        }
+        
+        if (btn) {
+          btn.className = 'px-3 py-1.5 rounded bg-stone-900 text-stone-300 hover:bg-stone-800 cursor-pointer transition';
+        }
+      });
+
+      var activeSec = document.getElementById('section-' + tabKey);
+      var activeBtn = document.getElementById('tab-btn-' + tabKey);
+      
+      if (activeSec) {
+        activeSec.style.display = 'block';
+      }
+      
+      if (activeBtn) {
+        activeBtn.className = 'px-3 py-1.5 rounded bg-stone-100 text-stone-950 font-semibold cursor-pointer transition';
+      }
+
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise();
+      }
+    }
+
+    function toggleBox(boxId) {
+      var box = document.getElementById(boxId);
+      if (box) {
+        if (box.style.display === 'none' || box.style.display === '') {
+          box.style.display = 'block';
+        } else {
+          box.style.display = 'none';
+        }
+      }
+    }
+
+    function evaluateInput(id, expected, tol, statusId) {
+      var el = document.getElementById(id);
+      var st = document.getElementById(statusId);
+      if (!el) return false;
+      var val = parseFloat(el.value);
+      if (isNaN(val)) {
+        el.className = 'w-full px-3 py-2 text-sm bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none';
+        if (st) st.textContent = '';
+        return false;
+      }
+      if (Math.abs(val - expected) <= tol) {
+        el.className = 'w-full px-3 py-2 text-sm bg-emerald-950/40 border border-emerald-500 text-emerald-200 rounded focus:outline-none';
+        if (st) {
+          st.textContent = 'Correct';
+          st.className = 'text-xs block mt-1 font-semibold text-emerald-400';
+        }
+        return true;
+      } else {
+        el.className = 'w-full px-3 py-2 text-sm bg-rose-950/40 border border-rose-500 text-rose-200 rounded focus:outline-none';
+        if (st) {
+          st.textContent = 'Recalculate';
+          st.className = 'text-xs block mt-1 font-semibold text-rose-400';
+        }
+        return false;
+      }
+    }
+
+    function evaluateInline(id, expected, tol, statusId) {
+      var el = document.getElementById(id);
+      var st = document.getElementById(statusId);
+      if (!el) return false;
+      var val = parseFloat(el.value);
+      if (isNaN(val)) {
+        if (st) st.textContent = '';
+        return false;
+      }
+      if (Math.abs(val - expected) <= tol) {
+        el.className = 'w-24 px-2 py-1 bg-stone-950 border border-emerald-500 text-emerald-300 rounded focus:outline-none';
+        if (st) {
+          st.textContent = ' Correct';
+          st.className = 'text-xs font-semibold text-emerald-400 ml-1';
+        }
+        return true;
+      } else {
+        el.className = 'w-24 px-2 py-1 bg-stone-950 border border-rose-500 text-rose-300 rounded focus:outline-none';
+        if (st) {
+          st.textContent = ' Check';
+          st.className = 'text-xs font-semibold text-rose-400 ml-1';
+        }
+        return false;
+      }
+    }
+
+    // Part 1 checks
+    function checkStage1() {
+      var v1 = evaluateInput('u-m1', 6.67, 0.05, 'u-m1-status');
+      var v2 = evaluateInput('u-m2', 10.00, 0.05, 'u-m2-status');
+      var v3 = evaluateInput('u-m3', 16.86, 0.05, 'u-m3-status');
+      var v4 = evaluateInput('u-gm', 10.86, 0.05, 'u-gm-status');
+      var summary = document.getElementById('stage1-summary');
+      if (v1 && v2 && v3 && v4) {
+        summary.textContent = 'Stage 1 complete: all means verified.';
+        summary.className = 'text-xs font-medium text-emerald-400';
+      } else {
+        summary.textContent = 'Review flagged means before moving to sums of squares.';
+        summary.className = 'text-xs font-medium text-rose-400';
+      }
+    }
+
+    function checkStage2() {
+      var v1 = evaluateInput('u-sstreat', 413.71, 0.5, 'u-sstreat-status');
+      var v2 = evaluateInput('u-sserror', 710.86, 0.5, 'u-sserror-status');
+      var v3 = evaluateInput('u-sstotal', 1124.57, 0.5, 'u-sstotal-status');
+      var summary = document.getElementById('stage2-summary');
+      if (v1 && v2 && v3) {
+        summary.textContent = 'Stage 2 complete: sums of squares partition verified.';
+        summary.className = 'text-xs font-medium text-emerald-400';
+      } else {
+        summary.textContent = 'Check sum of squares calculations.';
+        summary.className = 'text-xs font-medium text-rose-400';
+      }
+    }
+
+    function checkStage3() {
+      var v1 = evaluateInput('u-dftreat', 2, 0.01, 'u-dftreat-status');
+      var v2 = evaluateInput('u-dferror', 18, 0.01, 'u-dferror-status');
+      var v3 = evaluateInput('u-mstreat', 206.86, 0.2, 'u-mstreat-status');
+      var v4 = evaluateInput('u-mserror', 39.49, 0.2, 'u-mserror-status');
+      var summary = document.getElementById('stage3-summary');
+      if (v1 && v2 && v3 && v4) {
+        summary.textContent = 'Stage 3 complete: degrees of freedom and mean squares verified.';
+        summary.className = 'text-xs font-medium text-emerald-400';
+      } else {
+        summary.textContent = 'Check degrees of freedom or mean square values.';
+        summary.className = 'text-xs font-medium text-rose-400';
+      }
+    }
+
+    function checkStage4() {
+      var v1 = evaluateInput('u-fratio', 5.24, 0.05, 'u-fratio-status');
+      var v2 = evaluateInput('u-fcrit', 3.55, 0.05, 'u-fcrit-status');
+      var v3 = evaluateInput('u-eta', 0.37, 0.03, 'u-eta-status');
+      var v4 = evaluateInput('u-cohend', 0.83, 0.03, 'u-cohend-status');
+      var dec = document.getElementById('u-decision').value === 'reject';
+      var summary = document.getElementById('stage4-summary');
+      if (v1 && v2 && v3 && v4 && dec) {
+        summary.textContent = 'Part 1 complete: Omnibus test and effect sizes correct.';
+        summary.className = 'text-xs font-medium text-emerald-400';
+      } else {
+        summary.textContent = 'Review test statistics, effect sizes, or hypothesis decision.';
+        summary.className = 'text-xs font-medium text-rose-400';
+      }
+    }
+
+    // Part 2 checks
+    function checkOrthogonalAll() {
+      var c1s = evaluateInline('orth-c1-sum', 0, 0.01, 'orth-c1-sum-st');
+      var c2s = evaluateInline('orth-c2-sum', 0, 0.01, 'orth-c2-sum-st');
+      var c1p = evaluateInline('orth-c1-psi', -7.00, 0.05, 'orth-c1-psi-st');
+      var c2p = evaluateInline('orth-c2-psi', -3.00, 0.05, 'orth-c2-psi-st');
+      var c1w = evaluateInline('orth-c1-sqw', 1.50, 0.02, 'orth-c1-sqw-st');
+      var c2w = evaluateInline('orth-c2-sqw', 0.50, 0.02, 'orth-c2-sqw-st');
+      var c1ss = evaluateInline('orth-c1-ss', 294.00, 0.2, 'orth-c1-ss-st');
+      var c2ss = evaluateInline('orth-c2-ss', 162.00, 0.2, 'orth-c2-ss-st');
+      var c1f = evaluateInline('orth-c1-f', 7.95, 0.05, 'orth-c1-f-st');
+      var c2f = evaluateInline('orth-c2-f', 4.38, 0.05, 'orth-c2-f-st');
+      var c1t = evaluateInline('orth-c1-t', 2.82, 0.05, 'orth-c1-t-st');
+      var c2t = evaluateInline('orth-c2-t', 2.09, 0.05, 'orth-c2-t-st');
+
+      var sum = document.getElementById('orth-summary');
+      if (c1s && c2s && c1p && c2p && c1w && c2w && c1ss && c2ss && c1f && c2f && c1t && c2t) {
+        sum.textContent = 'All orthogonal contrast calculations verified.';
+        sum.className = 'text-xs font-medium text-emerald-400';
+      } else {
+        sum.textContent = 'Some values need review. Check flagged cells above.';
+        sum.className = 'text-xs font-medium text-rose-400';
+      }
+    }
+
+    // Part 3 checks
+    function checkNonorthogonalAll() {
+      var c1Psi = Math.abs(parseFloat(document.getElementById('non-c1-psi').value) - (-2.00)) <= 0.05;
+      var c1Sq = Math.abs(parseFloat(document.getElementById('non-c1-sq').value) - 0.50) <= 0.02;
+      var c1SS = Math.abs(parseFloat(document.getElementById('non-c1-ss').value) - 72.00) <= 0.2;
+      var c1F = Math.abs(parseFloat(document.getElementById('non-c1-f').value) - 1.95) <= 0.05;
+      var c1T = Math.abs(parseFloat(document.getElementById('non-c1-t').value) - 1.39) <= 0.05;
+      var c1Sig = document.getElementById('non-c1-sig').value === 'no';
+
+      var c2Psi = Math.abs(parseFloat(document.getElementById('non-c2-psi').value) - (-5.00)) <= 0.05;
+      var c2Sq = Math.abs(parseFloat(document.getElementById('non-c2-sq').value) - 0.50) <= 0.02;
+      var c2SS = Math.abs(parseFloat(document.getElementById('non-c2-ss').value) - 450.00) <= 0.5;
+      var c2F = Math.abs(parseFloat(document.getElementById('non-c2-f').value) - 12.16) <= 0.1;
+      var c2T = Math.abs(parseFloat(document.getElementById('non-c2-t').value) - 3.49) <= 0.05;
+      var c2Sig = document.getElementById('non-c2-sig').value === 'yes';
+
+      var c3Psi = Math.abs(parseFloat(document.getElementById('non-c3-psi').value) - 1.00) <= 0.05;
+      var c3Sq = Math.abs(parseFloat(document.getElementById('non-c3-sq').value) - 1.50) <= 0.02;
+      var c3SS = Math.abs(parseFloat(document.getElementById('non-c3-ss').value) - 6.00) <= 0.1;
+      var c3F = Math.abs(parseFloat(document.getElementById('non-c3-f').value) - 0.16) <= 0.05;
+      var c3T = Math.abs(parseFloat(document.getElementById('non-c3-t').value) - 0.40) <= 0.05;
+      var c3Sig = document.getElementById('non-c3-sig').value === 'no';
+
+      var allValid = c1Psi && c1Sq && c1SS && c1F && c1T && c1Sig &&
+                     c2Psi && c2Sq && c2SS && c2F && c2T && c2Sig &&
+                     c3Psi && c3Sq && c3SS && c3F && c3T && c3Sig;
+
+      var sum = document.getElementById('non-summary');
+      if (allValid) {
+        sum.textContent = 'All nonorthogonal entries and decisions verified.';
+        sum.className = 'text-xs font-medium text-emerald-400';
+      } else {
+        sum.textContent = 'Some entries or significance decisions require review.';
+        sum.className = 'text-xs font-medium text-rose-400';
+      }
+    }
+
+    // Part 4 checks
+    function checkTukeyDtVal() {
+      var val = parseFloat(document.getElementById('tukey-dt').value);
+      var st = document.getElementById('tukey-dt-status');
+      if (Math.abs(val - 7.16) <= 0.05) {
+        st.textContent = 'Correct Dt critical difference value.';
+        st.className = 'text-xs font-semibold text-emerald-400';
+      } else {
+        st.textContent = 'Recalculate Dt: 3.53 * sqrt(37 / 9)';
+        st.className = 'text-xs font-semibold text-rose-400';
+      }
+    }
+
+    function checkTukeyPairwiseAll() {
+      var d1 = evaluateInline('tukey-d1', 4.00, 0.05, 'tukey-d1-st');
+      var d2 = evaluateInline('tukey-d2', 10.00, 0.05, 'tukey-d2-st');
+      var d3 = evaluateInline('tukey-d3', 6.00, 0.05, 'tukey-d3-st');
+
+      var ex1 = document.getElementById('tukey-ex1').value === 'no';
+      var ex2 = document.getElementById('tukey-ex2').value === 'yes';
+      var ex3 = document.getElementById('tukey-ex3').value === 'no';
+
+      var s1 = document.getElementById('tukey-sig1').value === 'no';
+      var s2 = document.getElementById('tukey-sig2').value === 'yes';
+      var s3 = document.getElementById('tukey-sig3').value === 'no';
+
+      var sum = document.getElementById('tukey-pairwise-summary');
+      if (d1 && d2 && d3 && ex1 && ex2 && ex3 && s1 && s2 && s3) {
+        sum.textContent = 'All pairwise comparisons and conclusions verified.';
+        sum.className = 'text-xs font-medium text-emerald-400';
+      } else {
+        sum.textContent = 'Review difference values, Dt thresholds, or conclusions.';
+        sum.className = 'text-xs font-medium text-rose-400';
+      }
+    }
+
+    // Initialize MathJax rendering on page load
+    window.addEventListener('load', function() {
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise();
+      }
+    });
+  </script>
+</body>
+</html>

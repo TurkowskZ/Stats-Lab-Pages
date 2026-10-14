@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab 7: Omnibus ANOVA and Multiple Comparison Techniques</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Inter & Newsreader Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+  <!-- MathJax for Mathematical Notation -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      color: #1e293b;
+      background-color: #f8fafc;
+    }
+    .serif-quote {
+      font-family: 'Newsreader', serif;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    .apa-table {
+      border-top: 2px solid #0f172a;
+      border-bottom: 2px solid #0f172a;
+    }
+    .apa-table-header {
+      border-bottom: 1px solid #0f172a;
+    }
+    .apa-sub-border {
+      border-bottom: 1px solid #cbd5e1;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-indigo-100 selection:text-indigo-900">
+
+  <!-- Top Academic Navigation Bar -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-slate-200 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-lg shadow-sm">
+            Ψ
+          </div>
+          <div>
+            <h1 class="text-base sm:text-lg font-bold text-slate-900 tracking-tight leading-tight">
+              Lab 7: Omnibus ANOVA & Multiple Comparison Procedures
+            </h1>
+            <p class="text-xs text-slate-500 font-medium">Equal Sample Size Model ($n = 9$ per group)</p>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2">
+          <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+            Interactive Academic Guide
+          </span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Grid Layout -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <!-- Sticky Quick Navigation Rail (Desktop) -->
+      <nav class="hidden lg:block lg:col-span-3">
+        <div class="sticky top-24 space-y-1 bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-400 px-3 py-2">Module Contents</p>
+          <a href="#section-raw-data" class="flex items-center px-3 py-2 text-sm font-medium rounded-xl text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 transition-colors">
+            1. Study Context & Raw Data
+          </a>
+          <a href="#section-omnibus" class="flex items-center px-3 py-2 text-sm font-medium rounded-xl text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 transition-colors">
+            2. Omnibus ANOVA Source Table
+          </a>
+          <a href="#section-error-rates" class="flex items-center px-3 py-2 text-sm font-medium rounded-xl text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 transition-colors">
+            3. Error Rates & Inflation Simulator
+          </a>
+          <a href="#section-methods-matrix" class="flex items-center px-3 py-2 text-sm font-medium rounded-xl text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 transition-colors">
+            4. Comparison Techniques Matrix
+          </a>
+          <a href="#section-formula-logic" class="flex items-center px-3 py-2 text-sm font-medium rounded-xl text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 transition-colors">
+            5. Multiple t Formula with $MS_{error}$
+          </a>
+          <a href="#section-contrasts" class="flex items-center px-3 py-2 text-sm font-medium rounded-xl text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 transition-colors">
+            6. Orthogonal Contrasts Calculator
+          </a>
+          <a href="#section-tukey" class="flex items-center px-3 py-2 text-sm font-medium rounded-xl text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 transition-colors">
+            7. Tukey HSD & Critical Difference
+          </a>
+          <a href="#section-apa-report" class="flex items-center px-3 py-2 text-sm font-medium rounded-xl text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 transition-colors">
+            8. APA Write Up & Guidelines
+          </a>
+        </div>
+      </nav>
+
+      <!-- Content Area -->
+      <main class="lg:col-span-9 space-y-10">
+
+        <!-- SECTION 1: STUDY CONTEXT & RAW DATA -->
+        <section id="section-raw-data" class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs">
+          <div class="flex items-center space-x-3 mb-4">
+            <span class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm">1</span>
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Study Context & Raw Sample Data</h2>
+          </div>
+          
+          <p class="text-slate-600 leading-relaxed mb-6">
+            Researchers examined the impact of caffeine consumption on sustained attention performance accuracy. Participants were randomly sampled and assigned to one of three experimental caffeine conditions: No Caffeine, Low Caffeine, and High Caffeine. Performance was measured via the total number of correct responses on a continuous sustained attention battery.
+          </p>
+
+          <!-- Hypothesis Callout -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4">
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-1">Null Hypothesis</span>
+              <p class="font-mono text-base font-semibold text-slate-800">$H_0: \mu_1 = \mu_2 = \mu_3$</p>
+              <p class="text-xs text-slate-500 mt-1">All population group means are equal in sustained attention accuracy.</p>
+            </div>
+            <div class="bg-indigo-50/70 border border-indigo-100 rounded-2xl p-4">
+              <span class="text-xs font-bold uppercase tracking-wider text-indigo-600 block mb-1">Alternative Hypothesis</span>
+              <p class="font-mono text-base font-semibold text-indigo-950">$H_a: \text{At least one } \mu_k \text{ differs from the others}$</p>
+              <p class="text-xs text-indigo-800 mt-1">Not all population means are equivalent across experimental conditions.</p>
+            </div>
+          </div>
+
+          <!-- Raw Data Table & Group Stats -->
+          <div class="overflow-x-auto custom-scrollbar">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead>
+                <tr class="border-b-2 border-slate-800">
+                  <th class="py-3 px-4 font-semibold text-slate-900">Participant Index</th>
+                  <th class="py-3 px-4 font-semibold text-slate-900 bg-slate-50">No Caffeine ($j=1$)</th>
+                  <th class="py-3 px-4 font-semibold text-slate-900">Low Caffeine ($j=2$)</th>
+                  <th class="py-3 px-4 font-semibold text-slate-900 bg-slate-50">High Caffeine ($j=3$)</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 font-mono text-xs sm:text-sm">
+                <tr><td class="py-2 px-4 text-slate-400">Subject 1</td><td class="py-2 px-4 bg-slate-50">0</td><td class="py-2 px-4">10</td><td class="py-2 px-4 bg-slate-50">10</td></tr>
+                <tr><td class="py-2 px-4 text-slate-400">Subject 2</td><td class="py-2 px-4 bg-slate-50">6</td><td class="py-2 px-4">4</td><td class="py-2 px-4 bg-slate-50">16</td></tr>
+                <tr><td class="py-2 px-4 text-slate-400">Subject 3</td><td class="py-2 px-4 bg-slate-50">12</td><td class="py-2 px-4">16</td><td class="py-2 px-4 bg-slate-50">22</td></tr>
+                <tr><td class="py-2 px-4 text-slate-400">Subject 4</td><td class="py-2 px-4 bg-slate-50">6</td><td class="py-2 px-4">16</td><td class="py-2 px-4 bg-slate-50">16</td></tr>
+                <tr><td class="py-2 px-4 text-slate-400">Subject 5</td><td class="py-2 px-4 bg-slate-50">0</td><td class="py-2 px-4">4</td><td class="py-2 px-4 bg-slate-50">10</td></tr>
+                <tr><td class="py-2 px-4 text-slate-400">Subject 6</td><td class="py-2 px-4 bg-slate-50">18</td><td class="py-2 px-4">16</td><td class="py-2 px-4 bg-slate-50">28</td></tr>
+                <tr><td class="py-2 px-4 text-slate-400">Subject 7</td><td class="py-2 px-4 bg-slate-50">6</td><td class="py-2 px-4">10</td><td class="py-2 px-4 bg-slate-50">16</td></tr>
+                <tr><td class="py-2 px-4 text-slate-400">Subject 8</td><td class="py-2 px-4 bg-slate-50">0</td><td class="py-2 px-4">4</td><td class="py-2 px-4 bg-slate-50">10</td></tr>
+                <tr><td class="py-2 px-4 text-slate-400">Subject 9</td><td class="py-2 px-4 bg-slate-50">12</td><td class="py-2 px-4">16</td><td class="py-2 px-4 bg-slate-50">22</td></tr>
+              </tbody>
+              <tfoot>
+                <tr class="border-t-2 border-slate-800 bg-indigo-50/50 font-sans font-semibold text-slate-900 text-sm">
+                  <td class="py-3 px-4">Summary Statistics</td>
+                  <td class="py-3 px-4">
+                    <div>Mean: $6.67$</div>
+                    <div class="text-xs text-slate-500 font-normal">SD: $6.32$, $n = 9$</div>
+                  </td>
+                  <td class="py-3 px-4">
+                    <div>Mean: $10.67$</div>
+                    <div class="text-xs text-slate-500 font-normal">SD: $5.57$, $n = 9$</div>
+                  </td>
+                  <td class="py-3 px-4">
+                    <div>Mean: $16.67$</div>
+                    <div class="text-xs text-slate-500 font-normal">SD: $6.32$, $n = 9$</div>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </section>
+
+        <!-- SECTION 2: OMNIBUS ANOVA SOURCE TABLE -->
+        <section id="section-omnibus" class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs">
+          <div class="flex items-center space-x-3 mb-4">
+            <span class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm">2</span>
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Omnibus ANOVA Source Table (Equal Sample Size)</h2>
+          </div>
+          
+          <div class="mb-6">
+            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">APA Format Presentation</p>
+            <p class="text-base font-medium italic text-slate-800">Table 1. Source Table for the Analysis of Variance with Equal Sample Size ($n = 9$)</p>
+          </div>
+
+          <div class="overflow-x-auto custom-scrollbar mb-6">
+            <table class="w-full text-left apa-table text-sm">
+              <thead>
+                <tr class="apa-table-header text-slate-900 font-semibold">
+                  <th class="py-3 px-4">Source</th>
+                  <th class="py-3 px-4 text-right">Sum of Squares ($SS$)</th>
+                  <th class="py-3 px-4 text-right">$df$</th>
+                  <th class="py-3 px-4 text-right">Mean Squares ($MS$)</th>
+                  <th class="py-3 px-4 text-right">$F$</th>
+                  <th class="py-3 px-4 text-right">$p$</th>
+                  <th class="py-3 px-4 text-right">$\eta^2$</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 font-mono text-sm">
+                <tr class="hover:bg-slate-50">
+                  <td class="py-3 px-4 font-sans font-medium text-slate-900">Treatment (Between)</td>
+                  <td class="py-3 px-4 text-right">456</td>
+                  <td class="py-3 px-4 text-right">2</td>
+                  <td class="py-3 px-4 text-right">228</td>
+                  <td class="py-3 px-4 text-right font-bold text-indigo-600">6.16</td>
+                  <td class="py-3 px-4 text-right font-semibold text-emerald-600">.007</td>
+                  <td class="py-3 px-4 text-right">.339</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="py-3 px-4 font-sans font-medium text-slate-900">Error (Within)</td>
+                  <td class="py-3 px-4 text-right">888</td>
+                  <td class="py-3 px-4 text-right">24</td>
+                  <td class="py-3 px-4 text-right font-semibold text-slate-800">37</td>
+                  <td class="py-3 px-4 text-right text-slate-400"> </td>
+                  <td class="py-3 px-4 text-right text-slate-400"> </td>
+                  <td class="py-3 px-4 text-right text-slate-400"> </td>
+                </tr>
+                <tr class="hover:bg-slate-50 bg-slate-50/50 font-semibold">
+                  <td class="py-3 px-4 font-sans text-slate-900">Total</td>
+                  <td class="py-3 px-4 text-right">1344</td>
+                  <td class="py-3 px-4 text-right">26</td>
+                  <td class="py-3 px-4 text-right text-slate-400"> </td>
+                  <td class="py-3 px-4 text-right text-slate-400"> </td>
+                  <td class="py-3 px-4 text-right text-slate-400"> </td>
+                  <td class="py-3 px-4 text-right text-slate-400"> </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Interpretation Card -->
+          <div class="rounded-2xl bg-amber-50/70 border border-amber-200/80 p-5">
+            <h3 class="text-sm font-bold text-amber-900 uppercase tracking-wider mb-2 flex items-center space-x-2">
+              <span>Interpretation of Omnibus Results</span>
+            </h3>
+            <p class="text-sm text-amber-950 leading-relaxed mb-3">
+              Because the observed significance level $p = .007$ is less than standard $\alpha = .05$, we reject the omnibus null hypothesis that all three group means are equal.
+            </p>
+            <div class="text-xs sm:text-sm text-amber-900 space-y-1">
+              <p><strong>The Core Challenge:</strong> The omnibus $F$ test confirms that at least one group mean is significantly different from the others, but it cannot tell us:</p>
+              <ul class="list-disc list-inside space-y-1 pl-2">
+                <li>Which specific means are significantly different from each other.</li>
+                <li>The direction of the differences (which specific dosage level produces superior attention performance).</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 3: ERROR RATES & FAMILYWISE INFLATION SIMULATOR -->
+        <section id="section-error-rates" class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs">
+          <div class="flex items-center space-x-3 mb-4">
+            <span class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm">3</span>
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Error Rates & Type I Error Inflation</h2>
+          </div>
+          
+          <p class="text-slate-600 leading-relaxed mb-6">
+            When performing multiple statistical comparisons among means, the major challenge is the compounding inflation of Type I error. Researchers define error rates under two formal paradigms:
+          </p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+            <div class="border border-slate-200 rounded-2xl p-5 bg-slate-50/60">
+              <h3 class="text-sm font-bold text-slate-900 mb-2">Individual Type I Error Rate</h3>
+              <p class="text-xs text-slate-600 leading-relaxed mb-3">
+                Also termed the error rate per comparison. This is the probability for a single individual test that the null hypothesis will be rejected when the null hypothesis is in fact true.
+              </p>
+              <div class="inline-block px-3 py-1 bg-white border border-slate-200 rounded-lg text-xs font-mono font-bold text-slate-800">
+                $\alpha_{PC} = \alpha \text{ (typically } .05 \text{)}$
+              </div>
+            </div>
+
+            <div class="border border-indigo-200 rounded-2xl p-5 bg-indigo-50/50">
+              <h3 class="text-sm font-bold text-indigo-950 mb-2">Familywise Type I Error Rate</h3>
+              <p class="text-xs text-indigo-900 leading-relaxed mb-3">
+                The probability for an entire family of statistical tests that at least one null hypothesis will be rejected when all null hypotheses are true.
+              </p>
+              <div class="inline-block px-3 py-1 bg-white border border-indigo-200 rounded-lg text-xs font-mono font-bold text-indigo-900">
+                $\alpha_{FW} = 1 - (1 - \alpha)^c$
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Calculator -->
+          <div class="rounded-2xl border border-slate-200 bg-slate-900 text-white p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-base font-bold tracking-tight text-white">Interactive Familywise Error Calculator</h3>
+              <span class="text-xs text-indigo-300 font-mono">Formula: $1 - (1 - \alpha)^c$</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+              <div class="space-y-4">
+                <div>
+                  <div class="flex justify-between text-xs font-semibold mb-1 text-slate-300">
+                    <label for="input-alpha">Nominal Alpha Level ($\alpha$)</label>
+                    <span id="label-alpha" class="font-mono text-indigo-300">0.05</span>
+                  </div>
+                  <input type="range" id="input-alpha" min="0.01" max="0.10" step="0.01" value="0.05" class="w-full accent-indigo-500 cursor-pointer">
+                </div>
+
+                <div>
+                  <div class="flex justify-between text-xs font-semibold mb-1 text-slate-300">
+                    <label for="input-comparisons">Number of Planned Comparisons ($c$)</label>
+                    <span id="label-comparisons" class="font-mono text-indigo-300">2</span>
+                  </div>
+                  <input type="range" id="input-comparisons" min="1" max="10" step="1" value="2" class="w-full accent-indigo-500 cursor-pointer">
+                </div>
+
+                <div class="text-xs text-slate-400">
+                  Notice that for 2 comparisons at $\alpha = .05$, the familywise risk is approximately $9.75\%$, remaining under $10\%$.
+                </div>
+              </div>
+
+              <div class="bg-slate-800/80 rounded-2xl p-5 border border-slate-700/80 text-center">
+                <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold block mb-1">Calculated Familywise Risk</span>
+                <div id="stat-fw-rate" class="text-4xl font-extrabold text-indigo-400 font-mono tracking-tight my-2">9.75%</div>
+                <p id="stat-fw-desc" class="text-xs text-slate-300">
+                  With 2 comparisons, you have a 9.75% probability of committing at least one Type I error.
+                </p>
+                <div class="mt-4 pt-3 border-t border-slate-700/60 text-xs text-slate-400 flex justify-between">
+                  <span>Bonferroni adjusted alpha:</span>
+                  <span id="stat-bonf-alpha" class="font-mono font-semibold text-emerald-400">.0250</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 4: COMPARISON TECHNIQUES MATRIX -->
+        <section id="section-methods-matrix" class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs">
+          <div class="flex items-center space-x-3 mb-4">
+            <span class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm">4</span>
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Comparison Techniques & Decision Framework</h2>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div class="p-4 rounded-2xl bg-sky-50/70 border border-sky-100">
+              <h3 class="text-sm font-bold text-sky-950 mb-1">A Priori (Planned Contrasts)</h3>
+              <p class="text-xs text-sky-900 leading-relaxed">
+                Differences between group means are predicted by prior theory before viewing sample data. Because empirical theory motivates the tests, they retain higher statistical power and usually permit less stringent corrections.
+              </p>
+            </div>
+            <div class="p-4 rounded-2xl bg-amber-50/70 border border-amber-100">
+              <h3 class="text-sm font-bold text-amber-950 mb-1">Post Hoc (Unplanned Comparisons)</h3>
+              <p class="text-xs text-amber-900 leading-relaxed">
+                Follow up examinations conducted after viewing empirical findings, exploring unexpected differences. Because tests are atheoretical and numerous, familywise Type I error inflation must be strictly controlled.
+              </p>
+            </div>
+          </div>
+
+          <!-- Comparison Table -->
+          <div class="overflow-x-auto custom-scrollbar mb-6">
+            <table class="w-full text-left border-collapse text-xs sm:text-sm">
+              <thead>
+                <tr class="border-b-2 border-slate-800 bg-slate-50">
+                  <th class="py-3 px-4 font-semibold text-slate-900">Technique</th>
+                  <th class="py-3 px-4 font-semibold text-slate-900">When to Use</th>
+                  <th class="py-3 px-4 font-semibold text-slate-900">Stringency Level</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200">
+                <tr>
+                  <td class="py-3 px-4 font-semibold text-slate-900">Linear Contrasts</td>
+                  <td class="py-3 px-4 text-slate-600">Specific planned hypotheses testing one group or a set of groups against another. Can be orthogonal (independent) or non orthogonal.</td>
+                  <td class="py-3 px-4 text-slate-600">Flexible. Options include testing at a stricter alpha, applying Bonferroni adjustments, or conducting fewer total contrasts.</td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-4 font-semibold text-slate-900">Bonferroni Adjustment</td>
+                  <td class="py-3 px-4 text-slate-600">When performing a small number of planned comparisons to maintain exact familywise error limits ($\alpha / c$).</td>
+                  <td class="py-3 px-4 text-slate-600">Less stringent with very few comparisons, but becomes increasingly stringent as comparisons grow larger.</td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-4 font-semibold text-slate-900">Tukey HSD</td>
+                  <td class="py-3 px-4 text-slate-600">When testing all possible pairwise combinations among means, either planned a priori or exploratory post hoc.</td>
+                  <td class="py-3 px-4 text-slate-600">Moderately stringent. Maintains excellent power balance compared to Scheffe while controlling familywise alpha.</td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-4 font-semibold text-slate-900">Scheffe Method</td>
+                  <td class="py-3 px-4 text-slate-600">Post hoc complex linear combinations and exploratory data mining across many treatment conditions.</td>
+                  <td class="py-3 px-4 text-slate-600">Most stringent method available. Greatly reduces Type I error but increases the probability of Type II error.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Academic Controversy Card -->
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+            <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-2">Methodological Perspectives on Corrections</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-600 leading-relaxed">
+              <div>
+                <p class="font-semibold text-slate-800 mb-1">Standard Textbook Recommendation:</p>
+                <p>Argues that whether comparisons are planned or not, total volume of comparisons matters. Whenever conducting multiple contrasts ($c > 3$), familywise Type I error inflation corrections must be applied.</p>
+              </div>
+              <div>
+                <p class="font-semibold text-slate-800 mb-1">Keppel & Wickens (2004) Framework:</p>
+                <p>Argues planned comparisons motivated by formal prior empirical hypothesis do not require alpha penalties because prior grounding minimizes false discovery probability; adjustments should remain reserved for unexpected post hoc queries.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 5: MULTIPLE T FORMULA WITH MS_ERROR -->
+        <section id="section-formula-logic" class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs">
+          <div class="flex items-center space-x-3 mb-4">
+            <span class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm">5</span>
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Multiple t Tests Formula Utilizing $MS_{error}$</h2>
+          </div>
+          
+          <p class="text-slate-600 leading-relaxed mb-6">
+            The mathematical foundation of these comparison techniques replaces individual sample variances with the pooled error variance estimate ($MS_{error}$) from the omnibus ANOVA model.
+          </p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Standard Independent t Test</span>
+              <div class="bg-white p-3 rounded-xl border border-slate-200 text-center mb-3">
+                $$t = \frac{\bar{X}_1 - \bar{X}_2}{\sqrt{\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}}}$$
+              </div>
+              <p class="text-xs text-slate-500 leading-relaxed">
+                Relies solely on individual sample variances ($s_1^2, s_2^2$) from the two groups being tested, discarding information from the remaining sample groups.
+              </p>
+            </div>
+
+            <div class="bg-indigo-50/70 border border-indigo-100 rounded-2xl p-5">
+              <span class="text-xs font-bold uppercase tracking-wider text-indigo-700 block mb-2">Omnibus Error Replacement t Test</span>
+              <div class="bg-white p-3 rounded-xl border border-indigo-200 text-center mb-3">
+                $$t = \frac{\bar{X}_i - \bar{X}_j}{\sqrt{\frac{MS_{error}}{n} + \frac{MS_{error}}{n}}}$$
+              </div>
+              <p class="text-xs text-indigo-900 leading-relaxed">
+                Replaces isolated variances with $MS_{error}$ across all three conditions ($MS_{error} = 37$, $df_{error} = 24$), yielding substantially higher statistical power.
+              </p>
+            </div>
+          </div>
+
+          <!-- Conditions and Assumption Violations Checklist -->
+          <div class="border border-slate-200 rounded-2xl p-5 bg-white">
+            <h3 class="text-sm font-bold text-slate-900 mb-3">Assumptions & Decision Protocol</h3>
+            <div class="space-y-3 text-xs sm:text-sm text-slate-600">
+              <div class="flex items-start space-x-2">
+                <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs mt-0.5">✓</span>
+                <div>
+                  <strong class="text-slate-800">Condition 1:</strong> Homogeneity of variance holds across conditions, allowing individual group variances to be pooled into omnibus $MS_{error}$.
+                </div>
+              </div>
+              <div class="flex items-start space-x-2">
+                <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs mt-0.5">✓</span>
+                <div>
+                  <strong class="text-slate-800">Condition 2:</strong> Equal sample sizes exist across each group ($n_1 = n_2 = n_3 = 9$).
+                </div>
+              </div>
+              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-600 space-y-1">
+                <p><strong>Violation Protocol (Unequal Variances):</strong></p>
+                <p>• If homogeneity is violated with equal $n$: Use individual group variances and evaluate $t$ on $2(n - 1)$ degrees of freedom.</p>
+                <p>• If homogeneity is violated with unequal $n$: Use individual group variances with the Welch Satterthwaite degrees of freedom adjustment.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 6: LINEAR & ORTHOGONAL CONTRASTS CALCULATOR -->
+        <section id="section-contrasts" class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs">
+          <div class="flex items-center space-x-3 mb-4">
+            <span class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm">6</span>
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Orthogonal Linear Contrasts Verification & Calculator</h2>
+          </div>
+          
+          <p class="text-slate-600 leading-relaxed mb-6">
+            A linear combination $L$ is a contrast $\Psi$ when the sum of coefficients $\sum a_j = 0$. Orthogonal contrasts provide completely independent pieces of theoretical variance and satisfy specific mathematical properties:
+          </p>
+
+          <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 mb-6 text-xs sm:text-sm text-slate-700 space-y-2">
+            <div class="font-semibold text-slate-900">Properties of Orthogonal Sets:</div>
+            <ul class="list-disc list-inside space-y-1 pl-2 text-slate-600">
+              <li>Exactly $k - 1$ contrasts can be established in a complete orthogonal set ($3 - 1 = 2$).</li>
+              <li>Coefficients within each contrast must sum to zero: $\sum a_{1j} = 0$ and $\sum a_{2j} = 0$.</li>
+              <li>Cross products of coefficients across contrasts must sum to zero: $\sum (a_{1j} \cdot a_{2j}) = 0$.</li>
+              <li>The contrast sums of squares partition treatment variance: $SS_{contrast 1} + SS_{contrast 2} = SS_{treatment} = 456$.</li>
+            </ul>
+          </div>
+
+          <!-- Formula Callout -->
+          <div class="p-4 rounded-2xl bg-indigo-50/50 border border-indigo-100 mb-8 text-center">
+            $$SS_{contrast} = \frac{n \cdot (\Psi)^2}{\sum a_j^2} \quad \text{where} \quad \Psi = \sum (a_j \cdot \bar{X}_j), \quad F = \frac{MS_{contrast}}{MS_{error}}, \quad t = \sqrt{F}$$
+          </div>
+
+          <!-- Interactive Contrast Configurator -->
+          <div class="border border-slate-200 rounded-2xl p-6 bg-white shadow-xs">
+            <h3 class="text-base font-bold text-slate-900 mb-4">Interactive Contrast Weight Verification</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <!-- Contrast 1 -->
+              <div class="p-4 rounded-xl border border-slate-200 bg-slate-50">
+                <div class="flex justify-between items-center mb-3">
+                  <h4 class="text-sm font-bold text-slate-900">Contrast 1: High vs (Low + No)</h4>
+                  <span class="text-xs px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 font-semibold">Planned 1</span>
+                </div>
+                <div class="grid grid-cols-3 gap-2 text-xs">
+                  <div>
+                    <label class="block text-slate-500 mb-1">No ($a_{11}$)</label>
+                    <input type="number" step="0.5" id="c1-no" value="-0.5" class="w-full border border-slate-300 rounded-lg p-2 font-mono text-center">
+                  </div>
+                  <div>
+                    <label class="block text-slate-500 mb-1">Low ($a_{12}$)</label>
+                    <input type="number" step="0.5" id="c1-low" value="-0.5" class="w-full border border-slate-300 rounded-lg p-2 font-mono text-center">
+                  </div>
+                  <div>
+                    <label class="block text-slate-500 mb-1">High ($a_{13}$)</label>
+                    <input type="number" step="0.5" id="c1-high" value="1.0" class="w-full border border-slate-300 rounded-lg p-2 font-mono text-center">
+                  </div>
+                </div>
+                <div class="mt-3 text-xs text-slate-500 flex justify-between">
+                  <span>Sum of weights:</span>
+                  <span id="c1-sum" class="font-mono font-bold text-slate-800">0.00</span>
+                </div>
+              </div>
+
+              <!-- Contrast 2 -->
+              <div class="p-4 rounded-xl border border-slate-200 bg-slate-50">
+                <div class="flex justify-between items-center mb-3">
+                  <h4 class="text-sm font-bold text-slate-900">Contrast 2: Low vs No</h4>
+                  <span class="text-xs px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 font-semibold">Planned 2</span>
+                </div>
+                <div class="grid grid-cols-3 gap-2 text-xs">
+                  <div>
+                    <label class="block text-slate-500 mb-1">No ($a_{21}$)</label>
+                    <input type="number" step="0.5" id="c2-no" value="-0.5" class="w-full border border-slate-300 rounded-lg p-2 font-mono text-center">
+                  </div>
+                  <div>
+                    <label class="block text-slate-500 mb-1">Low ($a_{22}$)</label>
+                    <input type="number" step="0.5" id="c2-low" value="0.5" class="w-full border border-slate-300 rounded-lg p-2 font-mono text-center">
+                  </div>
+                  <div>
+                    <label class="block text-slate-500 mb-1">High ($a_{23}$)</label>
+                    <input type="number" step="0.5" id="c2-high" value="0.0" class="w-full border border-slate-300 rounded-lg p-2 font-mono text-center">
+                  </div>
+                </div>
+                <div class="mt-3 text-xs text-slate-500 flex justify-between">
+                  <span>Sum of weights:</span>
+                  <span id="c2-sum" class="font-mono font-bold text-slate-800">0.00</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Orthogonality Status Indicators -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6 text-xs">
+              <div id="check-sum1" class="p-3 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-900 flex items-center justify-between">
+                <span>Contrast 1 Sums to 0:</span>
+                <span class="font-bold">Valid</span>
+              </div>
+              <div id="check-sum2" class="p-3 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-900 flex items-center justify-between">
+                <span>Contrast 2 Sums to 0:</span>
+                <span class="font-bold">Valid</span>
+              </div>
+              <div id="check-ortho" class="p-3 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-900 flex items-center justify-between">
+                <span>Cross Products Sum to 0:</span>
+                <span class="font-bold">Orthogonal</span>
+              </div>
+            </div>
+
+            <!-- Calculated Results Table -->
+            <div class="overflow-x-auto custom-scrollbar">
+              <table class="w-full text-left apa-table text-xs sm:text-sm">
+                <thead>
+                  <tr class="apa-table-header text-slate-900 font-semibold">
+                    <th class="py-2.5 px-3">Comparison</th>
+                    <th class="py-2.5 px-3 text-right">Value ($\Psi$)</th>
+                    <th class="py-2.5 px-3 text-right">$SS_{contrast}$</th>
+                    <th class="py-2.5 px-3 text-right">$F(1, 24)$</th>
+                    <th class="py-2.5 px-3 text-right">$t(24)$</th>
+                    <th class="py-2.5 px-3 text-right">$p$ value</th>
+                    <th class="py-2.5 px-3 text-right">Decision ($\alpha = .05$)</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 font-mono text-xs sm:text-sm">
+                  <tr>
+                    <td class="py-2.5 px-3 font-sans font-medium text-slate-900">Contrast 1 (High vs Combined)</td>
+                    <td class="py-2.5 px-3 text-right" id="calc-c1-psi">8.00</td>
+                    <td class="py-2.5 px-3 text-right" id="calc-c1-ss">384.00</td>
+                    <td class="py-2.5 px-3 text-right" id="calc-c1-f">10.38</td>
+                    <td class="py-2.5 px-3 text-right font-bold text-indigo-600" id="calc-c1-t">3.22</td>
+                    <td class="py-2.5 px-3 text-right font-semibold text-emerald-600" id="calc-c1-p">.004</td>
+                    <td class="py-2.5 px-3 text-right font-sans font-semibold text-emerald-700">Significant</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-sans font-medium text-slate-900">Contrast 2 (Low vs No)</td>
+                    <td class="py-2.5 px-3 text-right" id="calc-c2-psi">2.00</td>
+                    <td class="py-2.5 px-3 text-right" id="calc-c2-ss">72.00</td>
+                    <td class="py-2.5 px-3 text-right" id="calc-c2-f">1.95</td>
+                    <td class="py-2.5 px-3 text-right font-bold text-slate-600" id="calc-c2-t">1.40</td>
+                    <td class="py-2.5 px-3 text-right font-semibold text-slate-600" id="calc-c2-p">.175</td>
+                    <td class="py-2.5 px-3 text-right font-sans text-slate-500">Not Significant</td>
+                  </tr>
+                  <tr class="bg-indigo-50/60 font-semibold font-sans">
+                    <td class="py-2.5 px-3 text-slate-900">Sum of Partitioned $SS$</td>
+                    <td class="py-2.5 px-3 text-right font-mono text-slate-500"> </td>
+                    <td class="py-2.5 px-3 text-right font-mono text-indigo-700" id="calc-sum-ss">456.00</td>
+                    <td colspan="4" class="py-2.5 px-3 text-xs text-indigo-900 text-right">
+                      Exactly equals Treatment $SS$ ($456$)
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="mt-4 flex justify-end">
+              <button id="btn-reset-contrasts" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors">
+                Reset Document Contrasts
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 7: TUKEY HSD & CRITICAL DIFFERENCE -->
+        <section id="section-tukey" class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs">
+          <div class="flex items-center space-x-3 mb-4">
+            <span class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm">7</span>
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Tukey HSD & Critical Difference Procedure</h2>
+          </div>
+          
+          <p class="text-slate-600 leading-relaxed mb-6">
+            Tukey’s Honestly Significant Difference tests all pairwise combinations by adjusting the critical decision threshold rather than computing test statistics beyond the raw mean difference.
+          </p>
+
+          <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 mb-6">
+            <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-2">Critical Difference Formula</h3>
+            <div class="text-center py-3 bg-white rounded-xl border border-slate-200 font-mono text-base font-semibold text-slate-800 mb-3">
+              $$D_t = q \cdot \sqrt{\frac{MS_{error}}{n}}$$
+            </div>
+            <div class="text-xs text-slate-600 space-y-1">
+              <p>• $q$: Studentized range statistic evaluated at $r = 3$ (number of groups) and $df_{error} = 24$.</p>
+              <p>• $MS_{error} = 37$, $n = 9$ (number of participants per group).</p>
+              <p>• Decision criterion: If $|\bar{X}_i - \bar{X}_j| > D_t$, the pair of means is statistically significantly different.</p>
+            </div>
+          </div>
+
+          <!-- Interactive Pairwise Matrix -->
+          <div class="border border-slate-200 rounded-2xl p-5 bg-white">
+            <h3 class="text-sm font-bold text-slate-900 mb-3">Pairwise Mean Differences Summary</h3>
+            
+            <div class="overflow-x-auto custom-scrollbar">
+              <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                <thead>
+                  <tr class="border-b-2 border-slate-800 bg-slate-50">
+                    <th class="py-2.5 px-3 font-semibold text-slate-900">Pairwise Contrast</th>
+                    <th class="py-2.5 px-3 font-semibold text-slate-900 text-right">Mean 1</th>
+                    <th class="py-2.5 px-3 font-semibold text-slate-900 text-right">Mean 2</th>
+                    <th class="py-2.5 px-3 font-semibold text-slate-900 text-right">Absolute Difference $|\bar{X}_i - \bar{X}_j|$</th>
+                    <th class="py-2.5 px-3 font-semibold text-slate-900 text-right">Directional Finding</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 font-mono">
+                  <tr>
+                    <td class="py-2.5 px-3 font-sans font-medium text-slate-900">High vs No Caffeine</td>
+                    <td class="py-2.5 px-3 text-right">16.67</td>
+                    <td class="py-2.5 px-3 text-right">6.67</td>
+                    <td class="py-2.5 px-3 text-right font-bold text-indigo-600">10.00</td>
+                    <td class="py-2.5 px-3 font-sans text-xs text-right text-emerald-700 font-semibold">High significantly higher</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-sans font-medium text-slate-900">High vs Low Caffeine</td>
+                    <td class="py-2.5 px-3 text-right">16.67</td>
+                    <td class="py-2.5 px-3 text-right">10.67</td>
+                    <td class="py-2.5 px-3 text-right font-bold text-indigo-600">6.00</td>
+                    <td class="py-2.5 px-3 font-sans text-xs text-right text-emerald-700 font-semibold">High significantly higher</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-sans font-medium text-slate-900">Low vs No Caffeine</td>
+                    <td class="py-2.5 px-3 text-right">10.67</td>
+                    <td class="py-2.5 px-3 text-right">6.67</td>
+                    <td class="py-2.5 px-3 text-right font-semibold text-slate-600">4.00</td>
+                    <td class="py-2.5 px-3 font-sans text-xs text-right text-slate-500">Not significantly different</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 8: APA WRITE UP & GUIDELINES -->
+        <section id="section-apa-report" class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs">
+          <div class="flex items-center space-x-3 mb-4">
+            <span class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm">8</span>
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Formal APA Results Report & Guidelines</h2>
+          </div>
+          
+          <p class="text-slate-600 leading-relaxed mb-6">
+            Below is the comprehensive APA format narrative summarizing the omnibus ANOVA findings and planned orthogonal linear contrasts:
+          </p>
+
+          <!-- Formal Write Up Box -->
+          <div class="relative rounded-2xl bg-slate-900 text-slate-100 p-6 sm:p-8 font-serif leading-relaxed text-sm sm:text-base border border-slate-800">
+            <button id="btn-copy-report" class="absolute top-4 right-4 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-sans text-xs font-semibold flex items-center space-x-1.5 border border-slate-700 transition-colors">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+              <span id="copy-btn-text">Copy APA Text</span>
+            </button>
+
+            <div id="apa-report-text" class="serif-quote pr-24 space-y-4 text-slate-200">
+              <p>
+                The omnibus ANOVA indicated that there was a significant difference in accuracy on a sustained attention task with different amounts of caffeine, <span class="text-indigo-300 font-sans font-semibold">F(2, 24) = 6.16, p = .007, η² = .339</span>. Planned orthogonal linear contrasts were conducted.
+              </p>
+              <p>
+                When comparing high caffeine intake to the combination of low caffeine intake and no caffeine intake, there was a significant difference, <span class="text-indigo-300 font-sans font-semibold">t(24) = 3.22, p = .004</span>, such that the mean accuracy for high caffeine intake (<span class="font-sans font-semibold text-slate-300">M = 16.67, SD = 6.32</span>) was significantly higher than the combination of low and no caffeine intake (<span class="font-sans font-semibold text-slate-300">M = 8.67, SD = 6.14</span>).
+              </p>
+              <p>
+                Further, there was not a significant difference in accuracy when comparing no caffeine intake (<span class="font-sans font-semibold text-slate-300">M = 6.67, SD = 6.32</span>) to low caffeine intake (<span class="font-sans font-semibold text-slate-300">M = 10.67, SD = 5.57</span>), <span class="text-indigo-300 font-sans font-semibold">t(24) = 1.40, p = .18</span>.
+              </p>
+            </div>
+          </div>
+
+          <!-- Bonferroni Note -->
+          <div class="mt-6 p-5 rounded-2xl bg-indigo-50/70 border border-indigo-100 text-xs sm:text-sm text-indigo-950 space-y-2">
+            <span class="font-bold block text-indigo-900 uppercase tracking-wider text-xs">Bonferroni Adjustment Protocol</span>
+            <p>
+              Because only two planned orthogonal linear contrasts were evaluated, familywise error remains bounded at $1 - (1 - .05)^2 = .0975$ (under $10\%$).
+            </p>
+            <p>
+              If a strict Bonferroni correction is preferred, the criterion is adjusted to $\alpha_{adj} = \frac{.05}{2} = .025$. Under this threshold, Contrast 1 remains significant ($p = .004 < .025$), while Contrast 2 remains not significant ($p = .18$). When adopting an adjusted alpha, researchers explicitly cite the new decision boundary in their report.
+            </p>
+          </div>
+        </section>
+		<div class="mt-12 pt-6 border-t border-stone-800 flex flex-col items-center justify-center gap-2">
+		  <a href="Omnibus and multiple t activity.html" class="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-sm tracking-wide transition shadow-lg shadow-amber-500/10 cursor-pointer">
+			Continue to Activity &rarr;
+		  </a>
+		  <span class="text-xs text-stone-500">How is a normal probability distribution like a lion? They both have a MEAN Mu.</span>
+		</div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Interactive JavaScript Engine -->
+  <script>
+    // Document constants
+    const N_PER_GROUP = 9;
+    const MS_ERROR = 37;
+    const DF_ERROR = 24;
+    const SS_TREATMENT = 456;
+    
+    // Group means
+    const MEAN_NO = 6.6666666667;
+    const MEAN_LOW = 10.6666666667;
+    const MEAN_HIGH = 16.6666666667;
+
+    // Student t distribution two-tailed p-value approximation
+    function studentTPValue(tVal, df) {
+      const t = Math.abs(tVal);
+      const x = df / (df + t * t);
+      // Incomplete beta function approximation via regularized series
+      const pOneTail = 0.5 * incompleteBeta(df / 2, 0.5, x);
+      return Math.min(1, Math.max(0, 2 * pOneTail));
+    }
+
+    // Log Gamma approximation (Lanczos)
+    function logGamma(z) {
+      const g = 7;
+      const C = [
+        0.99999999999980993,
+        676.5203681218851,
+        -1259.1392167224028,
+        771.32342877765313,
+        -176.61502916214059,
+        12.507343278686905,
+        -0.138571095836524,
+        9.9843695780195716e-6,
+        1.5056327351493116e-7
+      ];
+      if (z < 0.5) {
+        return Math.log(Math.PI / Math.sin(Math.PI * z)) - logGamma(1 - z);
+      }
+      z -= 1;
+      let x = C[0];
+      for (let i = 1; i < g + 2; i++) {
+        x += C[i] / (z + i);
+      }
+      const t = z + g + 0.5;
+      return 0.5 * Math.log(2 * Math.PI) + (z + 0.5) * Math.log(t) - t + Math.log(x);
+    }
+
+    // Regularized incomplete beta function via continued fraction
+    function incompleteBeta(a, b, x) {
+      if (x <= 0) return 0;
+      if (x >= 1) return 1;
+      
+      const factor = Math.exp(logGamma(a + b) - logGamma(a) - logGamma(b) + a * Math.log(x) + b * Math.log(1 - x));
+      
+      // Continued fraction expansion
+      let m = 1;
+      let c = 1;
+      let d = 1 - (a + b) * x / (a + 1);
+      if (Math.abs(d) < 1e-30) d = 1e-30;
+      d = 1 / d;
+      let h = d;
+
+      for (let iter = 1; iter <= 100; iter++) {
+        let an = iter * (b - iter) * x / ((a + 2 * iter - 1) * (a + 2 * iter));
+        d = 1 + an * d;
+        if (Math.abs(d) < 1e-30) d = 1e-30;
+        c = 1 + an / c;
+        if (Math.abs(c) < 1e-30) c = 1e-30;
+        d = 1 / d;
+        h *= d * c;
+
+        an = -(a + iter) * (a + b + iter) * x / ((a + 2 * iter) * (a + 2 * iter + 1));
+        d = 1 + an * d;
+        if (Math.abs(d) < 1e-30) d = 1e-30;
+        c = 1 + an / c;
+        if (Math.abs(c) < 1e-30) c = 1e-30;
+        d = 1 / d;
+        const del = d * c;
+        h *= del;
+        if (Math.abs(del - 1) < 1e-12) break;
+      }
+      return (factor / a) * h;
+    }
+
+    // Familywise Error Rate Simulator Update
+    function updateFwSimulator() {
+      const alpha = parseFloat(document.getElementById('input-alpha').value);
+      const c = parseInt(document.getElementById('input-comparisons').value, 10);
+      
+      document.getElementById('label-alpha').textContent = alpha.toFixed(2);
+      document.getElementById('label-comparisons').textContent = c;
+
+      const fwRate = 1 - Math.pow(1 - alpha, c);
+      const fwPercent = (fwRate * 100).toFixed(2);
+      const bonfAlpha = (alpha / c).toFixed(4);
+
+      document.getElementById('stat-fw-rate').textContent = fwPercent + '%';
+      document.getElementById('stat-fw-desc').textContent = 
+        `With ${c} comparisons at nominal alpha = ${alpha.toFixed(2)}, there is a ${fwPercent}% probability of at least one Type I error.`;
+      document.getElementById('stat-bonf-alpha').textContent = bonfAlpha;
+    }
+
+    // Contrast Calculation & Orthogonality Verification
+    function updateContrasts() {
+      const a1_no = parseFloat(document.getElementById('c1-no').value) || 0;
+      const a1_low = parseFloat(document.getElementById('c1-low').value) || 0;
+      const a1_high = parseFloat(document.getElementById('c1-high').value) || 0;
+
+      const a2_no = parseFloat(document.getElementById('c2-no').value) || 0;
+      const a2_low = parseFloat(document.getElementById('c2-low').value) || 0;
+      const a2_high = parseFloat(document.getElementById('c2-high').value) || 0;
+
+      const sum1 = a1_no + a1_low + a1_high;
+      const sum2 = a2_no + a2_low + a2_high;
+      const crossProductSum = (a1_no * a2_no) + (a1_low * a2_low) + (a1_high * a2_high);
+
+      document.getElementById('c1-sum').textContent = sum1.toFixed(2);
+      document.getElementById('c2-sum').textContent = sum2.toFixed(2);
+
+      // Status indicator updates
+      const checkSum1 = document.getElementById('check-sum1');
+      if (Math.abs(sum1) < 0.001) {
+        checkSum1.className = 'p-3 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-900 flex items-center justify-between';
+        checkSum1.innerHTML = '<span>Contrast 1 Sums to 0:</span><span class="font-bold">Valid (0.00)</span>';
+      } else {
+        checkSum1.className = 'p-3 rounded-xl border border-amber-200 bg-amber-50 text-amber-900 flex items-center justify-between';
+        checkSum1.innerHTML = `<span>Contrast 1 Sums to 0:</span><span class="font-bold">Invalid (${sum1.toFixed(2)})</span>`;
+      }
+
+      const checkSum2 = document.getElementById('check-sum2');
+      if (Math.abs(sum2) < 0.001) {
+        checkSum2.className = 'p-3 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-900 flex items-center justify-between';
+        checkSum2.innerHTML = '<span>Contrast 2 Sums to 0:</span><span class="font-bold">Valid (0.00)</span>';
+      } else {
+        checkSum2.className = 'p-3 rounded-xl border border-amber-200 bg-amber-50 text-amber-900 flex items-center justify-between';
+        checkSum2.innerHTML = `<span>Contrast 2 Sums to 0:</span><span class="font-bold">Invalid (${sum2.toFixed(2)})</span>`;
+      }
+
+      const checkOrtho = document.getElementById('check-ortho');
+      if (Math.abs(crossProductSum) < 0.001) {
+        checkOrtho.className = 'p-3 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-900 flex items-center justify-between';
+        checkOrtho.innerHTML = '<span>Cross Products Sum to 0:</span><span class="font-bold">Orthogonal (0.00)</span>';
+      } else {
+        checkOrtho.className = 'p-3 rounded-xl border border-rose-200 bg-rose-50 text-rose-900 flex items-center justify-between';
+        checkOrtho.innerHTML = `<span>Cross Products Sum to 0:</span><span class="font-bold">Non Orthogonal (${crossProductSum.toFixed(2)})</span>`;
+      }
+
+      // Calculations Contrast 1
+      const psi1 = (a1_no * MEAN_NO) + (a1_low * MEAN_LOW) + (a1_high * MEAN_HIGH);
+      const sumSqA1 = (a1_no * a1_no) + (a1_low * a1_low) + (a1_high * a1_high);
+      let ss1 = 0, f1 = 0, t1 = 0, p1 = 1;
+      if (sumSqA1 > 0) {
+        ss1 = (N_PER_GROUP * Math.pow(psi1, 2)) / sumSqA1;
+        f1 = ss1 / MS_ERROR;
+        t1 = Math.sqrt(f1);
+        p1 = studentTPValue(t1, DF_ERROR);
+      }
+
+      // Calculations Contrast 2
+      const psi2 = (a2_no * MEAN_NO) + (a2_low * MEAN_LOW) + (a2_high * MEAN_HIGH);
+      const sumSqA2 = (a2_no * a2_no) + (a2_low * a2_low) + (a2_high * a2_high);
+      let ss2 = 0, f2 = 0, t2 = 0, p2 = 1;
+      if (sumSqA2 > 0) {
+        ss2 = (N_PER_GROUP * Math.pow(psi2, 2)) / sumSqA2;
+        f2 = ss2 / MS_ERROR;
+        t2 = Math.sqrt(f2);
+        p2 = studentTPValue(t2, DF_ERROR);
+      }
+
+      // Display in table
+      document.getElementById('calc-c1-psi').textContent = psi1.toFixed(2);
+      document.getElementById('calc-c1-ss').textContent = ss1.toFixed(2);
+      document.getElementById('calc-c1-f').textContent = f1.toFixed(2);
+      document.getElementById('calc-c1-t').textContent = t1.toFixed(2);
+      document.getElementById('calc-c1-p').textContent = p1 < 0.001 ? '< .001' : p1.toFixed(3).replace('0.', '.');
+
+      document.getElementById('calc-c2-psi').textContent = psi2.toFixed(2);
+      document.getElementById('calc-c2-ss').textContent = ss2.toFixed(2);
+      document.getElementById('calc-c2-f').textContent = f2.toFixed(2);
+      document.getElementById('calc-c2-t').textContent = t2.toFixed(2);
+      document.getElementById('calc-c2-p').textContent = p2 < 0.001 ? '< .001' : p2.toFixed(3).replace('0.', '.');
+
+      const sumSS = ss1 + ss2;
+      document.getElementById('calc-sum-ss').textContent = sumSS.toFixed(2);
+    }
+
+    // Attach listeners
+    document.getElementById('input-alpha').addEventListener('input', updateFwSimulator);
+    document.getElementById('input-comparisons').addEventListener('input', updateFwSimulator);
+
+    const contrastInputs = ['c1-no', 'c1-low', 'c1-high', 'c2-no', 'c2-low', 'c2-high'];
+    contrastInputs.forEach(id => {
+      document.getElementById(id).addEventListener('input', updateContrasts);
+    });
+
+    document.getElementById('btn-reset-contrasts').addEventListener('click', () => {
+      document.getElementById('c1-no').value = -0.5;
+      document.getElementById('c1-low').value = -0.5;
+      document.getElementById('c1-high').value = 1.0;
+      document.getElementById('c2-no').value = -0.5;
+      document.getElementById('c2-low').value = 0.5;
+      document.getElementById('c2-high').value = 0.0;
+      updateContrasts();
+    });
+
+    // Copy APA report button
+    document.getElementById('btn-copy-report').addEventListener('click', () => {
+      const text = `The omnibus ANOVA indicated that there was a significant difference in accuracy on a sustained attention task with different amounts of caffeine, F(2, 24) = 6.16, p = .007, η² = .339. Planned orthogonal linear contrasts were conducted. When comparing high caffeine intake to the combination of low caffeine intake and no caffeine intake, there was a significant difference, t(24) = 3.22, p = .004, such that the mean accuracy for high caffeine intake (M = 16.67, SD = 6.32) was significantly higher than the combination of low and no caffeine intake (M = 8.67, SD = 6.14). Further, there was not a significant difference in accuracy when comparing no caffeine intake (M = 6.67, SD = 6.32) to low caffeine intake (M = 10.67, SD = 5.57), t(24) = 1.40, p = .18.`;
+      
+      const tempTextArea = document.createElement('textarea');
+      tempTextArea.value = text;
+      document.body.appendChild(tempTextArea);
+      tempTextArea.select();
+      try {
+        document.execCommand('copy');
+        const copyBtnText = document.getElementById('copy-btn-text');
+        copyBtnText.textContent = 'Copied!';
+        setTimeout(() => {
+          copyBtnText.textContent = 'Copy APA Text';
+        }, 2200);
+      } catch (err) {
+        console.error('Copy command failed', err);
+      }
+      document.body.removeChild(tempTextArea);
+    });
+
+    // Initial calculations on load
+    window.addEventListener('DOMContentLoaded', () => {
+      updateFwSimulator();
+      updateContrasts();
+    });
+  </script>
+</body>
+</html>
