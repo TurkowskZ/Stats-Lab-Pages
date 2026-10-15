@@ -60,7 +60,7 @@
       <div class="bg-stone-900 border border-stone-800 p-5 rounded-lg shadow-sm">
         <h2 class="text-lg font-bold text-stone-100 mb-2">Part 1: One Way Omnibus ANOVA with Unequal Sample Sizes</h2>
         <p class="text-stone-300 text-sm leading-relaxed mb-3">
-          Participants were randomly assigned to one of three conditions measuring sustained attention accuracy. Calculate your values in your spreadsheet or notebook following each numbered stage, enter your results, and click verify.
+          Participants were randomly assigned to one of $k = 3$ conditions measuring sustained attention accuracy ($X$). Calculate your values in your spreadsheet or notebook following each numbered stage, enter your results, and click verify.
         </p>
         <div class="p-3 bg-stone-950 rounded border border-stone-800 text-xs text-stone-400">
           <strong>Rounding guideline:</strong> Enter all values rounded to two decimal places (e.g. 10.86). Whole integers can be entered directly (e.g. 2).
@@ -69,21 +69,21 @@
 
       <!-- Raw Dataset Card -->
       <div class="bg-stone-900 border border-stone-800 p-5 rounded-lg shadow-sm">
-        <h3 class="text-sm font-bold uppercase tracking-wider text-amber-500 mb-3">Raw Dataset</h3>
+        <h3 class="text-sm font-bold uppercase tracking-wider text-amber-500 mb-3">Raw Dataset ($X$)</h3>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div class="bg-stone-950 p-4 rounded border border-stone-800">
-            <span class="font-bold text-stone-200 text-sm">No Caffeine Condition</span>
-            <span class="block text-xs text-stone-400 mt-0.5">Sample size: 9 participants</span>
+            <span class="font-bold text-stone-200 text-sm">No Caffeine Condition ($M_1$)</span>
+            <span class="block text-xs text-stone-400 mt-0.5">Sample size: $n_1 = 9$ participants</span>
             <p class="font-mono text-xs text-amber-400/90 mt-2">0, 6, 12, 6, 0, 18, 6, 0, 12</p>
           </div>
           <div class="bg-stone-950 p-4 rounded border border-stone-800">
-            <span class="font-bold text-stone-200 text-sm">Low Caffeine Condition</span>
-            <span class="block text-xs text-stone-400 mt-0.5">Sample size: 5 participants</span>
+            <span class="font-bold text-stone-200 text-sm">Low Caffeine Condition ($M_2$)</span>
+            <span class="block text-xs text-stone-400 mt-0.5">Sample size: $n_2 = 5$ participants</span>
             <p class="font-mono text-xs text-amber-400/90 mt-2">10, 4, 16, 16, 4</p>
           </div>
           <div class="bg-stone-950 p-4 rounded border border-stone-800">
-            <span class="font-bold text-stone-200 text-sm">High Caffeine Condition</span>
-            <span class="block text-xs text-stone-400 mt-0.5">Sample size: 7 participants</span>
+            <span class="font-bold text-stone-200 text-sm">High Caffeine Condition ($M_3$)</span>
+            <span class="block text-xs text-stone-400 mt-0.5">Sample size: $n_3 = 7$ participants</span>
             <p class="font-mono text-xs text-amber-400/90 mt-2">10, 16, 22, 16, 10, 28, 16</p>
           </div>
         </div>
@@ -94,33 +94,33 @@
         <div class="flex items-center justify-between mb-4">
           <div>
             <span class="text-xs font-mono text-amber-500 uppercase tracking-widest">Stage 1 of 4</span>
-            <h3 class="text-base font-bold text-stone-100">Group Means and Grand Mean</h3>
+            <h3 class="text-base font-bold text-stone-100">Sample Means ($M_i$) and Grand Mean ($M_{\text{Grand}}$)</h3>
           </div>
           <button type="button" onclick="toggleBox('unequal-help-1')" class="text-xs text-stone-400 hover:text-stone-200 underline cursor-pointer">Show Formula Help</button>
         </div>
 
         <div id="unequal-help-1" style="display: none;" class="mb-4 p-3 bg-stone-950 rounded border border-stone-800 text-xs text-stone-300">
-          Formula for grand mean: $\bar{X}_{..} = \frac{\sum \sum X_{ij}}{N}$ where $N = n_1 + n_2 + n_3$.
+          Formula for Grand Mean: $M_{\text{Grand}} = \frac{\sum^{scores} X}{n}$ where total sample size $n = n_1 + n_2 + n_3 = 21$.
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
           <div>
-            <label class="block text-xs font-medium text-stone-300 mb-1">Mean 1: No Caffeine $(\bar{X}_1)$</label>
+            <label class="block text-xs font-medium text-stone-300 mb-1">Mean 1: No Caffeine $(M_1)$</label>
             <input type="number" step="any" id="u-m1" placeholder="Enter value" class="w-full px-3 py-2 text-sm bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
             <span id="u-m1-status" class="text-xs block mt-1"></span>
           </div>
           <div>
-            <label class="block text-xs font-medium text-stone-300 mb-1">Mean 2: Low Caffeine $(\bar{X}_2)$</label>
+            <label class="block text-xs font-medium text-stone-300 mb-1">Mean 2: Low Caffeine $(M_2)$</label>
             <input type="number" step="any" id="u-m2" placeholder="Enter value" class="w-full px-3 py-2 text-sm bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
             <span id="u-m2-status" class="text-xs block mt-1"></span>
           </div>
           <div>
-            <label class="block text-xs font-medium text-stone-300 mb-1">Mean 3: High Caffeine $(\bar{X}_3)$</label>
+            <label class="block text-xs font-medium text-stone-300 mb-1">Mean 3: High Caffeine $(M_3)$</label>
             <input type="number" step="any" id="u-m3" placeholder="Enter value" class="w-full px-3 py-2 text-sm bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
             <span id="u-m3-status" class="text-xs block mt-1"></span>
           </div>
           <div>
-            <label class="block text-xs font-medium text-stone-300 mb-1">Grand Mean $(\bar{X}_{..})$</label>
+            <label class="block text-xs font-medium text-stone-300 mb-1">Grand Mean $(M_{\text{Grand}})$</label>
             <input type="number" step="any" id="u-gm" placeholder="Enter value" class="w-full px-3 py-2 text-sm bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
             <span id="u-gm-status" class="text-xs block mt-1"></span>
           </div>
@@ -137,30 +137,30 @@
         <div class="flex items-center justify-between mb-4">
           <div>
             <span class="text-xs font-mono text-amber-500 uppercase tracking-widest">Stage 2 of 4</span>
-            <h3 class="text-base font-bold text-stone-100">Partitioning Sum of Squares</h3>
+            <h3 class="text-base font-bold text-stone-100">Partitioning Sums of Squares ($SS$)</h3>
           </div>
           <button type="button" onclick="toggleBox('unequal-help-2')" class="text-xs text-stone-400 hover:text-stone-200 underline cursor-pointer">Show Formula Help</button>
         </div>
 
-        <div id="unequal-help-2" style="display: none;" class="mb-4 p-3 bg-stone-950 rounded border border-stone-800 text-xs text-stone-300 space-y-1">
-          <p>$SS_{treatment} = \sum n_j (\bar{X}_j - \bar{X}_{..})^2$</p>
-          <p>$SS_{error} = \sum \sum (X_{ij} - \bar{X}_j)^2$</p>
-          <p>$SS_{total} = \sum \sum (X_{ij} - \bar{X}_{..})^2 = SS_{treatment} + SS_{error}$</p>
+        <div id="unequal-help-2" style="display: none;" class="mb-4 p-3 bg-stone-950 rounded border border-stone-800 text-xs text-stone-300 space-y-1.5">
+          <p>$SS_{Effect} \text{ (or } SS_{Between}\text{)} = \sum^{k} n_i (M_i - M_{\text{Grand}})^2$</p>
+          <p>$SS_{Error} \text{ (or } SS_{Within}\text{)} = \sum^{all\ scores} (X - M)^2$</p>
+          <p>$SS_{Total} = \sum^{scores} (X - M_{\text{Grand}})^2 = SS_{Effect} + SS_{Error}$</p>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
-            <label class="block text-xs font-medium text-stone-300 mb-1">Treatment Sum of Squares $(SS_{treatment})$</label>
+            <label class="block text-xs font-medium text-stone-300 mb-1">Effect (Between) SS $(SS_{Effect})$</label>
             <input type="number" step="any" id="u-sstreat" placeholder="Enter value" class="w-full px-3 py-2 text-sm bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
             <span id="u-sstreat-status" class="text-xs block mt-1"></span>
           </div>
           <div>
-            <label class="block text-xs font-medium text-stone-300 mb-1">Error Sum of Squares $(SS_{error})$</label>
+            <label class="block text-xs font-medium text-stone-300 mb-1">Error (Within) SS $(SS_{Error})$</label>
             <input type="number" step="any" id="u-sserror" placeholder="Enter value" class="w-full px-3 py-2 text-sm bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
             <span id="u-sserror-status" class="text-xs block mt-1"></span>
           </div>
           <div>
-            <label class="block text-xs font-medium text-stone-300 mb-1">Total Sum of Squares $(SS_{total})$</label>
+            <label class="block text-xs font-medium text-stone-300 mb-1">Total SS $(SS_{Total})$</label>
             <input type="number" step="any" id="u-sstotal" placeholder="Enter value" class="w-full px-3 py-2 text-sm bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
             <span id="u-sstotal-status" class="text-xs block mt-1"></span>
           </div>
@@ -177,35 +177,35 @@
         <div class="flex items-center justify-between mb-4">
           <div>
             <span class="text-xs font-mono text-amber-500 uppercase tracking-widest">Stage 3 of 4</span>
-            <h3 class="text-base font-bold text-stone-100">Degrees of Freedom and Mean Squares</h3>
+            <h3 class="text-base font-bold text-stone-100">Degrees of Freedom ($df$) and Mean Squares ($s^2$ or $MS$)</h3>
           </div>
           <button type="button" onclick="toggleBox('unequal-help-3')" class="text-xs text-stone-400 hover:text-stone-200 underline cursor-pointer">Show Formula Help</button>
         </div>
 
-        <div id="unequal-help-3" style="display: none;" class="mb-4 p-3 bg-stone-950 rounded border border-stone-800 text-xs text-stone-300 space-y-1">
-          <p>$df_{treatment} = k - 1$ where $k = 3$</p>
-          <p>$df_{error} = N - k$ where $N = 21$</p>
-          <p>$MS_{treatment} = \frac{SS_{treatment}}{df_{treatment}}$ and $MS_{error} = \frac{SS_{error}}{df_{error}}$</p>
+        <div id="unequal-help-3" style="display: none;" class="mb-4 p-3 bg-stone-950 rounded border border-stone-800 text-xs text-stone-300 space-y-1.5">
+          <p>$df_{Effect} \text{ (or } df_{Between}\text{)} = k - 1$ where $k = 3$</p>
+          <p>$df_{Error} \text{ (or } df_{Within}\text{)} = n - k$ where total $n = 21$ (and $df_{Total} = n - 1 = 20$)</p>
+          <p>$MS_{Effect} = SS_{Effect} / df_{Effect}$ and $MS_{Error} = SS_{Error} / df_{Error}$</p>
         </div>
 
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <div>
-            <label class="block text-xs font-medium text-stone-300 mb-1">$df_{treatment}$</label>
+            <label class="block text-xs font-medium text-stone-300 mb-1">$df_{Effect}$ ($df_{Between}$)</label>
             <input type="number" id="u-dftreat" placeholder="Enter integer" class="w-full px-3 py-2 text-sm bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
             <span id="u-dftreat-status" class="text-xs block mt-1"></span>
           </div>
           <div>
-            <label class="block text-xs font-medium text-stone-300 mb-1">$df_{error}$</label>
+            <label class="block text-xs font-medium text-stone-300 mb-1">$df_{Error}$ ($df_{Within}$)</label>
             <input type="number" id="u-dferror" placeholder="Enter integer" class="w-full px-3 py-2 text-sm bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
             <span id="u-dferror-status" class="text-xs block mt-1"></span>
           </div>
           <div>
-            <label class="block text-xs font-medium text-stone-300 mb-1">Mean Square Treatment $(MS_{treatment})$</label>
+            <label class="block text-xs font-medium text-stone-300 mb-1">$MS_{Effect}$ ($MS_{Between}$)</label>
             <input type="number" step="any" id="u-mstreat" placeholder="Enter value" class="w-full px-3 py-2 text-sm bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
             <span id="u-mstreat-status" class="text-xs block mt-1"></span>
           </div>
           <div>
-            <label class="block text-xs font-medium text-stone-300 mb-1">Mean Square Error $(MS_{error})$</label>
+            <label class="block text-xs font-medium text-stone-300 mb-1">$MS_{Error}$ ($MS_{Within}$)</label>
             <input type="number" step="any" id="u-mserror" placeholder="Enter value" class="w-full px-3 py-2 text-sm bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
             <span id="u-mserror-status" class="text-xs block mt-1"></span>
           </div>
@@ -222,25 +222,25 @@
         <div class="flex items-center justify-between mb-4">
           <div>
             <span class="text-xs font-mono text-amber-500 uppercase tracking-widest">Stage 4 of 4</span>
-            <h3 class="text-base font-bold text-stone-100">Omnibus Test Statistic, Decision, and Effect Sizes</h3>
+            <h3 class="text-base font-bold text-stone-100">Omnibus $F$, $F_{critical}$, Decision, and Effect Sizes</h3>
           </div>
           <button type="button" onclick="toggleBox('unequal-help-4')" class="text-xs text-stone-400 hover:text-stone-200 underline cursor-pointer">Show Formula Help</button>
         </div>
 
-        <div id="unequal-help-4" style="display: none;" class="mb-4 p-3 bg-stone-950 rounded border border-stone-800 text-xs text-stone-300 space-y-1">
-          <p>$F = \frac{MS_{treatment}}{MS_{error}}$</p>
-          <p>Eta squared: $\eta^2 = \frac{SS_{treatment}}{SS_{total}}$</p>
-          <p>Cohen $d$: $d = \sqrt{\frac{1}{df_{treatment}} \cdot \frac{\sum (\bar{X}_j - \bar{X}_{..})^2}{MS_{error}}}$</p>
+        <div id="unequal-help-4" style="display: none;" class="mb-4 p-3 bg-stone-950 rounded border border-stone-800 text-xs text-stone-300 space-y-1.5">
+          <p>$F = \frac{MS_{Effect}}{MS_{Error}} = \frac{MS_{Between}}{MS_{Within}}$</p>
+          <p>Eta squared ($r$ family): $\eta^2 = \frac{SS_{between}}{SS_{total}} = \frac{MS_{between} * df_{between}}{(MS_{between} * df_{between}) + (MS_{within} * df_{within})}$</p>
+          <p>Standardized effect size ($d$ family): $d = \sqrt{\frac{1}{df_{Effect}} \cdot \frac{\sum (M_i - M_{\text{Grand}})^2}{MS_{Error}}}$</p>
         </div>
 
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <div>
-            <label class="block text-xs font-medium text-stone-300 mb-1">Calculated $F$ Ratio</label>
+            <label class="block text-xs font-medium text-stone-300 mb-1">Computed $F$ Ratio</label>
             <input type="number" step="any" id="u-fratio" placeholder="Enter value" class="w-full px-3 py-2 text-sm bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
             <span id="u-fratio-status" class="text-xs block mt-1"></span>
           </div>
           <div>
-            <label class="block text-xs font-medium text-stone-300 mb-1">Critical $F$ $(\alpha = .05)$</label>
+            <label class="block text-xs font-medium text-stone-300 mb-1">$F_{critical}(2, 18)$ $(\alpha = .05)$</label>
             <input type="number" step="any" id="u-fcrit" placeholder="Enter value" class="w-full px-3 py-2 text-sm bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
             <span id="u-fcrit-status" class="text-xs block mt-1"></span>
           </div>
@@ -257,7 +257,7 @@
         </div>
 
         <div class="mt-4 pt-4 border-t border-stone-800">
-          <label class="block text-xs font-medium text-stone-300 mb-1">Statistical Hypothesis Decision at $\alpha = .05$</label>
+          <label class="block text-xs font-medium text-stone-300 mb-1">Statistical Hypothesis Decision at $\alpha = .05$ ($H_0: \mu_1 = \mu_2 = \mu_3$)</label>
           <div class="flex flex-wrap items-center gap-4">
             <select id="u-decision" class="px-3 py-2 text-sm bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
               <option value="">Select your decision</option>
@@ -278,11 +278,11 @@
       <div class="bg-stone-900 border border-stone-800 p-5 rounded-lg shadow-sm">
         <h2 class="text-lg font-bold text-stone-100 mb-2">Part 2: Planned Orthogonal Linear Contrasts</h2>
         <p class="text-stone-300 text-sm leading-relaxed mb-3">
-          This section uses the equal sample size dataset from your walkthrough ($n = 9$ per condition, $MS_{error} = 37.00$, $df_{error} = 24$, Group Means: $\bar{X}_1 = 6.67$, $\bar{X}_2 = 10.67$, $\bar{X}_3 = 16.67$)[cite: 1].
+          This section uses the equal sample size dataset from your walkthrough ($n_i = 9$ per condition, total $n = 27$, $MS_{Error} = 37.00$, $df_{Error} = n - k = 24$, Sample Means: $M_1 = 6.67$, $M_2 = 10.67$, $M_3 = 16.67$).
         </p>
         <div class="p-3 bg-stone-950 rounded border border-stone-800 text-xs text-stone-400 space-y-1">
-          <p><strong>Contrast 1 question:</strong> Does No Caffeine differ from the combined average of Low and High Caffeine? (Weights: $a_1 = 1.0$, $a_2 = -0.5$, $a_3 = -0.5$)</p>
-          <p><strong>Contrast 2 question:</strong> Does Low Caffeine differ from High Caffeine? (Weights: $a_1 = 0.0$, $a_2 = 0.5$, $a_3 = -0.5$)</p>
+          <p><strong>Contrast 1 question:</strong> Does No Caffeine ($M_1$) differ from the combined average of Low ($M_2$) and High Caffeine ($M_3$)? (Weights: $a_1 = 1.0$, $a_2 = -0.5$, $a_3 = -0.5$)</p>
+          <p><strong>Contrast 2 question:</strong> Does Low Caffeine ($M_2$) differ from High Caffeine ($M_3$)? (Weights: $a_1 = 0.0$, $a_2 = 0.5$, $a_3 = -0.5$)</p>
         </div>
       </div>
 
@@ -291,15 +291,15 @@
           <thead>
             <tr class="text-stone-400 bg-stone-950">
               <th class="py-3 px-3">Computation Step</th>
-              <th class="py-3 px-3">Theoretical Formula</th>
+              <th class="py-3 px-3">Formula</th>
               <th class="py-3 px-3">Contrast 1 Value</th>
               <th class="py-3 px-3">Contrast 2 Value</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-stone-800">
             <tr>
-              <td class="py-3 px-3 font-semibold text-stone-200">1. Sum of weights $\sum a_j$</td>
-              <td class="py-3 px-3 font-mono text-stone-400">Must equal 0</td>
+              <td class="py-3 px-3 font-semibold text-stone-200">1. Sum of weights $\sum a_i$</td>
+              <td class="py-3 px-3 font-mono text-stone-400">Must equal $0$</td>
               <td class="py-3 px-3">
                 <input type="number" id="orth-c1-sum" placeholder="Sum" class="w-24 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
                 <span id="orth-c1-sum-st"></span>
@@ -311,7 +311,7 @@
             </tr>
             <tr>
               <td class="py-3 px-3 font-semibold text-stone-200">2. Contrast Value $\Psi$</td>
-              <td class="py-3 px-3 font-mono text-stone-400">\sum a_j \bar{X}_j</td>
+              <td class="py-3 px-3 text-stone-300">$\sum^{k} a_i M_i$</td>
               <td class="py-3 px-3">
                 <input type="number" step="any" id="orth-c1-psi" placeholder="Value" class="w-24 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
                 <span id="orth-c1-psi-st"></span>
@@ -323,7 +323,7 @@
             </tr>
             <tr>
               <td class="py-3 px-3 font-semibold text-stone-200">3. Sum of Squared Weights</td>
-              <td class="py-3 px-3 font-mono text-stone-400">\sum a_j^2</td>
+              <td class="py-3 px-3 text-stone-300">$\sum a_i^2$</td>
               <td class="py-3 px-3">
                 <input type="number" step="any" id="orth-c1-sqw" placeholder="Value" class="w-24 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
                 <span id="orth-c1-sqw-st"></span>
@@ -335,7 +335,7 @@
             </tr>
             <tr>
               <td class="py-3 px-3 font-semibold text-stone-200">4. Contrast Sum of Squares</td>
-              <td class="py-3 px-3 font-mono text-stone-400">\frac{n \Psi^2}{\sum a_j^2}</td>
+              <td class="py-3 px-3 text-stone-300">$\frac{n_i \Psi^2}{\sum a_i^2}$</td>
               <td class="py-3 px-3">
                 <input type="number" step="any" id="orth-c1-ss" placeholder="Value" class="w-24 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
                 <span id="orth-c1-ss-st"></span>
@@ -346,8 +346,8 @@
               </td>
             </tr>
             <tr>
-              <td class="py-3 px-3 font-semibold text-stone-200">5. Calculated $F$ Ratio</td>
-              <td class="py-3 px-3 font-mono text-stone-400">\frac{SS_{contrast}}{MS_{error}}</td>
+              <td class="py-3 px-3 font-semibold text-stone-200">5. Computed $F$ Ratio</td>
+              <td class="py-3 px-3 text-stone-300">$\frac{MS_{contrast}}{MS_{Error}}$</td>
               <td class="py-3 px-3">
                 <input type="number" step="any" id="orth-c1-f" placeholder="Value" class="w-24 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
                 <span id="orth-c1-f-st"></span>
@@ -358,8 +358,8 @@
               </td>
             </tr>
             <tr>
-              <td class="py-3 px-3 font-semibold text-stone-200">6. Calculated $t$ Statistic</td>
-              <td class="py-3 px-3 font-mono text-stone-400">\sqrt{F}</td>
+              <td class="py-3 px-3 font-semibold text-stone-200">6. Computed $t$ ($F = t^2$)</td>
+              <td class="py-3 px-3 text-stone-300">$t = \sqrt{F}$</td>
               <td class="py-3 px-3">
                 <input type="number" step="any" id="orth-c1-t" placeholder="Value" class="w-24 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
                 <span id="orth-c1-t-st"></span>
@@ -381,10 +381,10 @@
       <div class="bg-stone-900 border border-stone-800 p-5 rounded-lg shadow-sm">
         <h3 class="text-sm font-bold text-stone-200 mb-2">Orthogonal Additivity Verification</h3>
         <p class="text-xs text-stone-400 leading-relaxed mb-3">
-          Because these two contrasts are orthogonal, their individual sums of squares partition the between group variance completely with zero redundancy[cite: 1].
+          Because these two contrasts are orthogonal, their individual sums of squares partition the Effect (Between) variance completely with zero redundancy.
         </p>
         <div class="p-3 bg-stone-950 rounded border border-stone-800 font-mono text-xs text-stone-300">
-          SS(Contrast 1) + SS(Contrast 2) = 294.00 + 162.00 = 456.00 = SS(Treatment)
+          $SS_{\text{Contrast } 1} + SS_{\text{Contrast } 2} = 294.00 + 162.00 = 456.00 = SS_{Effect}$ ($SS_{Between}$)
         </div>
       </div>
 
@@ -396,19 +396,19 @@
       <div class="bg-stone-900 border border-stone-800 p-5 rounded-lg shadow-sm">
         <h2 class="text-lg font-bold text-stone-100 mb-2">Part 3: Nonorthogonal Planned Contrasts</h2>
         <p class="text-stone-300 text-sm leading-relaxed mb-3">
-          Nonorthogonal contrasts test specific planned theoretical hypotheses whose contrast weights have nonzero cross products ($\sum a_{1j} a_{2j} \neq 0$)[cite: 1]. Compute the statistics for each contrast and indicate whether it reaches significance at $\alpha = .05$ ($F_{crit} = 4.26$, $t_{crit} = 2.06$).
+          Nonorthogonal contrasts test specific planned theoretical hypotheses whose contrast weights have nonzero cross products ($\sum a_{1i} a_{2i} \neq 0$). Using $n_i = 9$, $MS_{Error} = 37.00$, and $M_1 = 6.67, M_2 = 10.67, M_3 = 16.67$, compute the statistics for each contrast and indicate whether it reaches significance at $\alpha = .05$ ($F_{critical}(1, 24) = 4.26$, $t_{critical}(24) = 2.06$).
         </p>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
           <div class="p-3 bg-stone-950 rounded border border-stone-800">
-            <span class="font-bold text-stone-200">Contrast A (No vs Low)</span>
+            <span class="font-bold text-stone-200">Contrast A ($M_1$ vs $M_2$)</span>
             <p class="text-stone-400 mt-1">Weights: $a = [0.5, -0.5, 0.0]$</p>
           </div>
           <div class="p-3 bg-stone-950 rounded border border-stone-800">
-            <span class="font-bold text-stone-200">Contrast B (No vs High)</span>
+            <span class="font-bold text-stone-200">Contrast B ($M_1$ vs $M_3$)</span>
             <p class="text-stone-400 mt-1">Weights: $a = [0.5, 0.0, -0.5]$</p>
           </div>
           <div class="p-3 bg-stone-950 rounded border border-stone-800">
-            <span class="font-bold text-stone-200">Contrast C (Low vs Both)</span>
+            <span class="font-bold text-stone-200">Contrast C ($M_2$ vs Both)</span>
             <p class="text-stone-400 mt-1">Weights: $a = [0.5, -1.0, 0.5]$</p>
           </div>
         </div>
@@ -419,17 +419,17 @@
           <thead>
             <tr class="text-stone-400 bg-stone-950">
               <th class="py-3 px-3">Contrast Comparison</th>
-              <th class="py-3 px-3">Psi $(\Psi)$</th>
-              <th class="py-3 px-3">Sum $a_j^2$</th>
+              <th class="py-3 px-3">$\Psi = \sum a_i M_i$</th>
+              <th class="py-3 px-3">$\sum a_i^2$</th>
               <th class="py-3 px-3">$SS_{contrast}$</th>
               <th class="py-3 px-3">$F$ Ratio</th>
-              <th class="py-3 px-3">$t$ Value</th>
+              <th class="py-3 px-3">$t = \sqrt{F}$</th>
               <th class="py-3 px-3">Significant at $\alpha = .05$?</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-stone-800">
             <tr>
-              <td class="py-3 px-3 font-semibold text-stone-200">Contrast A: No vs Low</td>
+              <td class="py-3 px-3 font-semibold text-stone-200">Contrast A: No ($M_1$) vs Low ($M_2$)</td>
               <td class="py-3 px-3"><input type="number" step="any" id="non-c1-psi" placeholder="Value" class="w-20 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none"></td>
               <td class="py-3 px-3"><input type="number" step="any" id="non-c1-sq" placeholder="Value" class="w-20 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none"></td>
               <td class="py-3 px-3"><input type="number" step="any" id="non-c1-ss" placeholder="Value" class="w-20 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none"></td>
@@ -444,7 +444,7 @@
               </td>
             </tr>
             <tr>
-              <td class="py-3 px-3 font-semibold text-stone-200">Contrast B: No vs High</td>
+              <td class="py-3 px-3 font-semibold text-stone-200">Contrast B: No ($M_1$) vs High ($M_3$)</td>
               <td class="py-3 px-3"><input type="number" step="any" id="non-c2-psi" placeholder="Value" class="w-20 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none"></td>
               <td class="py-3 px-3"><input type="number" step="any" id="non-c2-sq" placeholder="Value" class="w-20 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none"></td>
               <td class="py-3 px-3"><input type="number" step="any" id="non-c2-ss" placeholder="Value" class="w-20 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none"></td>
@@ -459,7 +459,7 @@
               </td>
             </tr>
             <tr>
-              <td class="py-3 px-3 font-semibold text-stone-200">Contrast C: Low vs Both</td>
+              <td class="py-3 px-3 font-semibold text-stone-200">Contrast C: Low ($M_2$) vs Both</td>
               <td class="py-3 px-3"><input type="number" step="any" id="non-c3-psi" placeholder="Value" class="w-20 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none"></td>
               <td class="py-3 px-3"><input type="number" step="any" id="non-c3-sq" placeholder="Value" class="w-20 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none"></td>
               <td class="py-3 px-3"><input type="number" step="any" id="non-c3-ss" placeholder="Value" class="w-20 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none"></td>
@@ -490,10 +490,10 @@
       <div class="bg-stone-900 border border-stone-800 p-5 rounded-lg shadow-sm">
         <h2 class="text-lg font-bold text-stone-100 mb-2">Part 4: Post Hoc Tukey Honestly Significant Difference (HSD)</h2>
         <p class="text-stone-300 text-sm leading-relaxed mb-3">
-          Tukey HSD tests all pairwise mean comparisons against a single critical difference threshold ($D_t$)[cite: 1].
+          Tukey HSD tests all pairwise sample mean comparisons ($|M_i - M_j|$) against a single critical difference threshold ($D_t$).
         </p>
         <div class="p-3 bg-stone-950 rounded border border-stone-800 text-xs text-stone-400 space-y-1">
-          <p><strong>Parameters:</strong> Studentized range critical value for $r = 3$ means, $df = 24$, $\alpha = .05$ is $q_t = 3.53$[cite: 1]. Sample size per group is $n = 9$, and $MS_{error} = 37.00$[cite: 1].</p>
+          <p><strong>Parameters:</strong> Studentized range critical value for $k = 3$ means, $df_{Error} = n - k = 24$, $\alpha = .05$ is $q_t = 3.53$. Sample size within each group is $n_i = 9$, and $MS_{Error} = 37.00$ ($MS_{Within}$).</p>
         </div>
       </div>
 
@@ -501,7 +501,7 @@
       <div class="bg-stone-900 border border-stone-800 p-5 rounded-lg shadow-sm">
         <h3 class="text-sm font-bold uppercase tracking-wider text-amber-500 mb-2">Step 1: Calculate the Critical Difference $(D_t)$</h3>
         <p class="text-xs text-stone-400 mb-3">
-          Formula: $D_t = q_t \sqrt{\frac{MS_{error}}{n}} = 3.53 \sqrt{\frac{37}{9}}$[cite: 1]
+          Formula: $D_t = q_t \sqrt{\frac{MS_{Error}}{n_i}}$
         </p>
         <div class="flex items-center gap-3">
           <input type="number" step="any" id="tukey-dt" placeholder="Enter calculated Dt" class="w-48 px-3 py-2 text-sm bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
@@ -518,15 +518,15 @@
           <thead>
             <tr class="text-stone-400 bg-stone-950">
               <th class="py-3 px-3">Pairwise Comparison</th>
-              <th class="py-3 px-3">Condition Means</th>
-              <th class="py-3 px-3">Absolute Mean Difference $|\bar{X}_i - \bar{X}_j|$</th>
+              <th class="py-3 px-3">Condition Means ($M_i$ vs $M_j$)</th>
+              <th class="py-3 px-3">Absolute Mean Difference $|M_i - M_j|$</th>
               <th class="py-3 px-3">Exceeds $D_t$?</th>
               <th class="py-3 px-3">Pairwise Conclusion</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-stone-800">
             <tr>
-              <td class="py-3 px-3 font-semibold text-stone-200">No Caffeine vs Low Caffeine</td>
+              <td class="py-3 px-3 font-semibold text-stone-200">No Caffeine ($M_1$) vs Low Caffeine ($M_2$)</td>
               <td class="py-3 px-3 text-stone-400">6.67 vs 10.67</td>
               <td class="py-3 px-3">
                 <input type="number" step="any" id="tukey-d1" placeholder="Enter difference" class="w-32 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
@@ -548,7 +548,7 @@
               </td>
             </tr>
             <tr>
-              <td class="py-3 px-3 font-semibold text-stone-200">High Caffeine vs No Caffeine</td>
+              <td class="py-3 px-3 font-semibold text-stone-200">High Caffeine ($M_3$) vs No Caffeine ($M_1$)</td>
               <td class="py-3 px-3 text-stone-400">16.67 vs 6.67</td>
               <td class="py-3 px-3">
                 <input type="number" step="any" id="tukey-d2" placeholder="Enter difference" class="w-32 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">
@@ -570,7 +570,7 @@
               </td>
             </tr>
             <tr>
-              <td class="py-3 px-3 font-semibold text-stone-200">High Caffeine vs Low Caffeine</td>
+              <td class="py-3 px-3 font-semibold text-stone-200">High Caffeine ($M_3$) vs Low Caffeine ($M_2$)</td>
               <td class="py-3 px-3 text-stone-400">16.67 vs 10.67</td>
               <td class="py-3 px-3">
                 <input type="number" step="any" id="tukey-d3" placeholder="Enter difference" class="w-32 px-2 py-1 bg-stone-950 border border-stone-700 text-stone-100 rounded focus:border-amber-500 focus:outline-none">

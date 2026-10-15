@@ -61,10 +61,10 @@
       </div>
       <div class="flex items-center gap-4 text-xs font-medium">
         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-800">
-          <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Left: Balanced (N = 27)
+          <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Left: Balanced (Total n = 27)
         </span>
         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-violet-950 text-violet-300 border border-violet-800">
-          <span class="w-2 h-2 rounded-full bg-violet-400"></span> Right: Unbalanced (N = 24)
+          <span class="w-2 h-2 rounded-full bg-violet-400"></span> Right: Unbalanced (Total n = 24)
         </span>
       </div>
     </div>
@@ -78,8 +78,8 @@
         <div class="flex items-center gap-2.5">
           <span class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm">∑</span>
           <div>
-            <h2 class="text-sm md:text-base font-bold text-slate-900 tracking-tight">Mathematical Notation and Symbol Reference Guide</h2>
-            <p class="text-xs text-slate-500">Definitions for indices, dot notation sums, squared totals, and test statistics</p>
+            <h2 class="text-sm md:text-base font-bold text-slate-900 tracking-tight">Lecture Formula Notation and Symbol Reference Guide</h2>
+            <p class="text-xs text-slate-500">Aligned with Chapter 11 Lecture Slides: Structural model, deviations around means, and ANOVA table syntax</p>
           </div>
         </div>
         <span class="text-xs font-semibold uppercase tracking-wider text-indigo-700 bg-indigo-50 border border-indigo-200 px-2.5 py-1 rounded-md">
@@ -89,110 +89,95 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
         
-        <!-- Category 1: Counts & Indices -->
+        <!-- Category 1: Counts, Indices & Structural Model -->
         <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-200 space-y-2.5">
           <h3 class="font-bold text-slate-800 uppercase tracking-wide text-[11px] flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-indigo-500"></span> Counts and Indices
+            <span class="w-2 h-2 rounded-full bg-indigo-500"></span> Counts and Structural Model
           </h3>
           <ul class="space-y-2 text-slate-600">
             <li>
-              <span class="font-mono-code font-bold text-slate-900">$k$</span>: Total number of treatment groups or levels. Here $k = 3$.
+              <span class="font-mono-code font-bold text-slate-900">$k$</span>: Total number of treatment groups or levels of the factor. Here $k = 3$.
             </li>
             <li>
-              <span class="font-mono-code font-bold text-slate-900">$j$</span>: Index denoting the specific treatment column ($j = 1, 2, \dots, k$).
+              <span class="font-mono-code font-bold text-slate-900">$n_i$</span>: Sample size within group $i$. When all groups are equal, every group has $n_i = 9$.
             </li>
             <li>
-              <span class="font-mono-code font-bold text-slate-900">$i$</span>: Index denoting the individual observation inside group $j$.
+              <span class="font-mono-code font-bold text-slate-900">$n$</span>: Total number of scores across all groups combined ($n = \sum n_i$) in the lecture df formulas ($df_{Total} = n - 1$, $df_{Within} = n - k$).
             </li>
             <li>
-              <span class="font-mono-code font-bold text-slate-900">$n$</span>: Sample size per group when every group contains equal counts.
+              <span class="font-mono-code font-bold text-slate-900">$X$ (or $X_{ij}$)</span>: Individual raw score of participant $i$ in group $j$.
             </li>
             <li>
-              <span class="font-mono-code font-bold text-slate-900">$n_j$</span>: Sample size belonging specifically to group $j$ in unequal designs.
-            </li>
-            <li>
-              <span class="font-mono-code font-bold text-slate-900">$N$</span>: Grand sample size across all conditions combined, $N = \sum n_j$.
+              <span class="font-mono-code font-bold text-slate-900">$X_{ij} = \mu + (\mu_j - \mu) + (X_{ij} - \mu_j)$</span>: Structural model where $\tau_j = (\mu_j - \mu)$ is the treatment effect and $\epsilon_{ij} = (X_{ij} - \mu_j)$ is individual error.
             </li>
           </ul>
         </div>
 
-        <!-- Category 2: Totals, Squared Totals & Dot Notation -->
+        <!-- Category 2: Means & Totals -->
         <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-200 space-y-2.5">
           <h3 class="font-bold text-slate-800 uppercase tracking-wide text-[11px] flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-indigo-500"></span> Totals, Squared Totals, Dot Notation
+            <span class="w-2 h-2 rounded-full bg-indigo-500"></span> Means and Group Totals
           </h3>
           <ul class="space-y-2 text-slate-600">
             <li>
-              <span class="font-mono-code font-bold text-slate-900">$Y_{ij}$</span>: Individual raw score of subject $i$ inside treatment condition $j$.
+              <span class="font-mono-code font-bold text-slate-900">$M_i$ (or $M$)</span>: Sample mean for a specific treatment group (e.g., $M_A, M_B, M_C$).
             </li>
             <li>
-              <span class="font-mono-code font-bold text-slate-900">$T_j$</span>: Total sum of observations inside group $j$, calculated as $\sum_{i=1}^{n_j} Y_{ij}$.
+              <span class="font-mono-code font-bold text-slate-900">$M_{\text{Grand}}$</span>: Grand Mean across all observations in the study ($M_{\text{Grand}} = \frac{\sum X}{n}$).
             </li>
             <li>
-              <span class="font-mono-code font-bold text-slate-900">$T_j^2$</span>: Square of an individual group total, multiplying $T_j$ by itself.
+              <span class="font-mono-code font-bold text-slate-900">$(X - M_{\text{Grand}})$</span>: Deviation of an individual score around the Grand Mean (Total variation component).
             </li>
             <li>
-              <span class="font-mono-code font-bold text-slate-900">$T_{\cdot\cdot}$ or $M_{\text{Grand}}$</span>: Grand total sum across every score. The two dots indicate summation over both index $i$ and index $j$.
+              <span class="font-mono-code font-bold text-slate-900">$(M_i - M_{\text{Grand}})$</span>: Deviation of a sample group mean around the Grand Mean (Treatment Effect component).
             </li>
             <li>
-              <span class="font-mono-code font-bold text-slate-900">$T_{\cdot\cdot}^2$</span>: Square of the grand total sum across all participants. You sum all raw scores first, then square that resulting single number.
-            </li>
-            <li>
-              <span class="font-mono-code font-bold text-slate-900">$\frac{T_{\cdot\cdot}^2}{N}$</span>: Correction factor term. It equals $N$ multiplied by the squared grand mean, subtracting baseline elevation from sums of squares.
+              <span class="font-mono-code font-bold text-slate-900">$(X - M)$</span>: Deviation of an individual score around its own group sample mean (Error component).
             </li>
           </ul>
         </div>
 
-        <!-- Category 3: Means & Sums of Squares -->
+        <!-- Category 3: Sums of Squares (Lecture Syntax) -->
         <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-200 space-y-2.5">
           <h3 class="font-bold text-slate-800 uppercase tracking-wide text-[11px] flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-indigo-500"></span> Means and Sums of Squares
+            <span class="w-2 h-2 rounded-full bg-indigo-500"></span> Sums of Squares (SS)
           </h3>
           <ul class="space-y-2 text-slate-600">
             <li>
-              <span class="font-mono-code font-bold text-slate-900">$\bar{Y}_j$</span>: Arithmetic mean of treatment group $j$, equal to $\frac{T_j}{n_j}$.
+              <span class="font-mono-code font-bold text-slate-900">$SS_{Total} = \sum^{scores}(X - M_{\text{Grand}})^2$</span>: Sum of squared deviations of all scores around the Grand Mean.
             </li>
             <li>
-              <span class="font-mono-code font-bold text-slate-900">$\bar{Y}_{\cdot\cdot}$</span>: Overall grand mean. The bar denotes an average while the two dots indicate averaging across all subjects and groups.
+              <span class="font-mono-code font-bold text-slate-900">$SS_{Effect} = \sum^{k} n_i(M_i - M_{\text{Grand}})^2$</span>: Also written as $SS_{Between}$. Deviation of sample means around the Grand Mean, weighted by group size $n_i$.
             </li>
             <li>
-              <span class="font-mono-code font-bold text-slate-900">$\sum Y_{ij}^2$</span>: Sum of each raw score squared before adding. Every individual observation is squared first, then summed.
+              <span class="font-mono-code font-bold text-slate-900">$SS_{Error} = \sum^{all\ scores}(X - M)^2$</span>: Also written as $SS_{Within}$. Deviation of each score around its respective group mean.
             </li>
             <li>
-              <span class="font-mono-code font-bold text-slate-900">$SS_{\text{total}}$</span>: Total sum of squares reflecting overall dispersion across all $N$ scores.
-            </li>
-            <li>
-              <span class="font-mono-code font-bold text-slate-900">$SS_{\text{between}}$</span>: Sum of squares between groups capturing treatment effects among conditions.
-            </li>
-            <li>
-              <span class="font-mono-code font-bold text-slate-900">$SS_{\text{within}}$</span>: Sum of squares within groups measuring pooled experimental error or noise.
+              <span class="font-mono-code font-bold text-slate-900">$SS_{Total} = SS_{Effect} + SS_{Error}$</span>: Partitioning of total sum of squares into treatment effect and error.
             </li>
           </ul>
         </div>
 
-        <!-- Category 4: Variance and Test Statistics -->
+        <!-- Category 4: Variance, F Ratio & Effect Size -->
         <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-200 space-y-2.5">
           <h3 class="font-bold text-slate-800 uppercase tracking-wide text-[11px] flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-indigo-500"></span> Variance and Test Statistics
+            <span class="w-2 h-2 rounded-full bg-indigo-500"></span> MS, F Ratio, and Eta Squared
           </h3>
           <ul class="space-y-2 text-slate-600">
             <li>
-              <span class="font-mono-code font-bold text-slate-900">$df$</span>: Degrees of freedom representing independent pieces of information.
+              <span class="font-mono-code font-bold text-slate-900">$df_{Between} = k - 1$</span>: Numerator degrees of freedom ($df_{Effect}$).
             </li>
             <li>
-              <span class="font-mono-code font-bold text-slate-900">$MS$</span>: Mean square variance estimate, computed as $SS$ divided by corresponding $df$.
+              <span class="font-mono-code font-bold text-slate-900">$df_{Within} = n - k$</span>: Denominator degrees of freedom ($df_{Error}$).
             </li>
             <li>
-              <span class="font-mono-code font-bold text-slate-900">$F$</span>: Test statistic ratio, calculated as $MS_{\text{between}}$ divided by $MS_{\text{within}}$.
+              <span class="font-mono-code font-bold text-slate-900">$s^2$ (or $MS$)</span>: Mean Square variance estimate ($MS_{Effect} = SS_{Effect}/df_{Effect}$ and $MS_{Error} = SS_{Error}/df_{Error}$).
             </li>
             <li>
-              <span class="font-mono-code font-bold text-slate-900">$p$ value</span>: Probability of obtaining an $F$ statistic at least this extreme under a true null hypothesis.
+              <span class="font-mono-code font-bold text-slate-900">$F = \frac{MS_{Effect}}{MS_{Error}} = \frac{MS_{Between}}{MS_{Within}}$</span>: Ratio of between groups variance to within groups error variance ($\sigma^2_e$).
             </li>
             <li>
-              <span class="font-mono-code font-bold text-slate-900">$\alpha$</span>: Significance threshold criterion, standardly set at 0.05.
-            </li>
-            <li>
-              <span class="font-mono-code font-bold text-slate-900">$q$</span>: Studentized range statistic utilized during post hoc multiple pairwise comparisons.
+              <span class="font-mono-code font-bold text-slate-900">$\eta^2 = \frac{SS_{between}}{SS_{total}}$</span>: Eta squared ($r$ family effect size), proportion of total variance accounted for by the treatment effect.
             </li>
           </ul>
         </div>
@@ -213,11 +198,11 @@
             <span class="px-2.5 py-1 text-xs font-bold uppercase tracking-wider rounded bg-emerald-500 text-slate-950">Left Side</span>
             <div>
               <h2 class="text-base md:text-lg font-bold text-emerald-300">Balanced Design (Equal Sample Sizes)</h2>
-              <p class="text-xs text-emerald-200/80">Three treatment conditions with uniform n = 9 per group</p>
+              <p class="text-xs text-emerald-200/80">Three treatment conditions with uniform $n_i = 9$ per group</p>
             </div>
           </div>
           <span class="text-xs font-mono font-bold px-2 py-1 bg-emerald-900/80 border border-emerald-700 text-emerald-200 rounded">
-            N = 27
+            Total n = 27
           </span>
         </div>
 
@@ -227,11 +212,11 @@
             <span class="px-2.5 py-1 text-xs font-bold uppercase tracking-wider rounded bg-violet-500 text-slate-950">Right Side</span>
             <div>
               <h2 class="text-base md:text-lg font-bold text-violet-300">Unbalanced Design (Unequal Sample Sizes)</h2>
-              <p class="text-xs text-violet-200/80">Trimmed baseline groups with variable sample sizes n₁=9, n₂=8, n₃=7</p>
+              <p class="text-xs text-violet-200/80">Trimmed baseline groups with variable sample sizes $n_1=9, n_2=8, n_3=7$</p>
             </div>
           </div>
           <span class="text-xs font-mono font-bold px-2 py-1 bg-violet-900/80 border border-violet-700 text-violet-200 rounded">
-            N = 24
+            Total n = 24
           </span>
         </div>
       </div>
@@ -244,9 +229,9 @@
           <div class="flex items-center justify-between border-b border-slate-200 pb-3">
             <div class="flex items-center gap-2">
               <span class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold">1</span>
-              <h3 class="font-bold text-slate-900 text-sm md:text-base">Raw Data and Group Metrics</h3>
+              <h3 class="font-bold text-slate-900 text-sm md:text-base">Raw Scores ($X$) and Group Sample Means ($M_i$)</h3>
             </div>
-            <span class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200">Balanced Rows</span>
+            <span class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200">Balanced Groups</span>
           </div>
 
           <div class="overflow-x-auto custom-scrollbar border border-slate-200 rounded-lg">
@@ -254,44 +239,44 @@
               <thead class="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200">
                 <tr>
                   <th class="py-2 px-2 text-left">Condition</th>
-                  <th class="py-2 px-2">Sample Array</th>
-                  <th class="py-2 px-2">Count (n)</th>
-                  <th class="py-2 px-2">Sum (T)</th>
-                  <th class="py-2 px-2">Mean</th>
-                  <th class="py-2 px-2">Sum of Sq (ΣY²)</th>
+                  <th class="py-2 px-2">Scores ($X$)</th>
+                  <th class="py-2 px-2">Group Size ($n_i$)</th>
+                  <th class="py-2 px-2">Sum ($\sum X$)</th>
+                  <th class="py-2 px-2">Group Mean ($M_i$)</th>
+                  <th class="py-2 px-2">$\sum(X - M)^2$</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100 font-mono-code text-slate-700">
                 <tr class="hover:bg-slate-50">
-                  <td class="py-2 px-2 text-left font-sans font-semibold text-sky-900">No Caffeine</td>
+                  <td class="py-2 px-2 text-left font-sans font-semibold text-sky-900">No Caffeine ($M_1$)</td>
                   <td class="py-2 px-2 text-slate-500">[1, 4, 7, 4, 1, 10, 4, 1, 7]</td>
                   <td class="py-2 px-2 font-bold text-emerald-700">9</td>
                   <td class="py-2 px-2">39</td>
                   <td class="py-2 px-2 font-semibold">4.333</td>
-                  <td class="py-2 px-2">249</td>
+                  <td class="py-2 px-2">80.000</td>
                 </tr>
                 <tr class="hover:bg-slate-50">
-                  <td class="py-2 px-2 text-left font-sans font-semibold text-amber-900">Low Caffeine</td>
+                  <td class="py-2 px-2 text-left font-sans font-semibold text-amber-900">Low Caffeine ($M_2$)</td>
                   <td class="py-2 px-2 text-slate-500">[5, 2, 8, 8, 2, 8, 5, 2, 8]</td>
                   <td class="py-2 px-2 font-bold text-emerald-700">9</td>
                   <td class="py-2 px-2">48</td>
                   <td class="py-2 px-2 font-semibold">5.333</td>
-                  <td class="py-2 px-2">318</td>
+                  <td class="py-2 px-2">62.000</td>
                 </tr>
                 <tr class="hover:bg-slate-50">
-                  <td class="py-2 px-2 text-left font-sans font-semibold text-purple-900">High Caffeine</td>
+                  <td class="py-2 px-2 text-left font-sans font-semibold text-purple-900">High Caffeine ($M_3$)</td>
                   <td class="py-2 px-2 text-slate-500">[3, 6, 9, 6, 3, 12, 6, 3, 9]</td>
                   <td class="py-2 px-2 font-bold text-emerald-700">9</td>
                   <td class="py-2 px-2">57</td>
                   <td class="py-2 px-2 font-semibold">6.333</td>
-                  <td class="py-2 px-2">441</td>
+                  <td class="py-2 px-2">80.000</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
           <div class="text-xs text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-200">
-            <strong>Equal sample size note:</strong> Each group possesses an exact matching count of <span class="font-mono-code font-bold text-emerald-700">n = 9</span>. The sum of all group totals produces grand total <span class="font-mono-code font-bold text-slate-900">T.. = 39 + 48 + 57 = 144</span> across 27 total observations.
+            <strong>Equal sample size note:</strong> Each group has an identical sample size of <span class="font-mono-code font-bold text-emerald-700">$n_i = 9$</span>. Summing all scores gives <span class="font-mono-code font-bold text-slate-900">$\sum X = 39 + 48 + 57 = 144$</span> across <span class="font-mono-code font-bold text-slate-900">$n = 27$</span> total participants.
           </div>
         </div>
 
@@ -300,9 +285,9 @@
           <div class="flex items-center justify-between border-b border-slate-200 pb-3">
             <div class="flex items-center gap-2">
               <span class="w-6 h-6 rounded-full bg-violet-600 text-white flex items-center justify-center text-xs font-bold">1</span>
-              <h3 class="font-bold text-slate-900 text-sm md:text-base">Raw Data and Group Metrics</h3>
+              <h3 class="font-bold text-slate-900 text-sm md:text-base">Raw Scores ($X$) and Group Sample Means ($M_i$)</h3>
             </div>
-            <span class="text-xs font-semibold text-violet-700 bg-violet-50 px-2.5 py-0.5 rounded border border-violet-200">Unbalanced Rows</span>
+            <span class="text-xs font-semibold text-violet-700 bg-violet-50 px-2.5 py-0.5 rounded border border-violet-200">Unbalanced Groups</span>
           </div>
 
           <div class="overflow-x-auto custom-scrollbar border border-slate-200 rounded-lg">
@@ -310,44 +295,44 @@
               <thead class="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200">
                 <tr>
                   <th class="py-2 px-2 text-left">Condition</th>
-                  <th class="py-2 px-2">Sample Array</th>
-                  <th class="py-2 px-2">Count (n)</th>
-                  <th class="py-2 px-2">Sum (T)</th>
-                  <th class="py-2 px-2">Mean</th>
-                  <th class="py-2 px-2">Sum of Sq (ΣY²)</th>
+                  <th class="py-2 px-2">Scores ($X$)</th>
+                  <th class="py-2 px-2">Group Size ($n_i$)</th>
+                  <th class="py-2 px-2">Sum ($\sum X$)</th>
+                  <th class="py-2 px-2">Group Mean ($M_i$)</th>
+                  <th class="py-2 px-2">$\sum(X - M)^2$</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100 font-mono-code text-slate-700">
                 <tr class="hover:bg-slate-50">
-                  <td class="py-2 px-2 text-left font-sans font-semibold text-sky-900">No Caffeine</td>
+                  <td class="py-2 px-2 text-left font-sans font-semibold text-sky-900">No Caffeine ($M_1$)</td>
                   <td class="py-2 px-2 text-slate-500">[1, 4, 7, 4, 1, 10, 4, 1, 7]</td>
                   <td class="py-2 px-2 font-bold text-violet-700">9</td>
                   <td class="py-2 px-2">39</td>
                   <td class="py-2 px-2 font-semibold">4.333</td>
-                  <td class="py-2 px-2">249</td>
+                  <td class="py-2 px-2">80.000</td>
                 </tr>
                 <tr class="hover:bg-slate-50">
-                  <td class="py-2 px-2 text-left font-sans font-semibold text-amber-900">Low Caffeine</td>
+                  <td class="py-2 px-2 text-left font-sans font-semibold text-amber-900">Low Caffeine ($M_2$)</td>
                   <td class="py-2 px-2 text-slate-500">[5, 2, 8, 8, 2, 8, 5, 2]</td>
                   <td class="py-2 px-2 font-bold text-violet-700">8</td>
                   <td class="py-2 px-2">40</td>
                   <td class="py-2 px-2 font-semibold">5.000</td>
-                  <td class="py-2 px-2">254</td>
+                  <td class="py-2 px-2">54.000</td>
                 </tr>
                 <tr class="hover:bg-slate-50">
-                  <td class="py-2 px-2 text-left font-sans font-semibold text-purple-900">High Caffeine</td>
+                  <td class="py-2 px-2 text-left font-sans font-semibold text-purple-900">High Caffeine ($M_3$)</td>
                   <td class="py-2 px-2 text-slate-500">[3, 6, 9, 6, 3, 12, 6]</td>
                   <td class="py-2 px-2 font-bold text-violet-700">7</td>
                   <td class="py-2 px-2">45</td>
                   <td class="py-2 px-2 font-semibold">6.429</td>
-                  <td class="py-2 px-2">347</td>
+                  <td class="py-2 px-2">57.714</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
           <div class="text-xs text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-200">
-            <strong>Unequal sample size note:</strong> Group counts differ with <span class="font-mono-code font-bold text-violet-700">n₁ = 9, n₂ = 8, n₃ = 7</span>. The sum of all group totals produces grand total <span class="font-mono-code font-bold text-slate-900">T.. = 39 + 40 + 45 = 124</span> across 24 total observations.
+            <strong>Unequal sample size note:</strong> Group counts differ with <span class="font-mono-code font-bold text-violet-700">$n_1 = 9, n_2 = 8, n_3 = 7$</span>. Summing all scores gives <span class="font-mono-code font-bold text-slate-900">$\sum X = 39 + 40 + 45 = 124$</span> across <span class="font-mono-code font-bold text-slate-900">$n = 24$</span> total participants.
           </div>
         </div>
       </div>
@@ -360,27 +345,27 @@
           <div class="flex items-center justify-between border-b border-slate-200 pb-3">
             <div class="flex items-center gap-2">
               <span class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold">2</span>
-              <h3 class="font-bold text-slate-900 text-sm md:text-base">Grand Mean (Overall Mean)</h3>
+              <h3 class="font-bold text-slate-900 text-sm md:text-base">Grand Mean ($M_{\text{Grand}}$)</h3>
             </div>
-            <span class="text-xs font-semibold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">Unweighted Average of Group Means</span>
+            <span class="text-xs font-semibold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">Unweighted Average Equals Overall Mean</span>
           </div>
 
           <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
-            <div class="text-xs text-slate-500 font-semibold uppercase">Theoretical Formulation</div>
+            <div class="text-xs text-slate-500 font-semibold uppercase">Lecture Grand Mean Formula</div>
             <div class="katex-render text-center text-sm py-1">
-              $$\bar{Y}_{\cdot\cdot} = \frac{1}{k}\sum_{j=1}^{k} \bar{Y}_j = \frac{T_{\cdot\cdot}}{N}$$
+              $$M_{\text{Grand}} = \frac{\sum^{scores} X}{n} = \frac{M_1 + M_2 + \dots + M_k}{k}$$
             </div>
             <div class="text-xs text-slate-700 font-mono-code bg-white p-3 rounded border border-slate-200 space-y-1">
-              <div>Simple arithmetic average of means:</div>
+              <div>Sum of all scores divided by total $n$:</div>
               <div class="text-emerald-950 font-bold">
-                $$\bar{Y}_{\cdot\cdot} = \frac{4.3333 + 5.3333 + 6.3333}{3} = \frac{16.000}{3} \approx 5.3333$$
+                $$M_{\text{Grand}} = \frac{39 + 48 + 57}{27} = \frac{144}{27} \approx 5.3333$$
               </div>
-              <div class="text-slate-500 text-[11px]">Grand total verification: T.. / N = 144 / 27 = 5.3333</div>
+              <div class="text-slate-500 text-[11px]">Average of sample means verification: (4.3333 + 5.3333 + 6.3333) / 3 = 5.3333</div>
             </div>
           </div>
 
           <div class="text-xs text-slate-600 bg-emerald-50/60 p-3 rounded-lg border border-emerald-200">
-            <strong>Key equality principle:</strong> In a balanced design, the grand mean is identical whether calculated as the average of group means or as the grand total divided by N. Every condition carries an identical weight of 33.33 percent.
+            <strong>Key equality principle:</strong> When $n_i$ is equal across all groups, $M_{\text{Grand}}$ is identical whether calculated by summing all raw $X$ scores and dividing by total $n$, or by averaging the group means $M_i$.
           </div>
         </div>
 
@@ -389,27 +374,27 @@
           <div class="flex items-center justify-between border-b border-slate-200 pb-3">
             <div class="flex items-center gap-2">
               <span class="w-6 h-6 rounded-full bg-violet-600 text-white flex items-center justify-center text-xs font-bold">2</span>
-              <h3 class="font-bold text-slate-900 text-sm md:text-base">Grand Mean (Overall Mean)</h3>
+              <h3 class="font-bold text-slate-900 text-sm md:text-base">Grand Mean ($M_{\text{Grand}}$)</h3>
             </div>
-            <span class="text-xs font-semibold text-violet-800 bg-violet-100 px-2 py-0.5 rounded">Sample Size Weighted Average</span>
+            <span class="text-xs font-semibold text-violet-800 bg-violet-100 px-2 py-0.5 rounded">Weighted by Group Sample Size $n_i$</span>
           </div>
 
           <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
-            <div class="text-xs text-slate-500 font-semibold uppercase">Theoretical Formulation</div>
+            <div class="text-xs text-slate-500 font-semibold uppercase">Lecture Grand Mean Formula</div>
             <div class="katex-render text-center text-sm py-1">
-              $$\bar{Y}_{\cdot\cdot} = \frac{\sum_{j=1}^{k} n_j \bar{Y}_j}{\sum n_j} = \frac{T_{\cdot\cdot}}{N}$$
+              $$M_{\text{Grand}} = \frac{\sum^{scores} X}{n} = \frac{\sum^{k} n_i M_i}{n}$$
             </div>
             <div class="text-xs text-slate-700 font-mono-code bg-white p-3 rounded border border-slate-200 space-y-1">
-              <div>Sample weighted calculation:</div>
+              <div>Sum of all scores divided by total $n$:</div>
               <div class="text-violet-950 font-bold">
-                $$\bar{Y}_{\cdot\cdot} = \frac{(9)(4.3333) + (8)(5.0000) + (7)(6.4286)}{24} = \frac{124}{24} \approx 5.1667$$
+                $$M_{\text{Grand}} = \frac{39 + 40 + 45}{24} = \frac{(9)(4.3333) + (8)(5.0000) + (7)(6.4286)}{24} = \frac{124}{24} \approx 5.1667$$
               </div>
-              <div class="text-slate-500 text-[11px]">Notice: (4.3333 + 5.0000 + 6.4286) / 3 = 5.2539 (Incorrect unweighted value)</div>
+              <div class="text-slate-500 text-[11px]">Notice: (4.3333 + 5.0000 + 6.4286) / 3 = 5.2539 (Unweighted average of means does not equal $M_{\text{Grand}}$)</div>
             </div>
           </div>
 
           <div class="text-xs text-slate-600 bg-violet-50/60 p-3 rounded-lg border border-violet-200">
-            <strong>Crucial difference:</strong> An unweighted mean of group means is mathematically invalid for unbalanced data. Group 1 carries 9/24 weight while Group 3 carries only 7/24 weight, shifting the grand mean toward the larger group.
+            <strong>Crucial difference:</strong> You must compute $M_{\text{Grand}}$ as the sum of all $X$ scores divided by total $n$ (or weight each $M_i$ by $n_i$). Taking a simple average of the three group means ignores the unequal group sizes.
           </div>
         </div>
       </div>
@@ -422,27 +407,29 @@
           <div class="flex items-center justify-between border-b border-slate-200 pb-3">
             <div class="flex items-center gap-2">
               <span class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold">3</span>
-              <h3 class="font-bold text-slate-900 text-sm md:text-base">Sum of Squares Total (SST)</h3>
+              <h3 class="font-bold text-slate-900 text-sm md:text-base">Total Variance: $SS_{Total}$</h3>
             </div>
             <span class="text-xs font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">All 27 Scores</span>
           </div>
 
           <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
-            <div class="text-xs text-slate-500 font-semibold uppercase">Total Sum of Squares Formula</div>
+            <div class="text-xs text-slate-500 font-semibold uppercase">Deviation of All Data Around the Grand Mean</div>
             <div class="katex-render text-center text-sm py-1">
-              $$SS_{\text{total}} = \sum_{j=1}^{k}\sum_{i=1}^{n} Y_{ij}^2 - \frac{T_{\cdot\cdot}^2}{N}$$
+              $$SS_{Total} = \sum^{scores} (X - M_{\text{Grand}})^2$$
             </div>
             <div class="text-xs text-slate-700 font-mono-code bg-white p-3 rounded border border-slate-200 space-y-1">
-              <div>Sum of squared observations: 249 + 318 + 441 = 1008</div>
-              <div>Correction factor: T..² / N = (144)² / 27 = 20736 / 27 = 768.000</div>
+              <div>Summing squared deviations $(X - 5.333)^2$ across all 27 scores:</div>
+              <div>Group 1: $(1 - 5.333)^2 + (4 - 5.333)^2 + \dots + (7 - 5.333)^2 = 89.000$</div>
+              <div>Group 2: $(5 - 5.333)^2 + (2 - 5.333)^2 + \dots + (8 - 5.333)^2 = 62.000$</div>
+              <div>Group 3: $(3 - 5.333)^2 + (6 - 5.333)^2 + \dots + (9 - 5.333)^2 = 89.000$</div>
               <div class="text-emerald-950 font-bold pt-1">
-                $$SS_{\text{total}} = 1008 - 768.000 = 240.000$$
+                $$SS_{Total} = 89.000 + 62.000 + 89.000 = 240.000$$
               </div>
             </div>
           </div>
 
           <p class="text-xs text-slate-600">
-            Total variation represents all deviation of individual scores around the common grand mean 5.333.
+            Measures the total squared deviation of every score $X$ around the Grand Mean ($M_{\text{Grand}} = 5.333$).
           </p>
         </div>
 
@@ -451,60 +438,63 @@
           <div class="flex items-center justify-between border-b border-slate-200 pb-3">
             <div class="flex items-center gap-2">
               <span class="w-6 h-6 rounded-full bg-violet-600 text-white flex items-center justify-center text-xs font-bold">3</span>
-              <h3 class="font-bold text-slate-900 text-sm md:text-base">Sum of Squares Total (SST)</h3>
+              <h3 class="font-bold text-slate-900 text-sm md:text-base">Total Variance: $SS_{Total}$</h3>
             </div>
             <span class="text-xs font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">All 24 Scores</span>
           </div>
 
           <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
-            <div class="text-xs text-slate-500 font-semibold uppercase">Total Sum of Squares Formula</div>
+            <div class="text-xs text-slate-500 font-semibold uppercase">Deviation of All Data Around the Grand Mean</div>
             <div class="katex-render text-center text-sm py-1">
-              $$SS_{\text{total}} = \sum_{j=1}^{k}\sum_{i=1}^{n_j} Y_{ij}^2 - \frac{T_{\cdot\cdot}^2}{N}$$
+              $$SS_{Total} = \sum^{scores} (X - M_{\text{Grand}})^2$$
             </div>
             <div class="text-xs text-slate-700 font-mono-code bg-white p-3 rounded border border-slate-200 space-y-1">
-              <div>Sum of squared observations: 249 + 254 + 347 = 850</div>
-              <div>Correction factor: T..² / N = (124)² / 24 = 15376 / 24 = 640.667</div>
+              <div>Summing squared deviations $(X - 5.167)^2$ across all 24 scores:</div>
+              <div>Group 1 ($n_1=9$): $\sum (X - 5.167)^2 = 86.250$</div>
+              <div>Group 2 ($n_2=8$): $\sum (X - 5.167)^2 = 54.222$</div>
+              <div>Group 3 ($n_3=7$): $\sum (X - 5.167)^2 = 68.861$</div>
               <div class="text-violet-950 font-bold pt-1">
-                $$SS_{\text{total}} = 850 - 640.667 = 209.333$$
+                $$SS_{Total} = 86.250 + 54.222 + 68.861 = 209.333$$
               </div>
             </div>
           </div>
 
           <p class="text-xs text-slate-600">
-            The inner summation runs strictly up to each individual group length n_j with N reduced to 24.
+            Uses the exact same formula $\sum^{scores}(X - M_{\text{Grand}})^2$ across all 24 available scores around $M_{\text{Grand}} = 5.167$.
           </p>
         </div>
       </div>
 
 
-      <!-- Phase 4: Sum of Squares Between -->
+      <!-- Phase 4: Sum of Squares Effect (Between) -->
       <div class="compare-row grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-300" data-stage="4">
         <!-- Left Side: Phase 4 -->
         <div class="p-6 space-y-4">
           <div class="flex items-center justify-between border-b border-slate-200 pb-3">
             <div class="flex items-center gap-2">
               <span class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold">4</span>
-              <h3 class="font-bold text-slate-900 text-sm md:text-base">Sum of Squares Between Groups (SSB)</h3>
+              <h3 class="font-bold text-slate-900 text-sm md:text-base">Effect Variance: $SS_{Effect}$ ($SS_{Between}$)</h3>
             </div>
-            <span class="text-xs font-semibold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">Constant Factor n = 9</span>
+            <span class="text-xs font-semibold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">Equal Weight $n_i = 9$</span>
           </div>
 
           <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
-            <div class="text-xs text-slate-500 font-semibold uppercase">Definitional and Computational Formulas</div>
-            <div class="katex-render text-center text-xs py-1">
-              $$SS_{\text{between}} = n \sum_{j=1}^{k} (\bar{Y}_j - \bar{Y}_{\cdot\cdot})^2 = \frac{1}{n}\sum_{j=1}^{k} T_j^2 - \frac{T_{\cdot\cdot}^2}{N}$$
+            <div class="text-xs text-slate-500 font-semibold uppercase">Deviation of Sample Means Around the Grand Mean</div>
+            <div class="katex-render text-center text-sm py-1">
+              $$SS_{Effect} = \sum^{k} n_i(M_i - M_{\text{Grand}})^2$$
             </div>
             <div class="text-xs text-slate-700 font-mono-code bg-white p-3 rounded border border-slate-200 space-y-1.5">
-              <div class="text-slate-500">Method A (Factoring constant n):</div>
-              <div>SSB = 9 × [ (4.333 - 5.333)² + (5.333 - 5.333)² + (6.333 - 5.333)² ]</div>
-              <div>SSB = 9 × [ (-1.000)² + (0.000)² + (1.000)² ] = 9 × [ 1 + 0 + 1 ] = <strong>18.000</strong></div>
-              <div class="text-slate-500 pt-1">Method B (Computational formula using group totals squared T_j²):</div>
-              <div>$$\frac{39^2 + 48^2 + 57^2}{9} - \frac{144^2}{27} = \frac{1521 + 2304 + 3249}{9} - 768 = \frac{7074}{9} - 768 = \mathbf{18.000}$$</div>
+              <div class="text-slate-500">Step by step substitution ($n_1 = n_2 = n_3 = 9$, $M_{\text{Grand}} = 5.333$):</div>
+              <div>$SS_{Effect} = 9(4.333 - 5.333)^2 + 9(5.333 - 5.333)^2 + 9(6.333 - 5.333)^2$</div>
+              <div>$SS_{Effect} = 9(-1.000)^2 + 9(0.000)^2 + 9(1.000)^2$</div>
+              <div class="text-emerald-950 font-bold">
+                $$SS_{Effect} = 9(1) + 9(0) + 9(1) = 18.000$$
+              </div>
             </div>
           </div>
 
           <div class="text-xs text-slate-600 bg-emerald-50/60 p-3 rounded-lg border border-emerald-200">
-            <strong>Algebraic elegance:</strong> Because every condition has nine items, n pulls cleanly outside the summation sign, and all squared group totals divide by one shared denominator.
+            <strong>Balanced design property:</strong> Because every group has the same sample size ($n_i = 9$), each squared treatment effect $(M_i - M_{\text{Grand}})^2$ is multiplied by the exact same constant $9$.
           </div>
         </div>
 
@@ -513,61 +503,63 @@
           <div class="flex items-center justify-between border-b border-slate-200 pb-3">
             <div class="flex items-center gap-2">
               <span class="w-6 h-6 rounded-full bg-violet-600 text-white flex items-center justify-center text-xs font-bold">4</span>
-              <h3 class="font-bold text-slate-900 text-sm md:text-base">Sum of Squares Between Groups (SSB)</h3>
+              <h3 class="font-bold text-slate-900 text-sm md:text-base">Effect Variance: $SS_{Effect}$ ($SS_{Between}$)</h3>
             </div>
-            <span class="text-xs font-semibold text-violet-800 bg-violet-100 px-2 py-0.5 rounded">Individual Weighting by n_j</span>
+            <span class="text-xs font-semibold text-violet-800 bg-violet-100 px-2 py-0.5 rounded">Weighted by Each Group's $n_i$</span>
           </div>
 
           <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
-            <div class="text-xs text-slate-500 font-semibold uppercase">Definitional and Computational Formulas</div>
-            <div class="katex-render text-center text-xs py-1">
-              $$SS_{\text{between}} = \sum_{j=1}^{k} n_j (\bar{Y}_j - \bar{Y}_{\cdot\cdot})^2 = \sum_{j=1}^{k}\frac{T_j^2}{n_j} - \frac{T_{\cdot\cdot}^2}{N}$$
+            <div class="text-xs text-slate-500 font-semibold uppercase">Deviation of Sample Means Around the Grand Mean</div>
+            <div class="katex-render text-center text-sm py-1">
+              $$SS_{Effect} = \sum^{k} n_i(M_i - M_{\text{Grand}})^2$$
             </div>
             <div class="text-xs text-slate-700 font-mono-code bg-white p-3 rounded border border-slate-200 space-y-1.5">
-              <div class="text-slate-500">Method A (Individually weighted terms):</div>
-              <div>SSB = 9(4.333 - 5.167)² + 8(5.000 - 5.167)² + 7(6.429 - 5.167)²</div>
-              <div>SSB = 9(-0.8333)² + 8(-0.1667)² + 7(1.2619)² = 6.250 + 0.222 + 11.146 = <strong>17.619</strong></div>
-              <div class="text-slate-500 pt-1">Method B (Computational formula dividing each T_j² by its own n_j):</div>
-              <div>$$\left(\frac{39^2}{9} + \frac{40^2}{8} + \frac{45^2}{7}\right) - \frac{124^2}{24} = \left(169 + 200 + 289.286\right) - 640.667 = \mathbf{17.619}$$</div>
+              <div class="text-slate-500">Step by step substitution ($n_1=9, n_2=8, n_3=7$, $M_{\text{Grand}} = 5.167$):</div>
+              <div>$SS_{Effect} = 9(4.333 - 5.167)^2 + 8(5.000 - 5.167)^2 + 7(6.429 - 5.167)^2$</div>
+              <div>$SS_{Effect} = 9(-0.8333)^2 + 8(-0.1667)^2 + 7(1.2619)^2$</div>
+              <div class="text-violet-950 font-bold">
+                $$SS_{Effect} = 6.250 + 0.222 + 11.146 = 17.619$$
+              </div>
             </div>
           </div>
 
           <div class="text-xs text-slate-600 bg-violet-50/60 p-3 rounded-lg border border-violet-200">
-            <strong>Mandatory individual division:</strong> You cannot factor out sample size. Each group total squared must divide by its own specific group size: 39²/9, 40²/8, and 45²/7.
+            <strong>Why $n_i$ is inside the summation:</strong> The lecture formula $\sum^{k} n_i(M_i - M_{\text{Grand}})^2$ already handles unequal sample sizes automatically because each group's squared deviation $(M_i - M_{\text{Grand}})^2$ is multiplied by its specific group size $n_i$.
           </div>
         </div>
       </div>
 
 
-      <!-- Phase 5: Sum of Squares Within -->
+      <!-- Phase 5: Sum of Squares Error (Within) -->
       <div class="compare-row grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-300" data-stage="5">
         <!-- Left Side: Phase 5 -->
         <div class="p-6 space-y-4">
           <div class="flex items-center justify-between border-b border-slate-200 pb-3">
             <div class="flex items-center gap-2">
               <span class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold">5</span>
-              <h3 class="font-bold text-slate-900 text-sm md:text-base">Sum of Squares Within Groups (SSW / SSE)</h3>
+              <h3 class="font-bold text-slate-900 text-sm md:text-base">Error Variance: $SS_{Error}$ ($SS_{Within}$)</h3>
             </div>
-            <span class="text-xs font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">Pooled Group Errors</span>
+            <span class="text-xs font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">Deviations Around $M_i$</span>
           </div>
 
           <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
-            <div class="text-xs text-slate-500 font-semibold uppercase">Within Groups Error Formula</div>
+            <div class="text-xs text-slate-500 font-semibold uppercase">Deviation of Scores Around the Sample Mean</div>
             <div class="katex-render text-center text-sm py-1">
-              $$SS_{\text{within}} = SS_{\text{total}} - SS_{\text{between}} = \sum_{j=1}^{k}\sum_{i=1}^{n}(Y_{ij} - \bar{Y}_j)^2$$
+              $$SS_{Error} = \sum^{all\ scores} (X - M)^2$$
             </div>
             <div class="text-xs text-slate-700 font-mono-code bg-white p-3 rounded border border-slate-200 space-y-1">
-              <div>Subtractive method: 240.000 - 18.000 = <strong>222.000</strong></div>
-              <div>Sum of separate group variations:</div>
-              <div>SS₁ = 249 - (39²/9) = 249 - 169 = 80.000</div>
-              <div>SS₂ = 318 - (48²/9) = 318 - 256 = 62.000</div>
-              <div>SS₃ = 441 - (57²/9) = 441 - 361 = 80.000</div>
-              <div class="text-emerald-950 font-bold pt-1">SSW = 80 + 62 + 80 = 222.000</div>
+              <div>Group 1 ($M_1 = 4.333$): $\sum (X - 4.333)^2 = 80.000$</div>
+              <div>Group 2 ($M_2 = 5.333$): $\sum (X - 5.333)^2 = 62.000$</div>
+              <div>Group 3 ($M_3 = 6.333$): $\sum (X - 6.333)^2 = 80.000$</div>
+              <div class="text-emerald-950 font-bold pt-1">
+                $$SS_{Error} = 80.000 + 62.000 + 80.000 = 222.000$$
+              </div>
+              <div class="text-slate-500 text-[11px]">Check: $SS_{Total} - SS_{Effect} = 240.000 - 18.000 = 222.000$</div>
             </div>
           </div>
 
           <p class="text-xs text-slate-600">
-            Measures intrinsic random variation among subjects receiving the exact same caffeine dosage.
+            Measures variability of scores within the same condition around their own group mean $M$.
           </p>
         </div>
 
@@ -576,28 +568,29 @@
           <div class="flex items-center justify-between border-b border-slate-200 pb-3">
             <div class="flex items-center gap-2">
               <span class="w-6 h-6 rounded-full bg-violet-600 text-white flex items-center justify-center text-xs font-bold">5</span>
-              <h3 class="font-bold text-slate-900 text-sm md:text-base">Sum of Squares Within Groups (SSW / SSE)</h3>
+              <h3 class="font-bold text-slate-900 text-sm md:text-base">Error Variance: $SS_{Error}$ ($SS_{Within}$)</h3>
             </div>
-            <span class="text-xs font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">Pooled Group Errors</span>
+            <span class="text-xs font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">Deviations Around $M_i$</span>
           </div>
 
           <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
-            <div class="text-xs text-slate-500 font-semibold uppercase">Within Groups Error Formula</div>
+            <div class="text-xs text-slate-500 font-semibold uppercase">Deviation of Scores Around the Sample Mean</div>
             <div class="katex-render text-center text-sm py-1">
-              $$SS_{\text{within}} = SS_{\text{total}} - SS_{\text{between}} = \sum_{j=1}^{k}\sum_{i=1}^{n_j}(Y_{ij} - \bar{Y}_j)^2$$
+              $$SS_{Error} = \sum^{all\ scores} (X - M)^2$$
             </div>
             <div class="text-xs text-slate-700 font-mono-code bg-white p-3 rounded border border-slate-200 space-y-1">
-              <div>Subtractive method: 209.333 - 17.619 = <strong>191.714</strong></div>
-              <div>Sum of separate group variations:</div>
-              <div>SS₁ = 249 - (39²/9) = 249 - 169.000 = 80.000</div>
-              <div>SS₂ = 254 - (40²/8) = 254 - 200.000 = 54.000</div>
-              <div>SS₃ = 347 - (45²/7) = 347 - 289.286 = 57.714</div>
-              <div class="text-violet-950 font-bold pt-1">SSW = 80 + 54 + 57.714 = 191.714</div>
+              <div>Group 1 ($n_1=9, M_1 = 4.333$): $\sum (X - 4.333)^2 = 80.000$</div>
+              <div>Group 2 ($n_2=8, M_2 = 5.000$): $\sum (X - 5.000)^2 = 54.000$</div>
+              <div>Group 3 ($n_3=7, M_3 = 6.429$): $\sum (X - 6.429)^2 = 57.714$</div>
+              <div class="text-violet-950 font-bold pt-1">
+                $$SS_{Error} = 80.000 + 54.000 + 57.714 = 191.714$$
+              </div>
+              <div class="text-slate-500 text-[11px]">Check: $SS_{Total} - SS_{Effect} = 209.333 - 17.619 = 191.714$</div>
             </div>
           </div>
 
           <p class="text-xs text-slate-600">
-            Group sum of squares calculation uses the specific sample size for each column when squaring sums.
+            Each participant's score $X$ is subtracted from its own group mean $M$, squared, and summed across all 24 scores.
           </p>
         </div>
       </div>
@@ -610,31 +603,31 @@
           <div class="flex items-center justify-between border-b border-slate-200 pb-3">
             <div class="flex items-center gap-2">
               <span class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold">6</span>
-              <h3 class="font-bold text-slate-900 text-sm md:text-base">Degrees of Freedom (df)</h3>
+              <h3 class="font-bold text-slate-900 text-sm md:text-base">Degrees of Freedom ($df$)</h3>
             </div>
-            <span class="text-xs font-semibold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">Total N = 27</span>
+            <span class="text-xs font-semibold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">Total $n = 27, k = 3$</span>
           </div>
 
           <div class="grid grid-cols-3 gap-2 text-center text-xs">
             <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
-              <span class="block text-slate-500 font-medium">df Between</span>
-              <span class="block font-mono-code text-slate-600 text-[11px] mt-0.5">k - 1 = 3 - 1</span>
+              <span class="block text-slate-500 font-medium">$df_{Effect}$ ($df_{Between}$)</span>
+              <span class="block font-mono-code text-slate-600 text-[11px] mt-0.5">$k - 1 = 3 - 1$</span>
               <span class="text-lg font-bold text-slate-900 mt-1 block">2</span>
             </div>
             <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
-              <span class="block text-slate-500 font-medium">df Within</span>
-              <span class="block font-mono-code text-slate-600 text-[11px] mt-0.5">N - k = 27 - 3</span>
+              <span class="block text-slate-500 font-medium">$df_{Error}$ ($df_{Within}$)</span>
+              <span class="block font-mono-code text-slate-600 text-[11px] mt-0.5">$n - k = 27 - 3$</span>
               <span class="text-lg font-bold text-emerald-800 mt-1 block">24</span>
             </div>
             <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
-              <span class="block text-slate-500 font-medium">df Total</span>
-              <span class="block font-mono-code text-slate-600 text-[11px] mt-0.5">N - 1 = 27 - 1</span>
+              <span class="block text-slate-500 font-medium">$df_{Total}$</span>
+              <span class="block font-mono-code text-slate-600 text-[11px] mt-0.5">$n - 1 = 27 - 1$</span>
               <span class="text-lg font-bold text-slate-900 mt-1 block">26</span>
             </div>
           </div>
 
           <div class="text-xs text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-200">
-            For equal sample sizes, within degrees of freedom can be written as <span class="font-mono-code font-bold">k(n - 1) = 3 × 8 = 24</span>.
+            In the lecture slides, $n$ in the $df$ formulas stands for total sample size across all groups ($n = 27$), so $df_{Error} = n - k = 27 - 3 = 24$.
           </div>
         </div>
 
@@ -643,31 +636,31 @@
           <div class="flex items-center justify-between border-b border-slate-200 pb-3">
             <div class="flex items-center gap-2">
               <span class="w-6 h-6 rounded-full bg-violet-600 text-white flex items-center justify-center text-xs font-bold">6</span>
-              <h3 class="font-bold text-slate-900 text-sm md:text-base">Degrees of Freedom (df)</h3>
+              <h3 class="font-bold text-slate-900 text-sm md:text-base">Degrees of Freedom ($df$)</h3>
             </div>
-            <span class="text-xs font-semibold text-violet-800 bg-violet-100 px-2 py-0.5 rounded">Total N = 24</span>
+            <span class="text-xs font-semibold text-violet-800 bg-violet-100 px-2 py-0.5 rounded">Total $n = 24, k = 3$</span>
           </div>
 
           <div class="grid grid-cols-3 gap-2 text-center text-xs">
             <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
-              <span class="block text-slate-500 font-medium">df Between</span>
-              <span class="block font-mono-code text-slate-600 text-[11px] mt-0.5">k - 1 = 3 - 1</span>
+              <span class="block text-slate-500 font-medium">$df_{Effect}$ ($df_{Between}$)</span>
+              <span class="block font-mono-code text-slate-600 text-[11px] mt-0.5">$k - 1 = 3 - 1$</span>
               <span class="text-lg font-bold text-slate-900 mt-1 block">2</span>
             </div>
             <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
-              <span class="block text-slate-500 font-medium">df Within</span>
-              <span class="block font-mono-code text-slate-600 text-[11px] mt-0.5">N - k = 24 - 3</span>
+              <span class="block text-slate-500 font-medium">$df_{Error}$ ($df_{Within}$)</span>
+              <span class="block font-mono-code text-slate-600 text-[11px] mt-0.5">$n - k = 24 - 3$</span>
               <span class="text-lg font-bold text-violet-800 mt-1 block">21</span>
             </div>
             <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
-              <span class="block text-slate-500 font-medium">df Total</span>
-              <span class="block font-mono-code text-slate-600 text-[11px] mt-0.5">N - 1 = 24 - 1</span>
+              <span class="block text-slate-500 font-medium">$df_{Total}$</span>
+              <span class="block font-mono-code text-slate-600 text-[11px] mt-0.5">$n - 1 = 24 - 1$</span>
               <span class="text-lg font-bold text-slate-900 mt-1 block">23</span>
             </div>
           </div>
 
           <div class="text-xs text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-200">
-            For unequal sizes, within degrees of freedom is computed as <span class="font-mono-code font-bold">Σ(n_j - 1) = (9-1) + (8-1) + (7-1) = 8 + 7 + 6 = 21</span>.
+            Using total sample size $n = 24$, $df_{Error} = n - k = 24 - 3 = 21$ (which equals $(9-1) + (8-1) + (7-1) = 21$).
           </div>
         </div>
       </div>
@@ -680,31 +673,31 @@
           <div class="flex items-center justify-between border-b border-slate-200 pb-3">
             <div class="flex items-center gap-2">
               <span class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold">7</span>
-              <h3 class="font-bold text-slate-900 text-sm md:text-base">Mean Squares and F Ratio</h3>
+              <h3 class="font-bold text-slate-900 text-sm md:text-base">Mean Squares ($MS$) and $F$ Ratio</h3>
             </div>
-            <span class="text-xs font-semibold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">Balanced F Statistic</span>
+            <span class="text-xs font-semibold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">Balanced $F$ Statistic</span>
           </div>
 
           <div class="grid grid-cols-2 gap-3 text-xs font-mono-code">
             <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
-              <div class="text-slate-500 font-sans text-[11px]">Mean Square Between</div>
-              <div class="text-slate-700 mt-1">MSB = 18.000 / 2</div>
+              <div class="text-slate-500 font-sans text-[11px]">$MS_{Effect} = SS_{Effect} / df_{Effect}$</div>
+              <div class="text-slate-700 mt-1">$MS_{Between} = 18.000 / 2$</div>
               <div class="text-base font-bold text-slate-900 mt-0.5">9.000</div>
             </div>
             <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
-              <div class="text-slate-500 font-sans text-[11px]">Mean Square Within</div>
-              <div class="text-slate-700 mt-1">MSW = 222.000 / 24</div>
+              <div class="text-slate-500 font-sans text-[11px]">$MS_{Error} = SS_{Error} / df_{Error}$</div>
+              <div class="text-slate-700 mt-1">$MS_{Within} = 222.000 / 24$</div>
               <div class="text-base font-bold text-emerald-800 mt-0.5">9.250</div>
             </div>
           </div>
 
           <div class="bg-emerald-50 border border-emerald-300 rounded-xl p-4 text-center">
-            <div class="text-xs font-bold text-emerald-900 uppercase tracking-wider">Computed F Ratio</div>
-            <div class="text-3xl font-extrabold text-emerald-950 font-mono-code my-1">
-              $$F = \frac{MS_{\text{between}}}{MS_{\text{within}}} = \frac{9.000}{9.250} = 0.973$$
+            <div class="text-xs font-bold text-emerald-900 uppercase tracking-wider">Computed $F$ Ratio</div>
+            <div class="text-2xl font-extrabold text-emerald-950 font-mono-code my-1">
+              $$F = \frac{MS_{Effect}}{MS_{Error}} = \frac{MS_{Between}}{MS_{Within}} = \frac{9.000}{9.250} = 0.973$$
             </div>
             <div class="text-xs text-emerald-800 font-mono-code mt-1">
-              p value = 0.3923 (Critical value at α=0.05 with df 2, 24 is 3.403)
+              $p = 0.3923$ | $F_{critical}(2, 24) = 3.403$ at $\alpha = .05$
             </div>
           </div>
         </div>
@@ -714,45 +707,45 @@
           <div class="flex items-center justify-between border-b border-slate-200 pb-3">
             <div class="flex items-center gap-2">
               <span class="w-6 h-6 rounded-full bg-violet-600 text-white flex items-center justify-center text-xs font-bold">7</span>
-              <h3 class="font-bold text-slate-900 text-sm md:text-base">Mean Squares and F Ratio</h3>
+              <h3 class="font-bold text-slate-900 text-sm md:text-base">Mean Squares ($MS$) and $F$ Ratio</h3>
             </div>
-            <span class="text-xs font-semibold text-violet-800 bg-violet-100 px-2 py-0.5 rounded">Unbalanced F Statistic</span>
+            <span class="text-xs font-semibold text-violet-800 bg-violet-100 px-2 py-0.5 rounded">Unbalanced $F$ Statistic</span>
           </div>
 
           <div class="grid grid-cols-2 gap-3 text-xs font-mono-code">
             <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
-              <div class="text-slate-500 font-sans text-[11px]">Mean Square Between</div>
-              <div class="text-slate-700 mt-1">MSB = 17.619 / 2</div>
+              <div class="text-slate-500 font-sans text-[11px]">$MS_{Effect} = SS_{Effect} / df_{Effect}$</div>
+              <div class="text-slate-700 mt-1">$MS_{Between} = 17.619 / 2$</div>
               <div class="text-base font-bold text-slate-900 mt-0.5">8.810</div>
             </div>
             <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
-              <div class="text-slate-500 font-sans text-[11px]">Mean Square Within</div>
-              <div class="text-slate-700 mt-1">MSW = 191.714 / 21</div>
+              <div class="text-slate-500 font-sans text-[11px]">$MS_{Error} = SS_{Error} / df_{Error}$</div>
+              <div class="text-slate-700 mt-1">$MS_{Within} = 191.714 / 21$</div>
               <div class="text-base font-bold text-violet-800 mt-0.5">9.129</div>
             </div>
           </div>
 
           <div class="bg-violet-50 border border-violet-300 rounded-xl p-4 text-center">
-            <div class="text-xs font-bold text-violet-900 uppercase tracking-wider">Computed F Ratio</div>
-            <div class="text-3xl font-extrabold text-violet-950 font-mono-code my-1">
-              $$F = \frac{MS_{\text{between}}}{MS_{\text{within}}} = \frac{8.810}{9.129} = 0.965$$
+            <div class="text-xs font-bold text-violet-900 uppercase tracking-wider">Computed $F$ Ratio</div>
+            <div class="text-2xl font-extrabold text-violet-950 font-mono-code my-1">
+              $$F = \frac{MS_{Effect}}{MS_{Error}} = \frac{MS_{Between}}{MS_{Within}} = \frac{8.810}{9.129} = 0.965$$
             </div>
             <div class="text-xs text-violet-800 font-mono-code mt-1">
-              p value = 0.3973 (Critical value at α=0.05 with df 2, 21 is 3.467)
+              $p = 0.3973$ | $F_{critical}(2, 21) = 3.467$ at $\alpha = .05$
             </div>
           </div>
         </div>
       </div>
 
 
-      <!-- Phase 8: ANOVA Summary Table -->
+      <!-- Phase 8: ANOVA Summary Table & Eta Squared -->
       <div class="compare-row grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-300" data-stage="8">
         <!-- Left Side: Phase 8 -->
         <div class="p-6 space-y-4">
           <div class="flex items-center justify-between border-b border-slate-200 pb-3">
             <div class="flex items-center gap-2">
               <span class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold">8</span>
-              <h3 class="font-bold text-slate-900 text-sm md:text-base">Complete ANOVA Summary Table</h3>
+              <h3 class="font-bold text-slate-900 text-sm md:text-base">One Way ANOVA Summary Table and Effect Size ($\eta^2$)</h3>
             </div>
             <span class="text-xs font-semibold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded">Equal Sizes</span>
           </div>
@@ -761,45 +754,46 @@
             <table class="w-full text-xs divide-y divide-slate-200 font-mono-code">
               <thead class="bg-slate-100 font-sans font-semibold text-slate-800">
                 <tr>
-                  <th class="py-2.5 px-3 text-left">Source</th>
+                  <th class="py-2.5 px-3 text-left">SOURCE</th>
                   <th class="py-2.5 px-3 text-right">SS</th>
                   <th class="py-2.5 px-3 text-right">df</th>
-                  <th class="py-2.5 px-3 text-right">MS</th>
+                  <th class="py-2.5 px-3 text-right">$s^2$ (or MS)</th>
                   <th class="py-2.5 px-3 text-right">F</th>
-                  <th class="py-2.5 px-3 text-right">p value</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100 text-slate-700">
                 <tr class="bg-white">
-                  <td class="py-2.5 px-3 font-sans font-semibold text-slate-900 text-left">Between Groups</td>
+                  <td class="py-2.5 px-3 font-sans font-semibold text-slate-900 text-left">Effect (Between)</td>
                   <td class="py-2.5 px-3 text-right">18.000</td>
                   <td class="py-2.5 px-3 text-right">2</td>
                   <td class="py-2.5 px-3 text-right font-semibold">9.000</td>
                   <td class="py-2.5 px-3 text-right font-bold text-indigo-700">0.973</td>
-                  <td class="py-2.5 px-3 text-right font-semibold text-slate-900">0.3923</td>
                 </tr>
                 <tr class="bg-slate-50/50">
-                  <td class="py-2.5 px-3 font-sans font-semibold text-slate-900 text-left">Within Groups</td>
+                  <td class="py-2.5 px-3 font-sans font-semibold text-slate-900 text-left">Error (Within)</td>
                   <td class="py-2.5 px-3 text-right">222.000</td>
                   <td class="py-2.5 px-3 text-right">24</td>
                   <td class="py-2.5 px-3 text-right font-semibold">9.250</td>
-                  <td class="py-2.5 px-3 text-right text-slate-400"></td>
                   <td class="py-2.5 px-3 text-right text-slate-400"></td>
                 </tr>
                 <tr class="bg-slate-100/70 font-semibold border-t border-slate-300">
                   <td class="py-2.5 px-3 font-sans text-slate-900 text-left">Total</td>
                   <td class="py-2.5 px-3 text-right">240.000</td>
                   <td class="py-2.5 px-3 text-right">26</td>
-                  <td class="py-2.5 px-3 text-right text-slate-400"></td>
-                  <td class="py-2.5 px-3 text-right text-slate-400"></td>
+                  <td class="py-2.5 px-3 text-right">9.231</td>
                   <td class="py-2.5 px-3 text-right text-slate-400"></td>
                 </tr>
               </tbody>
             </table>
           </div>
 
+          <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 text-xs space-y-1">
+            <div class="font-semibold text-slate-800">Effect Size (Eta squared, $\eta^2$):</div>
+            <div>$$\eta^2 = \frac{SS_{between}}{SS_{total}} = \frac{MS_{between} \cdot df_{between}}{(MS_{between} \cdot df_{between}) + (MS_{within} \cdot df_{within})} = \frac{18.000}{240.000} = 0.075$$</div>
+          </div>
+
           <div class="p-3.5 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-900 space-y-1">
-            <span class="font-bold">Statistical Inference:</span> Fail to reject the null hypothesis because p = 0.3923 is greater than the standard threshold 0.05. No significant mean difference detected among caffeine levels.
+            <span class="font-bold">Statistical Inference:</span> Since computed $F(0.973)$ is less extreme than $F_{critical}(2, 24) = 3.403$, we fail to reject $H_0$ ($\mu_1 = \mu_2 = \mu_3$).
           </div>
         </div>
 
@@ -808,7 +802,7 @@
           <div class="flex items-center justify-between border-b border-slate-200 pb-3">
             <div class="flex items-center gap-2">
               <span class="w-6 h-6 rounded-full bg-violet-600 text-white flex items-center justify-center text-xs font-bold">8</span>
-              <h3 class="font-bold text-slate-900 text-sm md:text-base">Complete ANOVA Summary Table</h3>
+              <h3 class="font-bold text-slate-900 text-sm md:text-base">One Way ANOVA Summary Table and Effect Size ($\eta^2$)</h3>
             </div>
             <span class="text-xs font-semibold text-violet-800 bg-violet-100 px-2.5 py-0.5 rounded">Unequal Sizes</span>
           </div>
@@ -817,45 +811,46 @@
             <table class="w-full text-xs divide-y divide-slate-200 font-mono-code">
               <thead class="bg-slate-100 font-sans font-semibold text-slate-800">
                 <tr>
-                  <th class="py-2.5 px-3 text-left">Source</th>
+                  <th class="py-2.5 px-3 text-left">SOURCE</th>
                   <th class="py-2.5 px-3 text-right">SS</th>
                   <th class="py-2.5 px-3 text-right">df</th>
-                  <th class="py-2.5 px-3 text-right">MS</th>
+                  <th class="py-2.5 px-3 text-right">$s^2$ (or MS)</th>
                   <th class="py-2.5 px-3 text-right">F</th>
-                  <th class="py-2.5 px-3 text-right">p value</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100 text-slate-700">
                 <tr class="bg-white">
-                  <td class="py-2.5 px-3 font-sans font-semibold text-slate-900 text-left">Between Groups</td>
+                  <td class="py-2.5 px-3 font-sans font-semibold text-slate-900 text-left">Effect (Between)</td>
                   <td class="py-2.5 px-3 text-right">17.619</td>
                   <td class="py-2.5 px-3 text-right">2</td>
                   <td class="py-2.5 px-3 text-right font-semibold">8.810</td>
                   <td class="py-2.5 px-3 text-right font-bold text-indigo-700">0.965</td>
-                  <td class="py-2.5 px-3 text-right font-semibold text-slate-900">0.3973</td>
                 </tr>
                 <tr class="bg-slate-50/50">
-                  <td class="py-2.5 px-3 font-sans font-semibold text-slate-900 text-left">Within Groups</td>
+                  <td class="py-2.5 px-3 font-sans font-semibold text-slate-900 text-left">Error (Within)</td>
                   <td class="py-2.5 px-3 text-right">191.714</td>
                   <td class="py-2.5 px-3 text-right">21</td>
                   <td class="py-2.5 px-3 text-right font-semibold">9.129</td>
-                  <td class="py-2.5 px-3 text-right text-slate-400"></td>
                   <td class="py-2.5 px-3 text-right text-slate-400"></td>
                 </tr>
                 <tr class="bg-slate-100/70 font-semibold border-t border-slate-300">
                   <td class="py-2.5 px-3 font-sans text-slate-900 text-left">Total</td>
                   <td class="py-2.5 px-3 text-right">209.333</td>
                   <td class="py-2.5 px-3 text-right">23</td>
-                  <td class="py-2.5 px-3 text-right text-slate-400"></td>
-                  <td class="py-2.5 px-3 text-right text-slate-400"></td>
+                  <td class="py-2.5 px-3 text-right">9.101</td>
                   <td class="py-2.5 px-3 text-right text-slate-400"></td>
                 </tr>
               </tbody>
             </table>
           </div>
 
+          <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 text-xs space-y-1">
+            <div class="font-semibold text-slate-800">Effect Size (Eta squared, $\eta^2$):</div>
+            <div>$$\eta^2 = \frac{SS_{between}}{SS_{total}} = \frac{MS_{between} \cdot df_{between}}{(MS_{between} \cdot df_{between}) + (MS_{within} \cdot df_{within})} = \frac{17.619}{209.333} = 0.084$$</div>
+          </div>
+
           <div class="p-3.5 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-900 space-y-1">
-            <span class="font-bold">Statistical Inference:</span> Fail to reject the null hypothesis because p = 0.3973 is greater than the standard threshold 0.05. Notice how close F remains (0.973 versus 0.965) even after trimming three observations.
+            <span class="font-bold">Statistical Inference:</span> Since computed $F(0.965)$ is less extreme than $F_{critical}(2, 21) = 3.467$, we fail to reject $H_0$ ($\mu_1 = \mu_2 = \mu_3$).
           </div>
         </div>
       </div>
@@ -868,34 +863,37 @@
           <div class="flex items-center justify-between border-b border-slate-200 pb-3">
             <div class="flex items-center gap-2">
               <span class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold">9</span>
-              <h3 class="font-bold text-slate-900 text-sm md:text-base">Methodological Strengths and Assumptions</h3>
+              <h3 class="font-bold text-slate-900 text-sm md:text-base">ANOVA Assumptions and Methodological Properties</h3>
             </div>
             <span class="text-xs font-semibold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">Equal Sample Properties</span>
           </div>
 
           <div class="space-y-3 text-xs text-slate-700 leading-relaxed">
             <div class="p-3 rounded-lg bg-slate-50 border border-slate-200 space-y-1">
-              <strong class="text-slate-900 block font-semibold">1. Robustness Against Variance Inequality</strong>
+              <strong class="text-slate-900 block font-semibold">1. Robustness to Homogeneity of Variance ($\sigma^2_1 = \sigma^2_2 = \dots = \sigma^2_k = \sigma^2_e$)</strong>
               <p>
-                Equal group allocations afford maximal resilience against violations of homoscedasticity. Even if one population variance is two or three times greater, the actual Type I error rate remains tightly anchored near the nominal 0.05 level.
+                As noted in the lecture slides, if you have equal group sizes ($n_i$), ANOVA is generally resilient ("robust") to moderate violations of both normality and homogeneity of variance.
               </p>
             </div>
 
             <div class="p-3 rounded-lg bg-slate-50 border border-slate-200 space-y-1">
-              <strong class="text-slate-900 block font-semibold">2. Classical Tukey Honestly Significant Difference</strong>
+              <strong class="text-slate-900 block font-semibold">2. Direct Estimation of $MS_{Effect}$ from Sample Mean Variance ($s^2_M$)</strong>
               <p>
-                Pairwise multiple comparisons use the original Tukey test statistic without modification because the standard error term contains one fixed denominator:
+                With equal sample sizes $n_i$, the central limit theorem relation from the lecture slides holds directly with a single $n_i$:
               </p>
               <div class="katex-render text-center py-1">
-                $$q = \frac{\bar{Y}_A - \bar{Y}_B}{\sqrt{\frac{MS_{\text{within}}}{n}}}$$
+                $$MS_{Between} = n_i \cdot s^2_M$$
               </div>
             </div>
 
             <div class="p-3 rounded-lg bg-slate-50 border border-slate-200 space-y-1">
-              <strong class="text-slate-900 block font-semibold">3. Statistical Power Maximization</strong>
+              <strong class="text-slate-900 block font-semibold">3. Unweighted Pooling of Sample Variances</strong>
               <p>
-                Dividing available participants evenly among levels delivers the greatest statistical test power for detecting differences under a constant total participant sample budget.
+                When all groups have the same $n_i$, $MS_{Within}$ ($\sigma^2_e$) is simply the unweighted arithmetic average of the individual group variances:
               </p>
+              <div class="katex-render text-center py-1">
+                $$MS_{Within} = \frac{s^2_{group\ 1} + s^2_{group\ 2} + \dots + s^2_{group\ k}}{k}$$
+              </div>
             </div>
           </div>
         </div>
@@ -905,33 +903,33 @@
           <div class="flex items-center justify-between border-b border-slate-200 pb-3">
             <div class="flex items-center gap-2">
               <span class="w-6 h-6 rounded-full bg-violet-600 text-white flex items-center justify-center text-xs font-bold">9</span>
-              <h3 class="font-bold text-slate-900 text-sm md:text-base">Methodological Strengths and Assumptions</h3>
+              <h3 class="font-bold text-slate-900 text-sm md:text-base">ANOVA Assumptions and Methodological Properties</h3>
             </div>
             <span class="text-xs font-semibold text-violet-800 bg-violet-100 px-2 py-0.5 rounded">Unequal Sample Properties</span>
           </div>
 
           <div class="space-y-3 text-xs text-slate-700 leading-relaxed">
             <div class="p-3 rounded-lg bg-slate-50 border border-slate-200 space-y-1">
-              <strong class="text-slate-900 block font-semibold">1. Vulnerability to Variance Violations</strong>
+              <strong class="text-slate-900 block font-semibold">1. Vulnerability to Homoscedasticity Violations (Levene's Test & Welch's ANOVA)</strong>
               <p>
-                Unequal sample counts make the test sensitive to heteroscedasticity. If smaller groups carry larger variances, the true Type I error rate inflates above 0.05 (producing false positives). If larger groups possess higher variance, the test becomes overly conservative.
+                With unequal group sizes, standard ANOVA is not robust to violations of homogeneity of variance. If Levene's test is significant ($p < .05$), you must use <strong>Welch's ANOVA</strong> as specified in the lecture slides.
               </p>
             </div>
 
             <div class="p-3 rounded-lg bg-slate-50 border border-slate-200 space-y-1">
-              <strong class="text-slate-900 block font-semibold">2. Mandatory Tukey Kramer Adjustment</strong>
+              <strong class="text-slate-900 block font-semibold">2. Group Size Weighting in $SS_{Effect}$</strong>
               <p>
-                Standard Tukey HSD cannot be utilized directly. The Tukey Kramer modification adjusts the standard error using the harmonic mean of the two specific group sizes being contrasted:
+                Because $n_i$ varies across groups, you cannot multiply the variance of sample means by a single $n_i$. You must weight each group's squared deviation by its own $n_i$:
               </p>
               <div class="katex-render text-center py-1">
-                $$q = \frac{\bar{Y}_A - \bar{Y}_B}{\sqrt{\frac{MS_{\text{within}}}{2}\left(\frac{1}{n_A} + \frac{1}{n_B}\right)}}$$
+                $$SS_{Effect} = \sum^{k} n_i(M_i - M_{\text{Grand}})^2$$
               </div>
             </div>
 
             <div class="p-3 rounded-lg bg-slate-50 border border-slate-200 space-y-1">
-              <strong class="text-slate-900 block font-semibold">3. Reduced Effective Sample Size</strong>
+              <strong class="text-slate-900 block font-semibold">3. Degrees of Freedom Weighting for $MS_{Within}$</strong>
               <p>
-                Unbalanced designs suffer power degradation because statistical precision is constrained by the smallest group in any pairwise contrast.
+                $MS_{Within}$ is no longer a simple average of the group variances $s^2_{group\ i}$; instead, summing $\sum(X - M)^2$ across all scores weights each group's variance by its degrees of freedom $(n_i - 1)$ divided by $df_{Within} = n - k$.
               </p>
             </div>
           </div>
