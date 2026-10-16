@@ -481,12 +481,12 @@
           <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
             <div class="text-xs text-slate-500 font-semibold uppercase">Deviation of Sample Means Around the Grand Mean</div>
             <div class="katex-render text-center text-sm py-1">
-              $$SS_{Effect} = \sum^{k} n_i(M_i - M_{\text{Grand}})^2$$
+              $$SS_{\text{Effect}} = \sum^{k} n_i(M_i - M_{\text{Grand}})^2 \overset{\text{for equal } n_i \text{ only}}{=} n_i \sum^{k} (M_i - M_{\text{Grand}})^2$$
             </div>
             <div class="text-xs text-slate-700 font-mono-code bg-white p-3 rounded border border-slate-200 space-y-1.5">
               <div class="text-slate-500">Step by step substitution ($n_1 = n_2 = n_3 = 9$, $M_{\text{Grand}} = 5.333$):</div>
               <div>$SS_{Effect} = 9(4.333 - 5.333)^2 + 9(5.333 - 5.333)^2 + 9(6.333 - 5.333)^2$</div>
-              <div>$SS_{Effect} = 9(-1.000)^2 + 9(0.000)^2 + 9(1.000)^2$</div>
+              <div>$SS_{Effect} = 9(-1.000)^2 + 9(0.000)^2 + 9(1.000)^2 = 9((-1)^2 + (0)^2 + (1)^2)$</div>
               <div class="text-emerald-950 font-bold">
                 $$SS_{Effect} = 9(1) + 9(0) + 9(1) = 18.000$$
               </div>
@@ -936,18 +936,12 @@
         </div>
       </div>
 		<div class="mt-12 pt-6 border-t border-stone-800 flex flex-col items-center justify-center gap-2">
-		  <a href="lab_7_omnibus_and_multiple_t_walkthrough.html" class="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-sm tracking-wide transition shadow-lg shadow-amber-500/10 cursor-pointer">
+		  <a href="lab_7_omnibus_and_APA_reporting_walkthrough.html" class="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-sm tracking-wide transition shadow-lg shadow-amber-500/10 cursor-pointer">
 			Continue to Next Page &rarr;
 		  </a>
-		  <span class="text-xs text-stone-500">What did the z distribution say to the t distribution? You may look like me but you’re not normal.</span>
 		</div>
     </div>
   </div>
-
-  <!-- Footer Section -->
-  <footer class="bg-white border-t border-slate-300 py-4 px-6 text-center text-xs text-slate-500">
-    One Way Analysis of Variance Comparison Laboratory
-  </footer>
 
   <!-- Scripts -->
   <script>

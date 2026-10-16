@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab 7: Omnibus ANOVA and Multiple Comparison Techniques</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Inter & Newsreader Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+  <!-- MathJax for Mathematical Notation -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      chtml: {
+        scale: 1,
+        minScale: 0.5
+      },
+      startup: {
+        pageReady: () => {
+          return MathJax.startup.defaultPageReady().then(() => {
+            fitFormulasToContainers();
+          });
+        }
+      }
+    };
+
+    function fitFormulasToContainers() {
+      // Scale display equations so they never clip or require scrollbars
+      const displayContainers = document.querySelectorAll('mjx-container[display="true"]');
+      displayContainers.forEach(container => {
+        const mathEl = container.querySelector('mjx-math');
+        if (!mathEl) return;
+
+        // Reset previous transforms to measure true natural dimensions
+        mathEl.style.transform = 'none';
+        mathEl.style.transformOrigin = 'center center';
+        container.style.height = 'auto';
+
+        const parent = container.parentElement;
+        if (!parent) return;
+
+        const parentStyle = window.getComputedStyle(parent);
+        const paddingLeft = parseFloat(parentStyle.paddingLeft) || 0;
+        const paddingRight = parseFloat(parentStyle.paddingRight) || 0;
+        const availableWidth = parent.clientWidth - paddingLeft - paddingRight - 4;
+        const naturalWidth = mathEl.scrollWidth || mathEl.getBoundingClientRect().width;
+
+        if (naturalWidth > availableWidth && availableWidth > 0) {
+          const scale = availableWidth / naturalWidth;
+          mathEl.style.display = 'inline-block';
+          mathEl.style.transform = `scale(${scale})`;
+          // Adjust container height to eliminate vertical whitespace after scaling
+          const naturalHeight = mathEl.getBoundingClientRect().height / scale;
+          container.style.height = `${naturalHeight * scale}px`;
+          container.style.display = 'flex';
+          container.style.alignItems = 'center';
+          container.style.justifyContent = 'center';
+        } else {
+          mathEl.style.display = '';
+          container.style.display = '';
+        }
+      });
+
+      // Also check any inline math inside constrained boxes or badges
+      const inlineContainers = document.querySelectorAll('.scale-inline-math mjx-container:not([display="true"])');
+      inlineContainers.forEach(container => {
+        const mathEl = container.querySelector('mjx-math');
+        if (!mathEl) return;
+
+        mathEl.style.transform = 'none';
+        const parent = container.parentElement;
+        if (!parent) return;
+
+        const parentStyle = window.getComputedStyle(parent);
+        const paddingLeft = parseFloat(parentStyle.paddingLeft) || 0;
+        const paddingRight = parseFloat(parentStyle.paddingRight) || 0;
+        const availableWidth = parent.clientWidth - paddingLeft - paddingRight - 4;
+        const naturalWidth = mathEl.scrollWidth || mathEl.getBoundingClientRect().width;
+
+        if (naturalWidth > availableWidth && availableWidth > 0) {
+          const scale = availableWidth / naturalWidth;
+          mathEl.style.display = 'inline-block';
+          mathEl.style.transformOrigin = 'left center';
+          mathEl.style.transform = `scale(${scale})`;
+        }
+      });
+    }
+
+    window.addEventListener('resize', () => {
+      window.requestAnimationFrame(fitFormulasToContainers);
+    });
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      color: #1e293b;
+      background-color: #f8fafc;
+    }
+    .serif-quote {
+      font-family: 'Newsreader', serif;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    .apa-table {
+      border-top: 2px solid #0f172a;
+      border-bottom: 2px solid #0f172a;
+    }
+    .apa-table-header {
+      border-bottom: 1px solid #0f172a;
+    }
+    .apa-sub-border {
+      border-bottom: 1px solid #cbd5e1;
+    }
+    /* Eliminate all scrollbars on MathJax equations and allow clean scaling */
+    mjx-container[jax="CHTML"][display="true"] {
+      max-width: 100%;
+      overflow: hidden !important;
+      padding: 0.15rem 0;
+      margin: 0.25rem 0 !important;
+    }
+    mjx-container[jax="CHTML"] {
+      overflow: visible;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-indigo-100 selection:text-indigo-900">
+
+  <!-- Top Academic Navigation Bar -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-slate-200 shadow-xs">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-lg shadow-sm">
+            Ψ
+          </div>
+          <div>
+            <h1 class="text-base sm:text-lg font-bold text-slate-900 tracking-tight leading-tight">
+              Lab 7: Omnibus ANOVA & Multiple Comparison Procedures
+            </h1>
+            <p class="text-xs text-slate-500 font-medium">Equal Sample Size Model ($n_i = 9$ per group, total $n = 27$)</p>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2">
+          <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+            Lab Guide
+          </span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Single-Column Container -->
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="space-y-10">
+
+      <!-- SECTION 1: STUDY CONTEXT & RAW DATA -->
+      <section id="section-raw-data" class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs">
+        <div class="flex items-center space-x-3 mb-4">
+          <span class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm">1</span>
+          <h2 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Study Context & Raw Sample Data ($X$)</h2>
+        </div>
+        
+        <p class="text-slate-600 leading-relaxed mb-6">
+          Researchers examined the impact of caffeine consumption on sustained attention performance accuracy. Participants were randomly sampled and assigned to one of $k = 3$ experimental caffeine conditions: No Caffeine, Low Caffeine, and High Caffeine. Performance was measured via the total number of correct responses ($X$) on a continuous sustained attention battery, where each individual score follows the structural model $X_{ij} = \mu + (\mu_j - \mu) + (X_{ij} - \mu_j) = \mu + \tau_j + \epsilon_{ij}$.
+        </p>
+
+        <!-- Hypothesis Callout -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+          <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 scale-inline-math overflow-hidden">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-1">Null Hypothesis</span>
+            <p class="font-mono text-sm sm:text-base font-semibold text-slate-800">$H_0: \mu_1 = \mu_2 = \mu_3 \quad (\mu_A = \mu_B = \mu_C = \dots = \mu_k)$</p>
+            <p class="text-xs text-slate-500 mt-1">All $k$ population group means are equal in sustained attention accuracy.</p>
+          </div>
+          <div class="bg-indigo-50/70 border border-indigo-100 rounded-2xl p-4 scale-inline-math overflow-hidden">
+            <span class="text-xs font-bold uppercase tracking-wider text-indigo-600 block mb-1">Alternative Hypothesis</span>
+            <p class="font-mono text-sm sm:text-base font-semibold text-indigo-950">$H_1 \text{ (or } H_a\text{)}: \text{The } k \text{ population means are not equal}$</p>
+            <p class="text-xs text-indigo-800 mt-1">There is at least one mean difference among the groups.</p>
+          </div>
+        </div>
+
+        <!-- Raw Data Table & Group Stats -->
+        <div class="overflow-x-auto custom-scrollbar">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="border-b-2 border-slate-800">
+                <th class="py-3 px-4 font-semibold text-slate-900">Participant Index</th>
+                <th class="py-3 px-4 font-semibold text-slate-900 bg-slate-50">No Caffeine ($M_1$)</th>
+                <th class="py-3 px-4 font-semibold text-slate-900">Low Caffeine ($M_2$)</th>
+                <th class="py-3 px-4 font-semibold text-slate-900 bg-slate-50">High Caffeine ($M_3$)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 font-mono text-xs sm:text-sm">
+              <tr><td class="py-2 px-4 text-slate-400">Subject 1</td><td class="py-2 px-4 bg-slate-50">0</td><td class="py-2 px-4">10</td><td class="py-2 px-4 bg-slate-50">10</td></tr>
+              <tr><td class="py-2 px-4 text-slate-400">Subject 2</td><td class="py-2 px-4 bg-slate-50">6</td><td class="py-2 px-4">4</td><td class="py-2 px-4 bg-slate-50">16</td></tr>
+              <tr><td class="py-2 px-4 text-slate-400">Subject 3</td><td class="py-2 px-4 bg-slate-50">12</td><td class="py-2 px-4">16</td><td class="py-2 px-4 bg-slate-50">22</td></tr>
+              <tr><td class="py-2 px-4 text-slate-400">Subject 4</td><td class="py-2 px-4 bg-slate-50">6</td><td class="py-2 px-4">16</td><td class="py-2 px-4 bg-slate-50">16</td></tr>
+              <tr><td class="py-2 px-4 text-slate-400">Subject 5</td><td class="py-2 px-4 bg-slate-50">0</td><td class="py-2 px-4">4</td><td class="py-2 px-4 bg-slate-50">10</td></tr>
+              <tr><td class="py-2 px-4 text-slate-400">Subject 6</td><td class="py-2 px-4 bg-slate-50">18</td><td class="py-2 px-4">16</td><td class="py-2 px-4 bg-slate-50">28</td></tr>
+              <tr><td class="py-2 px-4 text-slate-400">Subject 7</td><td class="py-2 px-4 bg-slate-50">6</td><td class="py-2 px-4">10</td><td class="py-2 px-4 bg-slate-50">16</td></tr>
+              <tr><td class="py-2 px-4 text-slate-400">Subject 8</td><td class="py-2 px-4 bg-slate-50">0</td><td class="py-2 px-4">4</td><td class="py-2 px-4 bg-slate-50">10</td></tr>
+              <tr><td class="py-2 px-4 text-slate-400">Subject 9</td><td class="py-2 px-4 bg-slate-50">12</td><td class="py-2 px-4">16</td><td class="py-2 px-4 bg-slate-50">22</td></tr>
+            </tbody>
+            <tfoot>
+              <tr class="border-t-2 border-slate-800 bg-indigo-50/50 font-sans font-semibold text-slate-900 text-sm">
+                <td class="py-3 px-4">
+                  <div>Summary Statistics</div>
+                  <div class="text-xs text-indigo-700 font-normal">Grand Mean ($GM$) $= 11.33$, Total $n = 27$</div>
+                </td>
+                <td class="py-3 px-4">
+                  <div>$M_1 = 6.67$</div>
+                  <div class="text-xs text-slate-500 font-normal">$SD = 6.32$, $n_1 = 9$</div>
+                </td>
+                <td class="py-3 px-4">
+                  <div>$M_2 = 10.67$</div>
+                  <div class="text-xs text-slate-500 font-normal">$SD = 5.57$, $n_2 = 9$</div>
+                </td>
+                <td class="py-3 px-4">
+                  <div>$M_3 = 16.67$</div>
+                  <div class="text-xs text-slate-500 font-normal">$SD = 6.32$, $n_3 = 9$</div>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECTION 2: OMNIBUS ANOVA SOURCE TABLE -->
+      <section id="section-omnibus" class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs">
+        <div class="flex items-center space-x-3 mb-4">
+          <span class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm">2</span>
+          <h2 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Omnibus ANOVA Source Table (Equal Sample Size)</h2>
+        </div>
+
+        <!-- Lecture Formulas Reference Grid (Auto-Scaled to Fit Without Scrollbars) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6 text-xs bg-slate-50 p-4 rounded-2xl border border-slate-200">
+          <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between overflow-hidden">
+            <span class="font-bold text-slate-800 block mb-1">Effect (Between)</span>
+            <div class="my-auto w-full">
+              $$SS_{Effect} = \sum^{k} n_i(M_i - M_{\text{Grand}})^2$$
+            </div>
+            <div class="text-center text-slate-500 pt-2 border-t border-slate-100">
+              $df_{Between} = k - 1$
+            </div>
+          </div>
+
+          <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between overflow-hidden">
+            <span class="font-bold text-slate-800 block mb-1">Error (Within)</span>
+            <div class="my-auto w-full">
+              $$SS_{Error} = \sum^{all\ scores} (X - M)^2$$
+            </div>
+            <div class="text-center text-slate-500 pt-2 border-t border-slate-100">
+              $df_{Within} = n - k$
+            </div>
+          </div>
+
+          <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between overflow-hidden">
+            <span class="font-bold text-slate-800 block mb-1">Total Variance</span>
+            <div class="my-auto w-full">
+              $$SS_{Total} = \sum^{scores} (X - M_{\text{Grand}})^2$$
+            </div>
+            <div class="text-center text-slate-500 pt-2 border-t border-slate-100">
+              $df_{Total} = n - 1$
+            </div>
+          </div>
+
+          <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between overflow-hidden">
+            <span class="font-bold text-slate-800 block mb-1">$F$ Ratio & Effect Size</span>
+            <div class="my-auto w-full">
+              $$F = \frac{MS_{Effect}}{MS_{Error}} = \frac{MS_{Between}}{MS_{Within}}$$
+            </div>
+            <div class="text-center text-slate-500 pt-2 border-t border-slate-100">
+              $\eta^2 = \dfrac{SS_{between}}{SS_{total}}$
+            </div>
+          </div>
+        </div>
+        
+        <div class="mb-6">
+          <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">APA Format & Lecture Table Presentation</p>
+          <p class="text-base font-medium italic text-slate-800">Table 1. Source Table for the One Way Analysis of Variance with Equal Sample Size ($n_i = 9$, Total $n = 27$)</p>
+        </div>
+
+        <div class="overflow-x-auto custom-scrollbar mb-6">
+          <table class="w-full text-left apa-table text-sm">
+            <thead>
+              <tr class="apa-table-header text-slate-900 font-semibold">
+                <th class="py-3 px-4">SOURCE</th>
+                <th class="py-3 px-4 text-right">$SS$</th>
+                <th class="py-3 px-4 text-right">$df$</th>
+                <th class="py-3 px-4 text-right">$s^2$ (or $MS$)</th>
+                <th class="py-3 px-4 text-right">$F$</th>
+                <th class="py-3 px-4 text-right">$p$</th>
+                <th class="py-3 px-4 text-right">$\eta^2$</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 font-mono text-sm">
+              <tr class="hover:bg-slate-50">
+                <td class="py-3 px-4 font-sans font-medium text-slate-900">Effect (Between)</td>
+                <td class="py-3 px-4 text-right">456</td>
+                <td class="py-3 px-4 text-right">2</td>
+                <td class="py-3 px-4 text-right">228</td>
+                <td class="py-3 px-4 text-right font-bold text-indigo-600">6.16</td>
+                <td class="py-3 px-4 text-right font-semibold text-emerald-600">.007</td>
+                <td class="py-3 px-4 text-right">.339</td>
+              </tr>
+              <tr class="hover:bg-slate-50">
+                <td class="py-3 px-4 font-sans font-medium text-slate-900">Error (Within)</td>
+                <td class="py-3 px-4 text-right">888</td>
+                <td class="py-3 px-4 text-right">24</td>
+                <td class="py-3 px-4 text-right font-semibold text-slate-800">37</td>
+                <td class="py-3 px-4 text-right text-slate-400"> </td>
+                <td class="py-3 px-4 text-right text-slate-400"> </td>
+                <td class="py-3 px-4 text-right text-slate-400"> </td>
+              </tr>
+              <tr class="hover:bg-slate-50 bg-slate-50/50 font-semibold">
+                <td class="py-3 px-4 font-sans text-slate-900">Total</td>
+                <td class="py-3 px-4 text-right">1344</td>
+                <td class="py-3 px-4 text-right">26</td>
+                <td class="py-3 px-4 text-right text-slate-400"> </td>
+                <td class="py-3 px-4 text-right text-slate-400"> </td>
+                <td class="py-3 px-4 text-right text-slate-400"> </td>
+                <td class="py-3 px-4 text-right text-slate-400"> </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 mb-6 text-xs text-slate-700 overflow-hidden">
+          <span class="font-bold text-slate-900 block mb-1">Lecture Effect Size Formula ($\eta^2$):</span>
+          $$\eta^2 = \frac{SS_{between}}{SS_{total}} = \frac{MS_{between} * df_{between}}{(MS_{between} * df_{between}) + (MS_{within} * df_{within})} = \frac{456}{1344} = .339$$
+        </div>
+
+        <!-- Interpretation Card -->
+        <div class="rounded-2xl bg-amber-50/70 border border-amber-200/80 p-5">
+          <h3 class="text-sm font-bold text-amber-900 uppercase tracking-wider mb-2 flex items-center space-x-2">
+            <span>Interpretation of Omnibus Results</span>
+          </h3>
+          <p class="text-sm text-amber-950 leading-relaxed mb-3">
+            Because our computed $F(2, 24) = 6.16$ ($p = .007$) is more extreme than $F_{critical}(2, 24) = 3.40$ at $\alpha = .05$, we reject the null hypothesis (that all the means are equal) and accept our alternative hypothesis (that there is at least one mean difference among the groups).
+          </p>
+          <div class="text-xs sm:text-sm text-amber-900 space-y-1">
+            <p><strong>The Core Challenge:</strong> The significant $F$ only indicates that at least two means are significantly different from one another, but you cannot know which specific mean pairs significantly differ until you conduct a planned or post hoc comparison:</p>
+            <ul class="list-disc list-inside space-y-1 pl-2">
+              <li>Which specific group means ($M_1, M_2, M_3$) are significantly different from each other.</li>
+              <li>The direction of the differences (which specific dosage level produces superior attention performance).</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 3: ERROR RATES & FAMILYWISE INFLATION SIMULATOR -->
+      <section id="section-error-rates" class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs">
+        <div class="flex items-center space-x-3 mb-4">
+          <span class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm">3</span>
+          <h2 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Error Rates & Type I Error Inflation</h2>
+        </div>
+        
+        <p class="text-slate-600 leading-relaxed mb-6">
+          When performing multiple $t$ tests to compare means, the major problem is the inflation of Type I error. Assuming all tests are independent and each is conducted at $\alpha = .05$, the probability that at least one test is a false positive is greater than $\alpha$:
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+          <div class="border border-slate-200 rounded-2xl p-5 bg-slate-50/60 scale-inline-math overflow-hidden">
+            <h3 class="text-sm font-bold text-slate-900 mb-2">Individual Type I Error Rate</h3>
+            <p class="text-xs text-slate-600 leading-relaxed mb-3">
+              Also termed the error rate per comparison. Generally, when you have one $t$ test, the probability of rejecting a true null hypothesis is set at $\alpha$:
+            </p>
+            <div class="inline-block max-w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-mono font-bold text-slate-800">
+              $\text{Type 1 error} = 1 - (.95) = 0.05 \quad (\alpha = .05)$
+            </div>
+          </div>
+
+          <div class="border border-indigo-200 rounded-2xl p-5 bg-indigo-50/50 scale-inline-math overflow-hidden">
+            <h3 class="text-sm font-bold text-indigo-950 mb-2">Family Wise Type I Error Rate</h3>
+            <p class="text-xs text-indigo-900 leading-relaxed mb-3">
+              The probability across a family of tests ($c =$ number of $t$ tests) that at least one test is a false positive when all null hypotheses are true:
+            </p>
+            <div class="inline-block max-w-full px-3 py-1.5 bg-white border border-indigo-200 rounded-lg text-xs font-mono font-bold text-indigo-900">
+              $\text{Family wise type I error} = 1 - (1 - \alpha)^c$
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Calculator -->
+        <div class="rounded-2xl border border-slate-200 bg-slate-900 text-white p-6 shadow-sm">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+            <h3 class="text-base font-bold tracking-tight text-white">Interactive Familywise Error Calculator</h3>
+            <span class="text-xs text-indigo-300 font-mono">Formula: $1 - (1 - \alpha)^{\text{number of } t\text{-tests}}$</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+            <div class="space-y-4">
+              <div>
+                <div class="flex justify-between text-xs font-semibold mb-1 text-slate-300">
+                  <label for="input-alpha">Nominal Alpha Level ($\alpha$)</label>
+                  <span id="label-alpha" class="font-mono text-indigo-300">0.05</span>
+                </div>
+                <input type="range" id="input-alpha" min="0.01" max="0.10" step="0.01" value="0.05" class="w-full accent-indigo-500 cursor-pointer">
+              </div>
+
+              <div>
+                <div class="flex justify-between text-xs font-semibold mb-1 text-slate-300">
+                  <label for="input-comparisons">Number of Comparisons / $t$ Tests ($c$)</label>
+                  <span id="label-comparisons" class="font-mono text-indigo-300">2</span>
+                </div>
+                <input type="range" id="input-comparisons" min="1" max="10" step="1" value="2" class="w-full accent-indigo-500 cursor-pointer">
+              </div>
+
+              <div class="text-xs text-slate-400">
+                Notice that for 2 comparisons at $\alpha = .05$, $1 - (.95)^2 = .0975$ ($9.75\%$), whereas 3 pairwise comparisons yield $1 - (.95)^3 = .1426$ ($\approx .14$).
+              </div>
+            </div>
+
+            <div class="bg-slate-800/80 rounded-2xl p-5 border border-slate-700/80 text-center">
+              <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold block mb-1">Calculated Familywise Risk</span>
+              <div id="stat-fw-rate" class="text-4xl font-extrabold text-indigo-400 font-mono tracking-tight my-2">9.75%</div>
+              <p id="stat-fw-desc" class="text-xs text-slate-300">
+                With 2 comparisons, you have a 9.75% probability of committing at least one Type I error.
+              </p>
+              <div class="mt-4 pt-3 border-t border-slate-700/60 text-xs text-slate-400 flex justify-between">
+                <span>Bonferroni adjusted alpha ($\alpha / c$):</span>
+                <span id="stat-bonf-alpha" class="font-mono font-semibold text-emerald-400">.0250</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 4: COMPARISON TECHNIQUES MATRIX -->
+      <section id="section-methods-matrix" class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs">
+        <div class="flex items-center space-x-3 mb-4">
+          <span class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm">4</span>
+          <h2 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Comparison Techniques & Decision Framework</h2>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div class="p-4 rounded-2xl bg-sky-50/70 border border-sky-100">
+            <h3 class="text-sm font-bold text-sky-950 mb-1">A Priori (Planned Contrasts)</h3>
+            <p class="text-xs text-sky-900 leading-relaxed">
+              Differences between group means ($M_i$) are predicted by prior theory before viewing sample data. Because empirical theory motivates the tests, they retain higher statistical power and usually permit less stringent corrections.
+            </p>
+          </div>
+          <div class="p-4 rounded-2xl bg-amber-50/70 border border-amber-100">
+            <h3 class="text-sm font-bold text-amber-950 mb-1">Post Hoc (Unplanned Comparisons)</h3>
+            <p class="text-xs text-amber-900 leading-relaxed">
+              Follow up examinations conducted after viewing empirical findings, exploring unexpected differences. Because tests are atheoretical and numerous, familywise Type I error inflation must be strictly controlled.
+            </p>
+          </div>
+        </div>
+
+        <!-- Comparison Table -->
+        <div class="overflow-x-auto custom-scrollbar mb-6">
+          <table class="w-full text-left border-collapse text-xs sm:text-sm">
+            <thead>
+              <tr class="border-b-2 border-slate-800 bg-slate-50">
+                <th class="py-3 px-4 font-semibold text-slate-900">Technique</th>
+                <th class="py-3 px-4 font-semibold text-slate-900">When to Use</th>
+                <th class="py-3 px-4 font-semibold text-slate-900">Stringency Level</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+              <tr>
+                <td class="py-3 px-4 font-semibold text-slate-900">Linear Contrasts</td>
+                <td class="py-3 px-4 text-slate-600">Specific planned hypotheses testing one group or a set of groups against another. Can be orthogonal (independent) or non orthogonal.</td>
+                <td class="py-3 px-4 text-slate-600">Flexible. Options include testing at a stricter alpha, applying Bonferroni adjustments, or conducting fewer total contrasts.</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4 font-semibold text-slate-900">Bonferroni Adjustment</td>
+                <td class="py-3 px-4 text-slate-600">When performing a small number of planned comparisons to maintain exact familywise error limits ($\alpha / c$).</td>
+                <td class="py-3 px-4 text-slate-600">Less stringent with very few comparisons, but becomes increasingly stringent as comparisons grow larger.</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4 font-semibold text-slate-900">Tukey HSD</td>
+                <td class="py-3 px-4 text-slate-600">When testing all possible pairwise combinations among group means ($M_i$ vs $M_j$), either planned a priori or exploratory post hoc.</td>
+                <td class="py-3 px-4 text-slate-600">Moderately stringent. Maintains excellent power balance compared to Scheffe while controlling familywise alpha.</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4 font-semibold text-slate-900">Scheffe Method</td>
+                <td class="py-3 px-4 text-slate-600">Post hoc complex linear combinations and exploratory data mining across many treatment conditions.</td>
+                <td class="py-3 px-4 text-slate-600">Most stringent method available. Greatly reduces Type I error but increases the probability of Type II error.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Academic Controversy Card -->
+        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+          <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-2">Methodological Perspectives on Corrections</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-600 leading-relaxed">
+            <div>
+              <p class="font-semibold text-slate-800 mb-1">Standard Textbook Recommendation:</p>
+              <p>Argues that whether comparisons are planned or not, total volume of comparisons matters. Whenever conducting multiple contrasts ($c > 3$), familywise Type I error inflation corrections must be applied.</p>
+            </div>
+            <div>
+              <p class="font-semibold text-slate-800 mb-1">Keppel & Wickens (2004) Framework:</p>
+              <p>Argues planned comparisons motivated by formal prior empirical hypothesis do not require alpha penalties because prior grounding minimizes false discovery probability; adjustments should remain reserved for unexpected post hoc queries.</p>
+            </div>
+			<div>
+              <p class="font-semibold text-slate-800 mb-1">Reality:</p>
+              <p>Type I error rates compound purely as a function of the number of tests conducted, regardless of whether comparisons were planned in advance. While theoretical grounding increases the prior odds that an effect is real, it does not alter nominal alpha or sampling variance. In practice, researchers must weigh the risk of false positives against power loss, making preregistration of specific hypotheses and standard error adjustments the default standard for multiple planned tests.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 5: MULTIPLE T FORMULA WITH MS_ERROR -->
+      <section id="section-formula-logic" class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs">
+        <div class="flex items-center space-x-3 mb-4">
+          <span class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm">5</span>
+          <h2 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Multiple t Tests Formula Utilizing $MS_{Error}$ ($MS_{Within}$)</h2>
+        </div>
+        
+        <p class="text-slate-600 leading-relaxed mb-6">
+          The mathematical foundation of these comparison techniques replaces individual sample variances ($s^2_{\text{group } i}$) with the pooled error variance estimate ($\sigma^2_e$, known as $MS_{Error}$ or $MS_{Within}$) from the omnibus ANOVA model.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Standard Independent t Test</span>
+            <div class="bg-white p-3 rounded-xl border border-slate-200 text-center mb-3 overflow-hidden">
+              $$t = \frac{M_1 - M_2}{\sqrt{\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}}}$$
+            </div>
+            <p class="text-xs text-slate-500 leading-relaxed">
+              Relies solely on individual sample variances ($s_1^2, s_2^2$) from the two groups being tested, discarding information from the remaining sample groups.
+            </p>
+          </div>
+
+          <div class="bg-indigo-50/70 border border-indigo-100 rounded-2xl p-5">
+            <span class="text-xs font-bold uppercase tracking-wider text-indigo-700 block mb-2">Omnibus Error Replacement t Test</span>
+            <div class="bg-white p-3 rounded-xl border border-indigo-200 text-center mb-3 overflow-hidden">
+              $$t = \frac{M_i - M_j}{\sqrt{\frac{MS_{Error}}{n_i} + \frac{MS_{Error}}{n_j}}}$$
+            </div>
+            <p class="text-xs text-indigo-900 leading-relaxed">
+              Replaces isolated variances with $MS_{Error}$ ($MS_{Within}$) across all three conditions ($MS_{Error} = 37$, $df_{Error} = n - k = 24$), yielding substantially higher statistical power.
+            </p>
+          </div>
+        </div>
+
+        <!-- Conditions and Assumption Violations Checklist -->
+        <div class="border border-slate-200 rounded-2xl p-5 bg-white">
+          <h3 class="text-sm font-bold text-slate-900 mb-3">ANOVA Assumptions & Decision Protocol</h3>
+          <div class="space-y-3 text-xs sm:text-sm text-slate-600">
+            <div class="flex items-start space-x-2">
+              <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs mt-0.5">✓</span>
+              <div>
+                <strong class="text-slate-800">Condition 1 (Homoscedasticity):</strong> All populations have the same variance ($\sigma^2_1 = \sigma^2_2 = \dots = \sigma^2_k = \sigma^2_e$), tested via Levene's test (we do not want Levene's test to be significant).
+              </div>
+            </div>
+            <div class="flex items-start space-x-2">
+              <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs mt-0.5">✓</span>
+              <div>
+                <strong class="text-slate-800">Condition 2 (Equal Group Sizes):</strong> Equal sample sizes exist across each group ($n_1 = n_2 = n_3 = 9$, total $n = 27$).
+              </div>
+            </div>
+            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-600 space-y-1">
+              <p><strong>Violation Protocol (When Homogeneity of Variance is Violated):</strong></p>
+              <p>• For the omnibus test: Use <strong>Welch's ANOVA</strong> when homogeneity of variance is violated.</p>
+              <p>• For pairwise $t$ tests with equal $n_i$: Use individual group variances ($s_i^2$) and evaluate $t$ on $2(n_i - 1)$ degrees of freedom.</p>
+              <p>• For pairwise $t$ tests with unequal $n_i$: Use individual group variances with the Welch Satterthwaite degrees of freedom adjustment.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      
+      <!-- SECTION 6: APA WRITE UP & GUIDELINES -->
+      <section id="section-apa-report" class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs">
+        <div class="flex items-center space-x-3 mb-4">
+          <span class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm">6</span>
+          <h2 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Formal APA Results Report & Guidelines</h2>
+        </div>
+        
+        <p class="text-slate-600 leading-relaxed mb-6">
+          Below is the comprehensive APA format narrative summarizing the omnibus ANOVA findings and post hoc pairwise comparisons with Bonferroni adjustment:
+        </p>
+
+        <!-- Formal Write Up Box -->
+        <div class="relative rounded-2xl bg-slate-900 text-slate-100 p-6 sm:p-8 font-serif leading-relaxed text-sm sm:text-base border border-slate-800">
+          <button id="btn-copy-report" class="absolute top-4 right-4 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-sans text-xs font-semibold flex items-center space-x-1.5 border border-slate-700 transition-colors">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+            <span id="copy-btn-text">Copy APA Text</span>
+          </button>
+
+          <div id="apa-report-text" class="serif-quote sm:pr-28 space-y-4 text-slate-200 pt-6 sm:pt-0">
+            <p>
+              The omnibus ANOVA indicated that there was a significant difference in accuracy on a sustained attention task across caffeine conditions, \( F(2, 24) = 6.16 \), \( p = .007 \), \( \eta^2 = .339 \). Follow up pairwise comparisons using independent samples \( t \) tests with a Bonferroni adjusted alpha criterion of \( \alpha = .017 \) indicated that mean accuracy for high caffeine intake (\( M = 16.67 \), \( SD = 6.32 \)) was significantly higher than no caffeine intake (\( M = 6.67 \), \( SD = 6.32 \)), \( p < .017 \). However, low caffeine intake (\( M = 10.67 \), \( SD = 5.57 \)) did not significantly differ from either no caffeine intake or high caffeine intake.
+            </p>
+          </div>
+        </div>
+
+        <!-- Bonferroni Note -->
+        <div class="mt-6 p-5 rounded-2xl bg-indigo-50/70 border border-indigo-100 text-xs sm:text-sm text-indigo-950 space-y-2">
+          <span class="font-bold block text-indigo-900 uppercase tracking-wider text-xs">Bonferroni Adjustment Protocol</span>
+          <p>
+            When conducting all \( c = 3 \) pairwise comparisons among the three treatment groups, uncorrected tests inflate the familywise Type I error rate up to \( \alpha_{FW} \le 1 - (1 - .05)^3 \approx .143 \) (over \( 14\% \)).
+          </p>
+          <p>
+            To maintain the total familywise error rate at \( \alpha = .05 \), the per comparison significance threshold is adjusted using the Bonferroni inequality:
+          </p>
+          <p class="text-center font-mono py-1">
+            \( \alpha_{adj} = \frac{\alpha_{FW}}{c} = \frac{.05}{3} \approx .017 \)
+          </p>
+          <p>
+            Only pairwise differences yielding \( p < .017 \) (or equivalently, adjusted \( p \) values where \( p \times 3 < .05 \)) are considered statistically significant.
+          </p>
+        </div>
+      </section>
+
+      <div class="mt-12 pt-6 border-t border-stone-800 flex flex-col items-center justify-center gap-2">
+        <a href="Omnibus and multiple t activity.html" class="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-sm tracking-wide transition shadow-lg shadow-amber-500/10 cursor-pointer">
+          Continue to Activity &rarr;
+        </a>
+        <span class="text-xs text-stone-500">How is a normal probability distribution like a lion? They both have a MEAN Mu.</span>
+      </div>
+    </main>
+  </div>
+
+  <!-- Interactive JavaScript Engine -->
+  <script>
+    // Document constants
+    const N_PER_GROUP = 9;
+    const MS_ERROR = 37;
+    const DF_ERROR = 24;
+    const SS_TREATMENT = 456;
+    
+    // Group means (M_1, M_2, M_3)
+    const MEAN_NO = 6.6666666667;
+    const MEAN_LOW = 10.6666666667;
+    const MEAN_HIGH = 16.6666666667;
+
+    // Student t distribution two-tailed p-value approximation
+    function studentTPValue(tVal, df) {
+      const t = Math.abs(tVal);
+      const x = df / (df + t * t);
+      // Incomplete beta function approximation via regularized series
+      const pOneTail = 0.5 * incompleteBeta(df / 2, 0.5, x);
+      return Math.min(1, Math.max(0, 2 * pOneTail));
+    }
+
+    // Log Gamma approximation (Lanczos)
+    function logGamma(z) {
+      const g = 7;
+      const C = [
+        0.99999999999980993,
+        676.5203681218851,
+        -1259.1392167224028,
+        771.32342877765313,
+        -176.61502916214059,
+        12.507343278686905,
+        -0.138571095836524,
+        9.9843695780195716e-6,
+        1.5056327351493116e-7
+      ];
+      if (z < 0.5) {
+        return Math.log(Math.PI / Math.sin(Math.PI * z)) - logGamma(1 - z);
+      }
+      z -= 1;
+      let x = C[0];
+      for (let i = 1; i < g + 2; i++) {
+        x += C[i] / (z + i);
+      }
+      const t = z + g + 0.5;
+      return 0.5 * Math.log(2 * Math.PI) + (z + 0.5) * Math.log(t) - t + Math.log(x);
+    }
+
+    // Regularized incomplete beta function via continued fraction
+    function incompleteBeta(a, b, x) {
+      if (x <= 0) return 0;
+      if (x >= 1) return 1;
+      
+      const factor = Math.exp(logGamma(a + b) - logGamma(a) - logGamma(b) + a * Math.log(x) + b * Math.log(1 - x));
+      
+      // Continued fraction expansion
+      let m = 1;
+      let c = 1;
+      let d = 1 - (a + b) * x / (a + 1);
+      if (Math.abs(d) < 1e-30) d = 1e-30;
+      d = 1 / d;
+      let h = d;
+
+      for (let iter = 1; iter <= 100; iter++) {
+        let an = iter * (b - iter) * x / ((a + 2 * iter - 1) * (a + 2 * iter));
+        d = 1 + an * d;
+        if (Math.abs(d) < 1e-30) d = 1e-30;
+        c = 1 + an / c;
+        if (Math.abs(c) < 1e-30) c = 1e-30;
+        d = 1 / d;
+        h *= d * c;
+
+        an = -(a + iter) * (a + b + iter) * x / ((a + 2 * iter) * (a + 2 * iter + 1));
+        d = 1 + an * d;
+        if (Math.abs(d) < 1e-30) d = 1e-30;
+        c = 1 + an / c;
+        if (Math.abs(c) < 1e-30) c = 1e-30;
+        d = 1 / d;
+        const del = d * c;
+        h *= del;
+        if (Math.abs(del - 1) < 1e-12) break;
+      }
+      return (factor / a) * h;
+    }
+
+    // Familywise Error Rate Simulator Update
+    function updateFwSimulator() {
+      const alpha = parseFloat(document.getElementById('input-alpha').value);
+      const c = parseInt(document.getElementById('input-comparisons').value, 10);
+      
+      document.getElementById('label-alpha').textContent = alpha.toFixed(2);
+      document.getElementById('label-comparisons').textContent = c;
+
+      const fwRate = 1 - Math.pow(1 - alpha, c);
+      const fwPercent = (fwRate * 100).toFixed(2);
+      const bonfAlpha = (alpha / c).toFixed(4);
+
+      document.getElementById('stat-fw-rate').textContent = fwPercent + '%';
+      document.getElementById('stat-fw-desc').textContent = 
+        `With ${c} comparisons at nominal alpha = ${alpha.toFixed(2)}, there is a ${fwPercent}% probability of at least one Type I error.`;
+      document.getElementById('stat-bonf-alpha').textContent = bonfAlpha;
+    }
+
+    // Contrast Calculation & Orthogonality Verification
+    function updateContrasts() {
+      const a1_no = parseFloat(document.getElementById('c1-no').value) || 0;
+      const a1_low = parseFloat(document.getElementById('c1-low').value) || 0;
+      const a1_high = parseFloat(document.getElementById('c1-high').value) || 0;
+
+      const a2_no = parseFloat(document.getElementById('c2-no').value) || 0;
+      const a2_low = parseFloat(document.getElementById('c2-low').value) || 0;
+      const a2_high = parseFloat(document.getElementById('c2-high').value) || 0;
+
+      const sum1 = a1_no + a1_low + a1_high;
+      const sum2 = a2_no + a2_low + a2_high;
+      const crossProductSum = (a1_no * a2_no) + (a1_low * a2_low) + (a1_high * a2_high);
+
+      document.getElementById('c1-sum').textContent = sum1.toFixed(2);
+      document.getElementById('c2-sum').textContent = sum2.toFixed(2);
+
+      // Status indicator updates
+      const checkSum1 = document.getElementById('check-sum1');
+      if (Math.abs(sum1) < 0.001) {
+        checkSum1.className = 'p-3 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-900 flex items-center justify-between';
+        checkSum1.innerHTML = '<span>Contrast 1 Sums to 0:</span><span class="font-bold">Valid (0.00)</span>';
+      } else {
+        checkSum1.className = 'p-3 rounded-xl border border-amber-200 bg-amber-50 text-amber-900 flex items-center justify-between';
+        checkSum1.innerHTML = `<span>Contrast 1 Sums to 0:</span><span class="font-bold">Invalid (${sum1.toFixed(2)})</span>`;
+      }
+
+      const checkSum2 = document.getElementById('check-sum2');
+      if (Math.abs(sum2) < 0.001) {
+        checkSum2.className = 'p-3 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-900 flex items-center justify-between';
+        checkSum2.innerHTML = '<span>Contrast 2 Sums to 0:</span><span class="font-bold">Valid (0.00)</span>';
+      } else {
+        checkSum2.className = 'p-3 rounded-xl border border-amber-200 bg-amber-50 text-amber-900 flex items-center justify-between';
+        checkSum2.innerHTML = `<span>Contrast 2 Sums to 0:</span><span class="font-bold">Invalid (${sum2.toFixed(2)})</span>`;
+      }
+
+      const checkOrtho = document.getElementById('check-ortho');
+      if (Math.abs(crossProductSum) < 0.001) {
+        checkOrtho.className = 'p-3 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-900 flex items-center justify-between';
+        checkOrtho.innerHTML = '<span>Cross Products Sum to 0:</span><span class="font-bold">Orthogonal (0.00)</span>';
+      } else {
+        checkOrtho.className = 'p-3 rounded-xl border border-rose-200 bg-rose-50 text-rose-900 flex items-center justify-between';
+        checkOrtho.innerHTML = `<span>Cross Products Sum to 0:</span><span class="font-bold">Non Orthogonal (${crossProductSum.toFixed(2)})</span>`;
+      }
+
+      // Calculations Contrast 1
+      const psi1 = (a1_no * MEAN_NO) + (a1_low * MEAN_LOW) + (a1_high * MEAN_HIGH);
+      const sumSqA1 = (a1_no * a1_no) + (a1_low * a1_low) + (a1_high * a1_high);
+      let ss1 = 0, f1 = 0, t1 = 0, p1 = 1;
+      if (sumSqA1 > 0) {
+        ss1 = (N_PER_GROUP * Math.pow(psi1, 2)) / sumSqA1;
+        f1 = ss1 / MS_ERROR;
+        t1 = Math.sqrt(f1);
+        p1 = studentTPValue(t1, DF_ERROR);
+      }
+
+      // Calculations Contrast 2
+      const psi2 = (a2_no * MEAN_NO) + (a2_low * MEAN_LOW) + (a2_high * MEAN_HIGH);
+      const sumSqA2 = (a2_no * a2_no) + (a2_low * a2_low) + (a2_high * a2_high);
+      let ss2 = 0, f2 = 0, t2 = 0, p2 = 1;
+      if (sumSqA2 > 0) {
+        ss2 = (N_PER_GROUP * Math.pow(psi2, 2)) / sumSqA2;
+        f2 = ss2 / MS_ERROR;
+        t2 = Math.sqrt(f2);
+        p2 = studentTPValue(t2, DF_ERROR);
+      }
+
+      // Display in table
+      document.getElementById('calc-c1-psi').textContent = psi1.toFixed(2);
+      document.getElementById('calc-c1-ss').textContent = ss1.toFixed(2);
+      document.getElementById('calc-c1-f').textContent = f1.toFixed(2);
+      document.getElementById('calc-c1-t').textContent = t1.toFixed(2);
+      document.getElementById('calc-c1-p').textContent = p1 < 0.001 ? '< .001' : p1.toFixed(3).replace('0.', '.');
+
+      document.getElementById('calc-c2-psi').textContent = psi2.toFixed(2);
+      document.getElementById('calc-c2-ss').textContent = ss2.toFixed(2);
+      document.getElementById('calc-c2-f').textContent = f2.toFixed(2);
+      document.getElementById('calc-c2-t').textContent = t2.toFixed(2);
+      document.getElementById('calc-c2-p').textContent = p2 < 0.001 ? '< .001' : p2.toFixed(3).replace('0.', '.');
+
+      const sumSS = ss1 + ss2;
+      document.getElementById('calc-sum-ss').textContent = sumSS.toFixed(2);
+    }
+
+    // Attach listeners
+    document.getElementById('input-alpha').addEventListener('input', updateFwSimulator);
+    document.getElementById('input-comparisons').addEventListener('input', updateFwSimulator);
+
+    const contrastInputs = ['c1-no', 'c1-low', 'c1-high', 'c2-no', 'c2-low', 'c2-high'];
+    contrastInputs.forEach(id => {
+      document.getElementById(id).addEventListener('input', updateContrasts);
+    });
+
+    document.getElementById('btn-reset-contrasts').addEventListener('click', () => {
+      document.getElementById('c1-no').value = -0.5;
+      document.getElementById('c1-low').value = -0.5;
+      document.getElementById('c1-high').value = 1.0;
+      document.getElementById('c2-no').value = -0.5;
+      document.getElementById('c2-low').value = 0.5;
+      document.getElementById('c2-high').value = 0.0;
+      updateContrasts();
+    });
+
+    // Copy APA report button
+    document.getElementById('btn-copy-report').addEventListener('click', () => {
+      const text = `The omnibus ANOVA indicated that there was a significant difference in accuracy on a sustained attention task with different amounts of caffeine, F(2, 24) = 6.16, p = .007, η² = .339. Planned orthogonal linear contrasts were conducted. When comparing high caffeine intake to the combination of low caffeine intake and no caffeine intake, there was a significant difference, t(24) = 3.22, p = .004, such that the mean accuracy for high caffeine intake (M = 16.67, SD = 6.32) was significantly higher than the combination of low and no caffeine intake (M = 8.67, SD = 6.14). Further, there was not a significant difference in accuracy when comparing no caffeine intake (M = 6.67, SD = 6.32) to low caffeine intake (M = 10.67, SD = 5.57), t(24) = 1.40, p = .18.`;
+      
+      const tempTextArea = document.createElement('textarea');
+      tempTextArea.value = text;
+      document.body.appendChild(tempTextArea);
+      tempTextArea.select();
+      try {
+        document.execCommand('copy');
+        const copyBtnText = document.getElementById('copy-btn-text');
+        copyBtnText.textContent = 'Copied!';
+        setTimeout(() => {
+          copyBtnText.textContent = 'Copy APA Text';
+        }, 2200);
+      } catch (err) {
+        console.error('Copy command failed', err);
+      }
+      document.body.removeChild(tempTextArea);
+    });
+
+    // Initial calculations and ResizeObserver on load
+    window.addEventListener('DOMContentLoaded', () => {
+      updateFwSimulator();
+      updateContrasts();
+
+      if (window.ResizeObserver) {
+        const ro = new ResizeObserver(() => {
+          window.requestAnimationFrame(fitFormulasToContainers);
+        });
+        document.querySelectorAll('section').forEach(sec => ro.observe(sec));
+      }
+    });
+  </script>
+</body>
+</html>
