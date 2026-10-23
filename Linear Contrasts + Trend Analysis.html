@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Step-by-Step Guide: Linear Contrasts & Trend Analysis</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --surface-alt: #162032;
+    --surface-highlight: #334155;
+    --text: #f8fafc;
+    --text-muted: #94a3b8;
+    --accent: #38bdf8;
+    --accent-alt: #818cf8;
+    --success: #4ade80;
+    --error: #f87171;
+    --warning: #fbbf24;
+    --border: #475569;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.65;
+    margin: 0;
+    padding: 2rem 1rem;
+  }
+
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  header {
+    border-bottom: 2px solid var(--surface-highlight);
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  h1 {
+    font-size: 2.2rem;
+    color: var(--accent);
+    margin: 0 0 0.5rem 0;
+  }
+
+  h2 {
+    font-size: 1.55rem;
+    color: var(--accent);
+    margin-top: 0;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.5rem;
+  }
+
+  h3 {
+    font-size: 1.22rem;
+    color: var(--accent-alt);
+    margin-top: 1.6rem;
+    margin-bottom: 0.6rem;
+  }
+
+  p {
+    margin: 0.75rem 0;
+  }
+
+  .card {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.85rem;
+    margin-bottom: 2.25rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.35);
+  }
+
+  .math-block {
+    background-color: var(--bg);
+    border-left: 4px solid var(--accent);
+    padding: 1rem 1.25rem;
+    margin: 1rem 0;
+    font-family: "Cambria Math", "Times New Roman", serif;
+    font-size: 1.15rem;
+    overflow-x: auto;
+    border-radius: 0 6px 6px 0;
+  }
+
+  .math-inline {
+    font-family: "Cambria Math", "Times New Roman", serif;
+    font-size: 1.1rem;
+    color: #e2e8f0;
+  }
+
+  /* Step-by-step recipe cards */
+  .step-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 1.25rem 0;
+  }
+
+  .step-box {
+    background-color: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent-alt);
+    border-radius: 6px;
+    padding: 1.1rem 1.35rem;
+  }
+
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .step-number {
+    background-color: var(--accent-alt);
+    color: var(--bg);
+    font-weight: 800;
+    font-size: 0.85rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .step-title {
+    font-weight: 700;
+    font-size: 1.08rem;
+    color: var(--text);
+  }
+
+  .worked-example {
+    background-color: rgba(251, 191, 36, 0.06);
+    border: 1px solid rgba(251, 191, 36, 0.4);
+    border-radius: 8px;
+    padding: 1.4rem;
+    margin: 1.5rem 0;
+  }
+
+  .worked-title {
+    color: var(--warning);
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.1rem 0;
+    background-color: var(--bg);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  th, td {
+    border: 1px solid var(--border);
+    padding: 0.75rem 0.9rem;
+    text-align: center;
+  }
+
+  th {
+    background-color: var(--surface-highlight);
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.02);
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 0.25rem 0.7rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    border-radius: 4px;
+    background-color: var(--surface-highlight);
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+
+  .interactive-box {
+    background-color: rgba(56, 189, 248, 0.08);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 1.4rem;
+    margin-top: 1.75rem;
+  }
+
+  .interactive-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+
+  .input-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 0.9rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .input-group label {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  input[type="number"], select {
+    background-color: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.55rem 0.75rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    width: 100%;
+  }
+
+  button {
+    background-color: var(--accent);
+    color: var(--bg);
+    border: none;
+    padding: 0.65rem 1.3rem;
+    border-radius: 4px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: opacity 0.2s;
+  }
+
+  button:hover {
+    opacity: 0.9;
+  }
+
+  .feedback {
+    margin-top: 0.9rem;
+    font-weight: 600;
+    min-height: 1.5rem;
+    line-height: 1.5;
+  }
+
+  .correct {
+    color: var(--success);
+  }
+
+  .incorrect {
+    color: var(--error);
+  }
+
+  .callout {
+    background-color: rgba(129, 140, 248, 0.1);
+    border-left: 4px solid var(--accent-alt);
+    padding: 0.9rem 1.2rem;
+    margin: 1rem 0;
+    border-radius: 0 6px 6px 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <span class="badge">STEP-BY-STEP HAND CALCULATION GUIDE</span>
+    <h1>Linear Contrasts &amp; Polynomial Trend Analysis</h1>
+    <p style="color: var(--text-muted);">A complete walkthrough of how to build contrast weights, compute contrast statistics by hand, verify orthogonality, and test polynomial trends.</p>
+  </header>
+
+  <!-- SECTION 1 -->
+  <section class="card">
+    <h2>1. Why Do We Need Contrasts After an Omnibus ANOVA?</h2>
+    <p>When you run a one way ANOVA with <span class="math-inline">k &ge; 3</span> groups, the omnibus <span class="math-inline">F</span> test evaluates one broad null hypothesis:</p>
+    <div class="math-block">
+      H<sub>0</sub>: &mu;<sub>1</sub> = &mu;<sub>2</sub> = &mu;<sub>3</sub> = &hellip; = &mu;<sub>k</sub>
+    </div>
+    <p>If your omnibus <span class="math-inline">F</span> test is statistically significant, you know that <em>at least one</em> population mean differs from the others, but you do not know which specific groups differ. A <strong>linear contrast</strong> lets you zoom in and test a specific 1 degree of freedom question (such as comparing Group 1 against Group 2, or comparing a Control group against the average of two Treatment groups).</p>
+
+    <div class="callout">
+      <strong>Why not just run regular two sample t tests?</strong><br>
+      If Levene's test is non significant (<span class="math-inline">p &gt; .05</span>), we can assume all groups share the same population variance (<span class="math-inline">&sigma;<sup>2</sup></span>). Instead of estimating variance from only the two groups being compared, a linear contrast uses <strong><span class="math-inline">MS<sub>error</sub></span></strong> from the entire omnibus ANOVA. This gives you a pooled error estimate based on all <span class="math-inline">N</span> participants and gives your test more degrees of freedom (<span class="math-inline">df<sub>error</sub> = N &minus; k</span>).
+    </div>
+  </section>
+
+  <!-- SECTION 2 -->
+  <section class="card">
+    <h2>2. Step-by-Step: How to Build Contrast Weights (c<sub>j</sub>)</h2>
+    <p>A linear contrast (denoted by <span class="math-inline">&psi;</span>, pronounced "psi") is a weighted sum of your group means (<span class="math-inline">M<sub>j</sub></span>). To set up any contrast by hand, follow this 4 step recipe to assign a weight (<span class="math-inline">c<sub>j</sub></span>) to every group:</p>
+
+    <div class="step-container">
+      <div class="step-box">
+        <div class="step-header">
+          <span class="step-number">Step 1</span>
+          <span class="step-title">Write down all k groups in order and zero out uninvolved groups</span>
+        </div>
+        <p>Every group in your ANOVA must receive a weight. If a group is not part of your specific research question, assign it a weight of <strong><span class="math-inline">0</span></strong>. Multiplying its mean by <span class="math-inline">0</span> removes it from the comparison while keeping its variance inside <span class="math-inline">MS<sub>error</sub></span>.</p>
+      </div>
+
+      <div class="step-box">
+        <div class="step-header">
+          <span class="step-number">Step 2</span>
+          <span class="step-title">Divide the remaining groups into Side A (+) and Side B (&minus;)</span>
+        </div>
+        <p>A contrast always pits one set of groups against another set of groups. Give all groups on Side A positive weights (<span class="math-inline">+</span>) and all groups on Side B negative weights (<span class="math-inline">&minus;</span>). Which side gets <span class="math-inline">+</span> or <span class="math-inline">&minus;</span> only flips the sign of <span class="math-inline">&psi;</span> and <span class="math-inline">t</span>; the <span class="math-inline">F</span> statistic and <span class="math-inline">p</span> value stay identical.</p>
+      </div>
+
+      <div class="step-box">
+        <div class="step-header">
+          <span class="step-number">Step 3</span>
+          <span class="step-title">Balance the weights so Side A and Side B sum to the same magnitude</span>
+        </div>
+        <p>If you are comparing <strong>1 group vs. 1 group</strong>, use <span class="math-inline">+1</span> and <span class="math-inline">&minus;1</span>.<br>
+        If you are comparing <strong>1 group vs. the average of 2 groups</strong>, you can either use fractions (<span class="math-inline">+1</span> vs. <span class="math-inline">&minus;1/2, &minus;1/2</span>) OR whole numbers (<span class="math-inline">+2</span> vs. <span class="math-inline">&minus;1, &minus;1</span>). Both options produce the exact same <span class="math-inline">t</span> and <span class="math-inline">F</span> values!</p>
+      </div>
+
+      <div class="step-box">
+        <div class="step-header">
+          <span class="step-number">Step 4</span>
+          <span class="step-title">Verify the Sum Rule: &sum;c<sub>j</sub> = 0</span>
+        </div>
+        <p>Add all of your weights across all <span class="math-inline">k</span> groups. They <strong>must add up to zero</strong>: <span class="math-inline">c<sub>1</sub> + c<sub>2</sub> + &hellip; + c<sub>k</sub> = 0</span>. If they do not sum to zero, it is not a valid contrast.</p>
+      </div>
+    </div>
+
+    <h3>Reference Table: Common Contrast Weight Patterns (for k = 3 Groups)</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Question Being Asked</th>
+          <th>Group 1 (c<sub>1</sub>)</th>
+          <th>Group 2 (c<sub>2</sub>)</th>
+          <th>Group 3 (c<sub>3</sub>)</th>
+          <th>Check: &sum;c<sub>j</sub></th>
+          <th>Algebraic Meaning of &psi;</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Group 1 vs. Group 2 (ignore Group 3)</td>
+          <td>+1</td>
+          <td>&minus;1</td>
+          <td>0</td>
+          <td>1 &minus; 1 + 0 = 0</td>
+          <td>M<sub>1</sub> &minus; M<sub>2</sub></td>
+        </tr>
+        <tr>
+          <td>Group 2 vs. Group 3 (ignore Group 1)</td>
+          <td>0</td>
+          <td>+1</td>
+          <td>&minus;1</td>
+          <td>0 + 1 &minus; 1 = 0</td>
+          <td>M<sub>2</sub> &minus; M<sub>3</sub></td>
+        </tr>
+        <tr>
+          <td>Group 1 vs. Average of Groups 2 &amp; 3 (Fractions)</td>
+          <td>+1</td>
+          <td>&minus;1/2</td>
+          <td>&minus;1/2</td>
+          <td>1 &minus; 0.5 &minus; 0.5 = 0</td>
+          <td>M<sub>1</sub> &minus; 0.5(M<sub>2</sub> + M<sub>3</sub>)</td>
+        </tr>
+        <tr>
+          <td>Group 1 vs. Average of Groups 2 &amp; 3 (Integers)</td>
+          <td>+2</td>
+          <td>&minus;1</td>
+          <td>&minus;1</td>
+          <td>2 &minus; 1 &minus; 1 = 0</td>
+          <td>2M<sub>1</sub> &minus; M<sub>2</sub> &minus; M<sub>3</sub></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- SECTION 3 -->
+  <section class="card">
+    <h2>3. Step-by-Step: Computing a Contrast by Hand</h2>
+    <p>Once you have your weights (<span class="math-inline">c<sub>j</sub></span>), the group means (<span class="math-inline">M<sub>j</sub></span>), the group sample sizes (<span class="math-inline">n<sub>j</sub></span>), and <span class="math-inline">MS<sub>error</sub></span> from the omnibus ANOVA table, follow these 5 steps to calculate the test statistic by hand.</p>
+
+    <div class="step-container">
+      <div class="step-box">
+        <div class="step-header">
+          <span class="step-number">Step 1</span>
+          <span class="step-title">Calculate the Contrast Value (&psi;)</span>
+        </div>
+        <p>Multiply each group's contrast weight (<span class="math-inline">c<sub>j</sub></span>) by its group mean (<span class="math-inline">M<sub>j</sub></span>), then add those products together:</p>
+        <div class="math-block">
+          &psi; = &sum;(c<sub>j</sub>M<sub>j</sub>) = (c<sub>1</sub> &times; M<sub>1</sub>) + (c<sub>2</sub> &times; M<sub>2</sub>) + &hellip; + (c<sub>k</sub> &times; M<sub>k</sub>)
+        </div>
+      </div>
+
+      <div class="step-box">
+        <div class="step-header">
+          <span class="step-number">Step 2</span>
+          <span class="step-title">Square Each Weight and Sum Them (&sum;c<sub>j</sub><sup>2</sup>)</span>
+        </div>
+        <p>Square every group's weight (remember that squaring a negative number makes it positive!) and add the squared weights together:</p>
+        <div class="math-block">
+          &sum;(c<sub>j</sub><sup>2</sup>) = c<sub>1</sub><sup>2</sup> + c<sub>2</sub><sup>2</sup> + &hellip; + c<sub>k</sub><sup>2</sup>
+        </div>
+      </div>
+
+      <div class="step-box">
+        <div class="step-header">
+          <span class="step-number">Step 3</span>
+          <span class="step-title">Compute the Standard Error of the Contrast (SE<sub>&psi;</sub>) and the t-Statistic</span>
+        </div>
+        <p>If all groups have the same sample size (<span class="math-inline">n</span>), plug <span class="math-inline">MS<sub>error</sub></span>, <span class="math-inline">n</span>, and <span class="math-inline">&sum;(c<sub>j</sub><sup>2</sup>)</span> into the Standard Error formula, then divide <span class="math-inline">&psi;</span> by <span class="math-inline">SE<sub>&psi;</sub></span>:</p>
+        <div class="math-block">
+          SE<sub>&psi;</sub> = &radic;[ (MS<sub>error</sub> / n) &times; &sum;(c<sub>j</sub><sup>2</sup>) ] &nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp; t = &psi; / SE<sub>&psi;</sub> &nbsp;&nbsp;(with df = N &minus; k)
+        </div>
+        <p><em>(If group sample sizes are unequal, compute <span class="math-inline">SE<sub>&psi;</sub> = &radic;[ MS<sub>error</sub> &times; &sum;(c<sub>j</sub><sup>2</sup> / n<sub>j</sub>) ]</span>.)</em></p>
+      </div>
+
+      <div class="step-box">
+        <div class="step-header">
+          <span class="step-number">Step 4</span>
+          <span class="step-title">Compute SS<sub>contrast</sub> and F<sub>contrast</sub> (Alternative ANOVA Path)</span>
+        </div>
+        <p>You can also compute the Sum of Squares for the contrast directly and divide by <span class="math-inline">MS<sub>error</sub></span> to get the <span class="math-inline">F</span> ratio. Because every single contrast has <span class="math-inline">df<sub>contrast</sub> = 1</span>, <span class="math-inline">MS<sub>contrast</sub></span> is equal to <span class="math-inline">SS<sub>contrast</sub></span>:</p>
+        <div class="math-block">
+          SS<sub>contrast</sub> = ( n &times; &psi;<sup>2</sup> ) / &sum;(c<sub>j</sub><sup>2</sup>) &nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp; F<sub>contrast</sub> = SS<sub>contrast</sub> / MS<sub>error</sub>
+        </div>
+      </div>
+
+      <div class="step-box">
+        <div class="step-header">
+          <span class="step-number">Step 5</span>
+          <span class="step-title">Cross-Check Your Math Using F = t<sup>2</sup></span>
+        </div>
+        <p>Any 1 degree of freedom <span class="math-inline">F</span> test (including a two group ANOVA or a single linear contrast) is mathematically identical to a squared <span class="math-inline">t</span> test: <strong><span class="math-inline">F = t<sup>2</sup></span></strong> (and <span class="math-inline">|t| = &radic;F</span>). Square your <span class="math-inline">t</span> from Step 3 to verify that it equals your <span class="math-inline">F</span> from Step 4!</p>
+      </div>
+    </div>
+
+    <!-- WORKED EXAMPLE 1 -->
+    <div class="worked-example">
+      <span class="worked-title">Worked Example: Taste Study (3 Groups, n = 5 per Group)</span>
+      <p>Suppose 15 participants (<span class="math-inline">n = 5</span> per group) rate three types of cookies on a 1 to 8 scale:<br>
+      <strong>Group 1 (Vanilla):</strong> <span class="math-inline">M<sub>1</sub> = 3.20</span> &nbsp;|&nbsp; <strong>Group 2 (Chocolate):</strong> <span class="math-inline">M<sub>2</sub> = 6.40</span> &nbsp;|&nbsp; <strong>Group 3 (Peanut Butter):</strong> <span class="math-inline">M<sub>3</sub> = 6.00</span>.<br>
+      From the omnibus ANOVA, <strong><span class="math-inline">MS<sub>error</sub> = 1.50</span></strong> with <span class="math-inline">df<sub>error</sub> = 15 &minus; 3 = 12</span>.<br>
+      <strong>Research Question:</strong> Does Vanilla (Group 1) differ from the average of the two nut/cocoa cookies (Groups 2 &amp; 3)?</p>
+
+      <ol>
+        <li><strong>Choose Weights:</strong> Give Vanilla <span class="math-inline">c<sub>1</sub> = &minus;2</span>, Chocolate <span class="math-inline">c<sub>2</sub> = +1</span>, and Peanut Butter <span class="math-inline">c<sub>3</sub> = +1</span>. (Check: <span class="math-inline">&minus;2 + 1 + 1 = 0</span>).</li>
+        <li><strong>Step 1 (Find &psi;):</strong> <span class="math-inline">&psi; = (&minus;2)(3.20) + (+1)(6.40) + (+1)(6.00) = &minus;6.40 + 6.40 + 6.00 = <strong>6.00</strong></span>.</li>
+        <li><strong>Step 2 (Find &sum;c<sub>j</sub><sup>2</sup>):</strong> <span class="math-inline">&sum;c<sub>j</sub><sup>2</sup> = (&minus;2)<sup>2</sup> + (+1)<sup>2</sup> + (+1)<sup>2</sup> = 4 + 1 + 1 = <strong>6</strong></span>.</li>
+        <li><strong>Step 3 (Find SE<sub>&psi;</sub> and t):</strong>
+          <br><span class="math-inline">SE<sub>&psi;</sub> = &radic;[ (1.50 / 5) &times; 6 ] = &radic;[ 0.30 &times; 6 ] = &radic;1.80 = <strong>1.342</strong></span>.
+          <br><span class="math-inline">t = 6.00 / 1.342 = <strong>4.472</strong></span>.
+        </li>
+        <li><strong>Step 4 (Find SS<sub>contrast</sub> and F):</strong>
+          <br><span class="math-inline">SS<sub>contrast</sub> = (5 &times; 6.00<sup>2</sup>) / 6 = (5 &times; 36) / 6 = <strong>30.00</strong></span>.
+          <br><span class="math-inline">F<sub>contrast</sub> = 30.00 / 1.50 = <strong>20.00</strong></span>.
+        </li>
+        <li><strong>Step 5 (Verify F = t<sup>2</sup>):</strong> <span class="math-inline">t<sup>2</sup> = (4.472)<sup>2</sup> = <strong>20.00</strong></span>. The calculations match!</li>
+      </ol>
+    </div>
+
+    <!-- INTERACTIVE CHECK 1 -->
+    <div class="interactive-box">
+      <span class="interactive-title">Try It Yourself: Step-by-Step Contrast Calculation</span>
+      <p>Using the same Cookie Taste Study dataset (<span class="math-inline">n = 5</span> per group, <span class="math-inline">MS<sub>error</sub> = 1.50</span>, <strong>M<sub>1</sub> = 3.20, M<sub>2</sub> = 6.40, M<sub>3</sub> = 6.00</strong>), test a second contrast comparing <strong>Chocolate (Group 2) vs. Peanut Butter (Group 3)</strong> using weights: <strong>c<sub>1</sub> = 0, c<sub>2</sub> = +1, c<sub>3</sub> = &minus;1</strong>.</p>
+      <div class="input-grid">
+        <div class="input-group">
+          <label>Step 1: &psi;</label>
+          <input type="number" id="c1-psi" step="0.01" placeholder="e.g. 0.40">
+        </div>
+        <div class="input-group">
+          <label>Step 2: &sum;(c<sub>j</sub><sup>2</sup>)</label>
+          <input type="number" id="c1-sumc2" step="1" placeholder="e.g. 2">
+        </div>
+        <div class="input-group">
+          <label>Step 3: t-statistic</label>
+          <input type="number" id="c1-t" step="0.01" placeholder="e.g. 0.52">
+        </div>
+        <div class="input-group">
+          <label>Step 4: SS<sub>contrast</sub></label>
+          <input type="number" id="c1-ss" step="0.01" placeholder="e.g. 0.40">
+        </div>
+        <div class="input-group">
+          <label>Step 4: F<sub>contrast</sub></label>
+          <input type="number" id="c1-f" step="0.01" placeholder="e.g. 0.27">
+        </div>
+      </div>
+      <button onclick="checkContrastSteps()">Check All 5 Steps</button>
+      <div id="c1-feedback" class="feedback"></div>
+    </div>
+  </section>
+
+  <!-- SECTION 4 -->
+  <section class="card">
+    <h2>4. Step-by-Step: Testing Orthogonality &amp; Applying Bonferroni</h2>
+    <p>When you run more than one contrast on the same dataset, you need to know two things: (1) Are the contrasts testing completely independent pieces of variance (<strong>orthogonality</strong>)? (2) How do we protect against Type I error inflation across multiple tests (<strong>Bonferroni correction</strong>)?</p>
+
+    <h3>Part A: 3-Step Recipe to Test if Two Contrasts are Orthogonal</h3>
+    <p>Two contrasts are <strong>orthogonal</strong> if the sum of the products of their corresponding weights equals zero (<span class="math-inline">&sum;(c<sub>1j</sub> &times; c<sub>2j</sub>) = 0</span> for equal sample sizes). Here is how to show your work in a table:</p>
+
+    <div class="step-container">
+      <div class="step-box">
+        <div class="step-header">
+          <span class="step-number">Step 1</span>
+          <span class="step-title">Verify Each Contrast Individually Sums to Zero</span>
+        </div>
+        <p>Add the weights across Row 1 (<span class="math-inline">&sum;c<sub>1j</sub> = 0</span>) and across Row 2 (<span class="math-inline">&sum;c<sub>2j</sub> = 0</span>) to make sure both are valid contrasts.</p>
+      </div>
+
+      <div class="step-box">
+        <div class="step-header">
+          <span class="step-number">Step 2</span>
+          <span class="step-title">Multiply Vertical Pairs (Column by Column)</span>
+        </div>
+        <p>Create a third row in your table called <strong>Product (<span class="math-inline">c<sub>1j</sub> &times; c<sub>2j</sub></span>)</strong>. In each group's column, multiply the Contrast 1 weight by the Contrast 2 weight.</p>
+      </div>
+
+      <div class="step-box">
+        <div class="step-header">
+          <span class="step-number">Step 3</span>
+          <span class="step-title">Add the Products Across the Bottom Row</span>
+        </div>
+        <p>Sum the products across all <span class="math-inline">k</span> columns: <span class="math-inline">&sum;(c<sub>1j</sub> &times; c<sub>2j</sub>)</span>.<br>
+        &bull; If the sum equals <strong><span class="math-inline">0</span></strong>, the contrasts <strong>are orthogonal</strong>.<br>
+        &bull; If the sum is <strong>any number other than 0</strong>, the contrasts <strong>are NOT orthogonal</strong>.</p>
+      </div>
+    </div>
+
+    <div class="worked-example">
+      <span class="worked-title">Worked Example: Checking Orthogonality with Fractional Weights</span>
+      <p>Let's test whether Contrast 1 (<span class="math-inline">0, +1, &minus;1</span>) and Contrast 2 (<span class="math-inline">+1, &minus;1/2, &minus;1/2</span>) are orthogonal:</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Row Description</th>
+            <th>Group 1</th>
+            <th>Group 2</th>
+            <th>Group 3</th>
+            <th>Row Sum</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Contrast 1 (c<sub>1j</sub>)</strong></td>
+            <td>0</td>
+            <td>+1</td>
+            <td>&minus;1</td>
+            <td>0 + 1 &minus; 1 = <strong>0</strong> (Valid)</td>
+          </tr>
+          <tr>
+            <td><strong>Contrast 2 (c<sub>2j</sub>)</strong></td>
+            <td>+1</td>
+            <td>&minus;1/2</td>
+            <td>&minus;1/2</td>
+            <td>1 &minus; 1/2 &minus; 1/2 = <strong>0</strong> (Valid)</td>
+          </tr>
+          <tr>
+            <td><strong>Product (c<sub>1j</sub> &times; c<sub>2j</sub>)</strong></td>
+            <td>(0)(+1) = <strong>0</strong></td>
+            <td>(+1)(&minus;1/2) = <strong>&minus;1/2</strong></td>
+            <td>(&minus;1)(&minus;1/2) = <strong>+1/2</strong></td>
+            <td>0 + (&minus;1/2) + (+1/2) = <strong>0</strong></td>
+          </tr>
+        </tbody>
+      </table>
+      <p><strong>Conclusion:</strong> Because both rows sum to <span class="math-inline">0</span> and the sum of the cross products (<span class="math-inline">&sum;c<sub>1j</sub>c<sub>2j</sub></span>) equals <span class="math-inline">0</span>, these two contrasts <strong>are orthogonal</strong>.</p>
+    </div>
+
+    <h3>Part B: How to Apply the Bonferroni Correction by Hand (and in R)</h3>
+    <p>When you run <span class="math-inline">m</span> comparisons, your Familywise Type I Error Rate increases. The <strong>Bonferroni correction</strong> adjusts for conducting <span class="math-inline">m</span> tests:</p>
+    <ul>
+      <li><strong>By Hand (Adjusting Alpha):</strong> Divide your starting alpha (<span class="math-inline">&alpha; = 0.05</span>) by the number of contrasts you ran (<span class="math-inline">m</span>): <span class="math-inline">&alpha;<sub>Bonferroni</sub> = 0.05 / m</span>. For example, if you run <span class="math-inline">m = 2</span> contrasts, a contrast is only significant if its unadjusted <span class="math-inline">p</span> value is less than <span class="math-inline">0.05 / 2 = 0.025</span>. If you run <span class="math-inline">m = 3</span> pairwise contrasts, each needs <span class="math-inline">p &lt; 0.05 / 3 = 0.0167</span>.</li>
+      <li><strong>In Software like R (`adjust = "bonferroni"`):</strong> Instead of shrinking <span class="math-inline">&alpha;</span>, R multiplies each contrast's raw <span class="math-inline">p</span> value by <span class="math-inline">m</span>: <span class="math-inline">p<sub>bonf</sub> = p<sub>raw</sub> &times; m</span> (capped at <span class="math-inline">1.00</span>). You then compare <span class="math-inline">p<sub>bonf</sub></span> directly against <span class="math-inline">0.05</span>. Both methods always give the exact same significance decision!</li>
+    </ul>
+
+    <!-- INTERACTIVE CHECK 2 -->
+    <div class="interactive-box">
+      <span class="interactive-title">Try It Yourself: Fill Out an Orthogonality Table</span>
+      <p>Test whether these two contrasts across 3 equal sized groups are orthogonal:<br>
+      <strong>Contrast 1:</strong> <span class="math-inline">c<sub>1,1</sub> = +1, &nbsp;c<sub>1,2</sub> = &minus;1/2, &nbsp;c<sub>1,3</sub> = &minus;1/2</span><br>
+      <strong>Contrast 2:</strong> <span class="math-inline">c<sub>2,1</sub> = 0, &nbsp;c<sub>2,2</sub> = &minus;1, &nbsp;c<sub>2,3</sub> = +1</span><br>
+      Enter the product for each column (use decimals like `0.5` or `-0.5`), the total sum of products, and your final decision:</p>
+      <div class="input-grid">
+        <div class="input-group">
+          <label>Group 1 Product (c<sub>1,1</sub>&times;c<sub>2,1</sub>)</label>
+          <input type="number" id="o-g1" step="0.1" placeholder="e.g. 0">
+        </div>
+        <div class="input-group">
+          <label>Group 2 Product (c<sub>1,2</sub>&times;c<sub>2,2</sub>)</label>
+          <input type="number" id="o-g2" step="0.1" placeholder="e.g. 0.5">
+        </div>
+        <div class="input-group">
+          <label>Group 3 Product (c<sub>1,3</sub>&times;c<sub>2,3</sub>)</label>
+          <input type="number" id="o-g3" step="0.1" placeholder="e.g. -0.5">
+        </div>
+        <div class="input-group">
+          <label>Row Sum (&sum;c<sub>1j</sub>c<sub>2j</sub>)</label>
+          <input type="number" id="o-sum" step="0.1" placeholder="e.g. 0">
+        </div>
+        <div class="input-group">
+          <label>Are They Orthogonal?</label>
+          <select id="o-decision">
+            <option value="">Select...</option>
+            <option value="yes">Yes (Orthogonal)</option>
+            <option value="no">No (Not Orthogonal)</option>
+          </select>
+        </div>
+      </div>
+      <button onclick="checkOrthoTable()">Verify Orthogonality Table</button>
+      <div id="o-feedback" class="feedback"></div>
+    </div>
+  </section>
+
+  <!-- SECTION 5 -->
+  <section class="card">
+    <h2>5. Step-by-Step: Polynomial Trend Analysis</h2>
+    <p>What if your independent variable is not nominal categories (like cookie flavors), but <strong>quantitative, ordered levels</strong> (such as Study Time: <strong>1 min, 2 min, 3 min, 4 min</strong>)? Instead of just asking whether 1 minute differs from 2 minutes, we want to know the <strong>overall shape (trend)</strong> across all levels.</p>
+    <p><strong>Polynomial trend analysis</strong> is simply a set of pre built orthogonal contrasts designed to detect specific geometric shapes across ordered group means:</p>
+    <ul>
+      <li><strong>Linear Trend:</strong> Do the means consistently rise or fall along a straight line (<strong>0 bends</strong>)?</li>
+      <li><strong>Quadratic Trend:</strong> Does the pattern curve or level off with <strong>1 bend</strong> (a U shape, inverted U, or diminishing returns plateau)?</li>
+      <li><strong>Cubic Trend:</strong> Does the pattern reverse direction twice with <strong>2 bends</strong> (an S shaped wave)?</li>
+    </ul>
+
+    <div class="callout">
+      <strong>The (k &minus; 1) Rule for Trends:</strong> With <span class="math-inline">k</span> ordered groups, you can test up to <span class="math-inline">k &minus; 1</span> orthogonal polynomial trends. For <span class="math-inline">k = 4</span> groups, <span class="math-inline">df<sub>between</sub> = 3</span>, which splits cleanly into <strong>Linear (1 df) + Quadratic (1 df) + Cubic (1 df)</strong>. Because these three polynomial contrasts are mutually orthogonal, their Sums of Squares add up to the entire omnibus <span class="math-inline">SS<sub>between</sub></span>:
+      <div class="math-block" style="margin-bottom: 0;">
+        SS<sub>between</sub> = SS<sub>linear</sub> + SS<sub>quadratic</sub> + SS<sub>cubic</sub>
+      </div>
+    </div>
+
+    <h3>Standard Orthogonal Polynomial Weights Table (Equal Intervals)</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Number of Groups (k)</th>
+          <th>Trend Shape</th>
+          <th>Bends</th>
+          <th>Level 1</th>
+          <th>Level 2</th>
+          <th>Level 3</th>
+          <th>Level 4</th>
+          <th>&sum;(c<sub>j</sub><sup>2</sup>)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td rowspan="2"><strong>k = 3 Groups</strong></td>
+          <td>Linear</td>
+          <td>0</td>
+          <td>&minus;1</td>
+          <td>0</td>
+          <td>+1</td>
+          <td>&mdash;</td>
+          <td>2</td>
+        </tr>
+        <tr>
+          <td>Quadratic</td>
+          <td>1</td>
+          <td>+1</td>
+          <td>&minus;2</td>
+          <td>+1</td>
+          <td>&mdash;</td>
+          <td>6</td>
+        </tr>
+        <tr>
+          <td rowspan="3"><strong>k = 4 Groups</strong></td>
+          <td>Linear</td>
+          <td>0</td>
+          <td>&minus;3</td>
+          <td>&minus;1</td>
+          <td>+1</td>
+          <td>+3</td>
+          <td>20</td>
+        </tr>
+        <tr>
+          <td>Quadratic</td>
+          <td>1</td>
+          <td>+1</td>
+          <td>&minus;1</td>
+          <td>&minus;1</td>
+          <td>+1</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td>Cubic</td>
+          <td>2</td>
+          <td>&minus;1</td>
+          <td>+3</td>
+          <td>&minus;3</td>
+          <td>+1</td>
+          <td>20</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- WORKED EXAMPLE: MEMORY & STUDY TIME -->
+    <div class="worked-example">
+      <span class="worked-title">Complete Walkthrough: Study Time &amp; Word Recall (k = 4 Groups, n = 6 per Group)</span>
+      <p>A researcher assigns <span class="math-inline">N = 24</span> participants (<span class="math-inline">n = 6</span> per group) to study a list of words for <strong>1 min, 2 min, 3 min, or 4 min</strong>. From the omnibus ANOVA, <strong><span class="math-inline">SS<sub>between</sub> = 172.50</span></strong> and <strong><span class="math-inline">MS<sub>error</sub> = 2.60</span></strong> (<span class="math-inline">df<sub>error</sub> = 20</span>).</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Group Level</th>
+            <th>1 min (Group 1)</th>
+            <th>2 min (Group 2)</th>
+            <th>3 min (Group 3)</th>
+            <th>4 min (Group 4)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Sample Size (n<sub>j</sub>)</strong></td>
+            <td>6</td>
+            <td>6</td>
+            <td>6</td>
+            <td>6</td>
+          </tr>
+          <tr>
+            <td><strong>Group Mean (M<sub>j</sub>)</strong></td>
+            <td><strong>2.00</strong></td>
+            <td><strong>6.00</strong></td>
+            <td><strong>8.00</strong></td>
+            <td><strong>9.00</strong></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>Notice the pattern in the group means: from 1 min to 2 min, recall jumps by <strong>+4 words</strong> (2 to 6); from 2 min to 3 min, it rises by <strong>+2 words</strong> (6 to 8); from 3 min to 4 min, it rises by <strong>+1 word</strong> (8 to 9). Let's test the Linear and Quadratic trends step by step using the exact same contrast formulas from Section 3!</p>
+
+      <h4>1. Step-by-Step Linear Trend (&minus;3, &minus;1, +1, +3)</h4>
+      <ul>
+        <li><strong>Step 1 (Compute &psi;<sub>linear</sub>):</strong> Multiply each Linear weight by its group mean:
+          <br><span class="math-inline">&psi;<sub>linear</sub> = (&minus;3)(2.00) + (&minus;1)(6.00) + (+1)(8.00) + (+3)(9.00) = &minus;6 &minus; 6 + 8 + 27 = <strong>23.00</strong></span>
+        </li>
+        <li><strong>Step 2 (Find &sum;c<sub>j</sub><sup>2</sup>):</strong> <span class="math-inline">(&minus;3)<sup>2</sup> + (&minus;1)<sup>2</sup> + (+1)<sup>2</sup> + (+3)<sup>2</sup> = 9 + 1 + 1 + 9 = <strong>20</strong></span></li>
+        <li><strong>Step 3 (Compute SS<sub>linear</sub>):</strong> <span class="math-inline">SS<sub>linear</sub> = (n &times; &psi;<sub>linear</sub><sup>2</sup>) / &sum;c<sub>j</sub><sup>2</sup> = (6 &times; 23.00<sup>2</sup>) / 20 = (6 &times; 529) / 20 = <strong>158.70</strong></span></li>
+        <li><strong>Step 4 (Compute F<sub>linear</sub> and t<sub>linear</sub>):</strong>
+          <br><span class="math-inline">F<sub>linear</sub> = SS<sub>linear</sub> / MS<sub>error</sub> = 158.70 / 2.60 = <strong>61.04</strong></span> &nbsp;(with <span class="math-inline">t = &radic;61.04 = <strong>7.81</strong>, p &lt; .001</span>).
+          <br><em>Meaning:</em> Over 92% of the between group variance (<span class="math-inline">158.70 / 172.50</span>) is explained by a straight line increase!
+        </li>
+      </ul>
+
+      <h4>2. Step-by-Step Quadratic Trend (+1, &minus;1, &minus;1, +1)</h4>
+      <ul>
+        <li><strong>Step 1 (Compute &psi;<sub>quad</sub>):</strong> Multiply each Quadratic weight by its group mean:
+          <br><span class="math-inline">&psi;<sub>quad</sub> = (+1)(2.00) + (&minus;1)(6.00) + (&minus;1)(8.00) + (+1)(9.00) = 2 &minus; 6 &minus; 8 + 9 = <strong>&minus;3.00</strong></span>
+        </li>
+        <li><strong>Step 2 (Find &sum;c<sub>j</sub><sup>2</sup>):</strong> <span class="math-inline">(+1)<sup>2</sup> + (&minus;1)<sup>2</sup> + (&minus;1)<sup>2</sup> + (+1)<sup>2</sup> = 1 + 1 + 1 + 1 = <strong>4</strong></span></li>
+        <li><strong>Step 3 (Compute SS<sub>quad</sub>):</strong> <span class="math-inline">SS<sub>quad</sub> = (6 &times; (&minus;3.00)<sup>2</sup>) / 4 = (6 &times; 9) / 4 = <strong>13.50</strong></span></li>
+        <li><strong>Step 4 (Compute F<sub>quad</sub> and t<sub>quad</sub>):</strong>
+          <br><span class="math-inline">F<sub>quad</sub> = SS<sub>quad</sub> / MS<sub>error</sub> = 13.50 / 2.60 = <strong>5.19</strong></span> &nbsp;(with <span class="math-inline">t = &minus;&radic;5.19 = <strong>&minus;2.28</strong>, p = .034</span>).
+          <br><em>Meaning:</em> There is also a statistically significant 1 bend curve (<span class="math-inline">p &lt; .05</span>), capturing the leveling off (diminishing returns) at higher study times.
+        </li>
+      </ul>
+    </div>
+
+    <!-- INTERACTIVE CHECK 3 -->
+    <div class="interactive-box">
+      <span class="interactive-title">Try It Yourself: Complete the Cubic Trend &amp; Partition SS<sub>between</sub></span>
+      <p>Now finish the 3rd component for the Study Time dataset! Using the group means (<strong>M<sub>1</sub> = 2.00, M<sub>2</sub> = 6.00, M<sub>3</sub> = 8.00, M<sub>4</sub> = 9.00</strong>), <span class="math-inline">n = 6</span>, <span class="math-inline">MS<sub>error</sub> = 2.60</span>, and the <strong>Cubic weights (&minus;1, +3, &minus;3, +1)</strong> where <span class="math-inline">&sum;c<sub>j</sub><sup>2</sup> = 20</span>, compute the Cubic trend and add all three trend Sums of Squares together:</p>
+      <div class="input-grid">
+        <div class="input-group">
+          <label>Step 1: &psi;<sub>cubic</sub></label>
+          <input type="number" id="t3-psi" step="0.01" placeholder="e.g. 1.00">
+        </div>
+        <div class="input-group">
+          <label>Step 2: SS<sub>cubic</sub></label>
+          <input type="number" id="t3-ss" step="0.01" placeholder="e.g. 0.30">
+        </div>
+        <div class="input-group">
+          <label>Step 3: F<sub>cubic</sub></label>
+          <input type="number" id="t3-f" step="0.01" placeholder="e.g. 0.12">
+        </div>
+        <div class="input-group">
+          <label>Step 4: SS<sub>lin</sub> + SS<sub>quad</sub> + SS<sub>cub</sub></label>
+          <input type="number" id="t3-total" step="0.01" placeholder="158.70 + 13.50 + SS_cub">
+        </div>
+      </div>
+      <button onclick="checkCubicSteps()">Verify Cubic Trend &amp; Total SS</button>
+      <div id="t3-feedback" class="feedback"></div>
+    </div>
+  </section>
+</div>
+
+<script>
+  function checkContrastSteps() {
+    const psi = parseFloat(document.getElementById('c1-psi').value);
+    const sumc2 = parseFloat(document.getElementById('c1-sumc2').value);
+    const tval = parseFloat(document.getElementById('c1-t').value);
+    const ss = parseFloat(document.getElementById('c1-ss').value);
+    const fval = parseFloat(document.getElementById('c1-f').value);
+    const fb = document.getElementById('c1-feedback');
+
+    // M1=3.2, M2=6.4, M3=6.0; c = 0, +1, -1
+    // psi = 0 + 6.4 - 6.0 = 0.40
+    // sum(c^2) = 0 + 1 + 1 = 2
+    // SE = sqrt((1.50 / 5) * 2) = sqrt(0.60) = 0.7746
+    // t = 0.40 / 0.7746 = 0.5164
+    // SS = (5 * 0.40^2) / 2 = (5 * 0.16) / 2 = 0.40
+    // F = 0.40 / 1.50 = 0.2667
+    const psiOk = Math.abs(psi - 0.40) < 0.02;
+    const sumc2Ok = Math.abs(sumc2 - 2) < 0.01;
+    const tOk = Math.abs(tval - 0.52) < 0.03;
+    const ssOk = Math.abs(ss - 0.40) < 0.02;
+    const fOk = Math.abs(fval - 0.27) < 0.03;
+
+    if (psiOk && sumc2Ok && tOk && ssOk && fOk) {
+      fb.className = "feedback correct";
+      fb.textContent = "All 5 steps verified! \u03C8 = 0.40, \u2211c\u00B2 = 2, SE = \u221A[(1.50/5)\u00D72] = 0.775, t = 0.40 / 0.775 = 0.52, SS_contrast = 0.40, and F = 0.27 (which equals 0.516\u00B2). Notice too that Contrast 1 (SS = 30.00) and Contrast 2 (SS = 0.40) are orthogonal!";
+    } else {
+      let msg = [];
+      if (!psiOk) msg.push("Step 1 (\u03C8): (0)(3.20) + (+1)(6.40) + (-1)(6.00)");
+      if (!sumc2Ok) msg.push("Step 2 (\u2211c\u00B2): 0\u00B2 + 1\u00B2 + (-1)\u00B2");
+      if (!tOk) msg.push("Step 3 (t): First find SE = \u221A[(1.50 / 5) \u00D7 2] = 0.775, then divide \u03C8 by SE");
+      if (!ssOk) msg.push("Step 4 (SS): (5 \u00D7 \u03C8\u00B2) / \u2211c\u00B2");
+      if (!fOk) msg.push("Step 4 (F): Divide SS_contrast by MS_error (1.50)");
+      fb.className = "feedback incorrect";
+      fb.textContent = "Check these steps: " + msg.join(" | ");
+    }
+  }
+
+  function checkOrthoTable() {
+    const g1 = parseFloat(document.getElementById('o-g1').value);
+    const g2 = parseFloat(document.getElementById('o-g2').value);
+    const g3 = parseFloat(document.getElementById('o-g3').value);
+    const sum = parseFloat(document.getElementById('o-sum').value);
+    const dec = document.getElementById('o-decision').value;
+    const fb = document.getElementById('o-feedback');
+
+    // c1: +1, -0.5, -0.5 | c2: 0, -1, +1
+    // Products: (+1)(0) = 0; (-0.5)(-1) = +0.5; (-0.5)(+1) = -0.5; Sum = 0
+    const g1Ok = Math.abs(g1 - 0) < 0.01;
+    const g2Ok = Math.abs(g2 - 0.5) < 0.01;
+    const g3Ok = Math.abs(g3 - (-0.5)) < 0.01;
+    const sumOk = Math.abs(sum - 0) < 0.01;
+    const decOk = (dec === "yes");
+
+    if (g1Ok && g2Ok && g3Ok && sumOk && decOk) {
+      fb.className = "feedback correct";
+      fb.textContent = "Spot on! Group 1: (+1)(0) = 0 | Group 2: (-1/2)(-1) = +0.5 | Group 3: (-1/2)(+1) = -0.5. Adding the bottom row gives 0 + 0.5 - 0.5 = 0, proving they are orthogonal.";
+    } else {
+      let msg = [];
+      if (!g1Ok) msg.push("Group 1 product is (+1) \u00D7 (0)");
+      if (!g2Ok) msg.push("Group 2 product is (-0.5) \u00D7 (-1) [negative times negative is positive!]");
+      if (!g3Ok) msg.push("Group 3 product is (-0.5) \u00D7 (+1)");
+      if (!sumOk) msg.push("Add the three products together for the Row Sum");
+      if (!decOk) msg.push("Remember: when the sum of products equals 0, the contrasts are orthogonal");
+      fb.className = "feedback incorrect";
+      fb.textContent = "Almost there: " + msg.join(" | ");
+    }
+  }
+
+  function checkCubicSteps() {
+    const psi = parseFloat(document.getElementById('t3-psi').value);
+    const ss = parseFloat(document.getElementById('t3-ss').value);
+    const fval = parseFloat(document.getElementById('t3-f').value);
+    const total = parseFloat(document.getElementById('t3-total').value);
+    const fb = document.getElementById('t3-feedback');
+
+    // M = 2, 6, 8, 9; c = -1, +3, -3, +1
+    // psi = (-1)(2) + (3)(6) + (-3)(8) + (1)(9) = -2 + 18 - 24 + 9 = 1.00
+    // SS = (6 * 1^2) / 20 = 0.30
+    // F = 0.30 / 2.60 = 0.115
+    // Total SS = 158.70 + 13.50 + 0.30 = 172.50
+    const psiOk = Math.abs(psi - 1.0) < 0.03;
+    const ssOk = Math.abs(ss - 0.30) < 0.03;
+    const fOk = Math.abs(fval - 0.12) < 0.03;
+    const totOk = Math.abs(total - 172.50) < 0.05;
+
+    if (psiOk && ssOk && fOk && totOk) {
+      fb.className = "feedback correct";
+      fb.textContent = "Complete! \u03C8_cubic = 1.00, SS_cubic = 0.30, and F_cubic = 0.12 (non-significant, so no S-curve). And look at Step 4: 158.70 (Linear) + 13.50 (Quadratic) + 0.30 (Cubic) = 172.50, which equals the exact omnibus SS_between!";
+    } else {
+      let msg = [];
+      if (!psiOk) msg.push("Step 1 (\u03C8_cubic): (-1)(2.00) + (+3)(6.00) + (-3)(8.00) + (+1)(9.00)");
+      if (!ssOk) msg.push("Step 2 (SS_cubic): (6 \u00D7 \u03C8\u00B2) / 20");
+      if (!fOk) msg.push("Step 3 (F_cubic): SS_cubic / 2.60");
+      if (!totOk) msg.push("Step 4 (Total SS): Add 158.70 + 13.50 + your SS_cubic");
+      fb.className = "feedback incorrect";
+      fb.textContent = "Check these steps: " + msg.join(" | ");
+    }
+  }
+</script>
+
+</body>
+</html>
