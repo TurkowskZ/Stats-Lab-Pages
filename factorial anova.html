@@ -1,0 +1,1688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Psy 5480 Experimental Design: 2x5 Factorial ANOVA</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- KaTeX for crisp mathematical notation -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"
+          onload="renderMathInElement(document.body);"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    code, pre, .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    /* Custom subtle scrollbars */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
+
+  <!-- Header Banner -->
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap justify-between items-center gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-sky-400 flex items-center justify-center shadow-lg shadow-indigo-500/20 text-white font-bold text-xl">
+          Ψ
+        </div>
+        <div>
+          <span class="text-xs font-semibold uppercase tracking-wider text-indigo-400">Psy 5480 Experimental Design</span>
+          <h1 class="text-lg sm:text-xl font-bold tracking-tight text-white">Lab 8: Factorial ANOVA (2 × 5 Between Subjects)</h1>
+        </div>
+      </div>
+
+      <!-- Quick Jump Nav Pill -->
+      <nav class="flex items-center gap-1 sm:gap-2 overflow-x-auto py-1 text-xs font-medium text-slate-300">
+        <button onclick="switchTab('overview')" class="nav-tab px-3 py-1.5 rounded-lg transition-all bg-indigo-600 text-white font-semibold" data-target="overview">Overview</button>
+        <button onclick="switchTab('data')" class="nav-tab px-3 py-1.5 rounded-lg transition-all hover:bg-slate-800 text-slate-400 hover:text-slate-100" data-target="data">Data & \(X\)</button>
+        <button onclick="switchTab('matrix')" class="nav-tab px-3 py-1.5 rounded-lg transition-all hover:bg-slate-800 text-slate-400 hover:text-slate-100" data-target="matrix">Means Matrix</button>
+        <button onclick="switchTab('interaction')" class="nav-tab px-3 py-1.5 rounded-lg transition-all hover:bg-slate-800 text-slate-400 hover:text-slate-100" data-target="interaction">Interpreting R Table</button>
+        <button onclick="switchTab('walkthrough')" class="nav-tab px-3 py-1.5 rounded-lg transition-all hover:bg-slate-800 text-slate-400 hover:text-slate-100" data-target="walkthrough">Hand Calculations</button>
+        <button onclick="switchTab('summary')" class="nav-tab px-3 py-1.5 rounded-lg transition-all hover:bg-slate-800 text-slate-400 hover:text-slate-100" data-target="summary">ANOVA Table</button>
+        <button onclick="switchTab('practice')" class="nav-tab px-3 py-1.5 rounded-lg transition-all hover:bg-slate-800 text-slate-400 hover:text-slate-100" data-target="practice">Self Check</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- TAB 1: OVERVIEW & HYPOTHESES -->
+    <section id="section-overview" class="tab-pane space-y-8 block">
+      <div class="bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/80 rounded-2xl p-6 sm:p-8 shadow-xl">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-950 text-indigo-300 border border-indigo-800 mb-4">
+          <span>Human Factors & Human-Computer Interaction Lab</span>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white mb-4 tracking-tight">Research Question & Design Architecture</h2>
+        <p class="text-slate-300 text-base sm:text-lg leading-relaxed max-w-4xl">
+          Do display characteristics (screen resolution and ambient lighting intensity) and their potential interaction produce significant differences in player difficulty, quantified by the <strong class="text-indigo-300">number of lives used up in a video game</strong>?
+        </p>
+
+        <!-- Variables Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+          <div class="bg-slate-900/90 border border-slate-700 rounded-xl p-5 shadow-sm">
+            <div class="text-xs font-bold text-sky-400 uppercase tracking-wider mb-1">Rows Factor</div>
+            <h3 class="text-lg font-bold text-white mb-2">Graphics Display Resolution</h3>
+            <p class="text-xs text-slate-400 mb-3">5 Levels (\(N_{\text{Rows}} = 5\))</p>
+            <ul class="text-xs space-y-1.5 text-slate-300">
+              <li><span class="text-sky-300 font-semibold">1: QVGA</span> (320 × 240 pixels)</li>
+              <li><span class="text-sky-300 font-semibold">2: VGA</span> (640 × 480 pixels)</li>
+              <li><span class="text-sky-300 font-semibold">3: SVGA</span> (832 × 624 pixels)</li>
+              <li><span class="text-sky-300 font-semibold">4: XGA</span> (1024 × 768 pixels)</li>
+              <li><span class="text-sky-300 font-semibold">5: UXGA</span> (1600 × 1200 pixels)</li>
+            </ul>
+          </div>
+
+          <div class="bg-slate-900/90 border border-slate-700 rounded-xl p-5 shadow-sm">
+            <div class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1">Columns Factor</div>
+            <h3 class="text-lg font-bold text-white mb-2">Lighting Intensity</h3>
+            <p class="text-xs text-slate-400 mb-3">2 Levels (\(N_{\text{Columns}} = 2\))</p>
+            <ul class="text-xs space-y-2 text-slate-300">
+              <li class="p-2 rounded bg-slate-800/80 border border-slate-700/60">
+                <span class="font-bold text-emerald-300">Column 1: Low Light</span>
+                <p class="text-slate-400 text-[11px] mt-0.5">Dim room lighting mimicking evening gameplay conditions</p>
+              </li>
+              <li class="p-2 rounded bg-slate-800/80 border border-slate-700/60">
+                <span class="font-bold text-emerald-300">Column 2: High Light</span>
+                <p class="text-slate-400 text-[11px] mt-0.5">Bright ambient lighting producing glare risks on standard monitors</p>
+              </li>
+            </ul>
+          </div>
+
+          <div class="bg-slate-900/90 border border-slate-700 rounded-xl p-5 shadow-sm">
+            <div class="text-xs font-bold text-amber-400 uppercase tracking-wider mb-1">Dependent Variable (DV)</div>
+            <h3 class="text-lg font-bold text-white mb-2">Game Performance</h3>
+            <p class="text-xs text-slate-400 mb-3">Continuous ratio metric</p>
+            <div class="bg-amber-950/40 border border-amber-900/60 rounded-lg p-3 text-xs text-amber-200 leading-relaxed">
+              <strong>Number of Lives Used:</strong> Higher values indicate greater player error, fatigue, or visual hindrance during standard gaming scenarios.
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-800 text-xs text-slate-400 space-y-1">
+              <div>Sample size per cell (\(n_i\)): <span class="text-white font-semibold">4</span></div>
+              <div>Total experimental cells (\(N_{\text{Cells}}\)): <span class="text-white font-semibold">10</span></div>
+              <div>Total participants (\(n\)): <span class="text-white font-semibold">40</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formal Hypotheses -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8">
+        <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+          <span>Statistical Hypotheses for a 2 × 5 Factorial Design</span>
+        </h3>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-5 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-2 h-full bg-sky-500"></div>
+            <h4 class="text-base font-bold text-sky-300 mb-2">1. Main Effect of Rows (Resolution)</h4>
+            <p class="text-xs text-slate-400 mb-4">Tests whether row means (\(M_{\text{Row}}\)) differ when averaged across both lighting conditions.</p>
+            <div class="space-y-3 text-sm">
+              <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                <span class="text-xs font-bold text-slate-400 block mb-1">Null Hypothesis (\(H_0\)):</span>
+                <span class="text-slate-200">\( \mu_{\text{Row 1}} = \mu_{\text{Row 2}} = \mu_{\text{Row 3}} = \mu_{\text{Row 4}} = \mu_{\text{Row 5}} \)</span>
+              </div>
+              <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                <span class="text-xs font-bold text-slate-400 block mb-1">Alternative Hypothesis (\(H_a\)):</span>
+                <span class="text-slate-200">At least one row mean differs from the others.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-5 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-2 h-full bg-emerald-500"></div>
+            <h4 class="text-base font-bold text-emerald-300 mb-2">2. Main Effect of Columns (Lighting)</h4>
+            <p class="text-xs text-slate-400 mb-4">Tests whether column means (\(M_{\text{Column}}\)) differ when averaged across all 5 resolution types.</p>
+            <div class="space-y-3 text-sm">
+              <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                <span class="text-xs font-bold text-slate-400 block mb-1">Null Hypothesis (\(H_0\)):</span>
+                <span class="text-slate-200">\( \mu_{\text{Column 1}} = \mu_{\text{Column 2}} \)</span>
+              </div>
+              <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                <span class="text-xs font-bold text-slate-400 block mb-1">Alternative Hypothesis (\(H_a\)):</span>
+                <span class="text-slate-200">\( \mu_{\text{Column 1}} \neq \mu_{\text{Column 2}} \)</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-5 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-2 h-full bg-purple-500"></div>
+            <h4 class="text-base font-bold text-purple-300 mb-2">3. Interaction Effect (Rows × Columns)</h4>
+            <p class="text-xs text-slate-400 mb-4">Tests whether differences across cell means (\(M_{\text{Cell}}\)) equal the combined additive row and column effects.</p>
+            <div class="space-y-3 text-sm">
+              <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                <span class="text-xs font-bold text-slate-400 block mb-1">Null Hypothesis (\(H_0\)):</span>
+                <span class="text-slate-200">No interaction effect exists. Lighting differences are invariant across all display resolutions.</span>
+              </div>
+              <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                <span class="text-xs font-bold text-slate-400 block mb-1">Alternative Hypothesis (\(H_a\)):</span>
+                <span class="text-slate-200">A significant interaction exists. The effect of lighting differs across display resolutions.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: DATA & NOTATION EXPLORER -->
+    <section id="section-data" class="tab-pane space-y-8 hidden">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8">
+        <h3 class="text-xl font-bold text-white mb-3">Understanding the Course Notation</h3>
+        <p class="text-slate-300 text-sm leading-relaxed mb-6">
+          Every individual score is designated as \(X\), belonging to a specific row, column, and cell.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+            <div class="text-sky-400 font-bold text-lg font-mono">Rows (Resolution)</div>
+            <div class="text-xs text-slate-400 mt-1">Number of rows: \(N_{\text{Rows}} = 5\)</div>
+            <p class="text-xs text-slate-300 mt-2">Row means are denoted by \(M_{\text{Row}}\), calculated across all columns within each row.</p>
+          </div>
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+            <div class="text-emerald-400 font-bold text-lg font-mono">Columns (Lighting)</div>
+            <div class="text-xs text-slate-400 mt-1">Number of columns: \(N_{\text{Columns}} = 2\)</div>
+            <p class="text-xs text-slate-300 mt-2">Column means are denoted by \(M_{\text{Column}}\). Column 1 designates Low Light; Column 2 designates High Light.</p>
+          </div>
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+            <div class="text-amber-400 font-bold text-lg font-mono">Cells & Scores</div>
+            <div class="text-xs text-slate-400 mt-1">Total scores: \(n = 40\)</div>
+            <p class="text-xs text-slate-300 mt-2">Cell means are denoted by \(M_{\text{Cell}}\), each having \(n_i = 4\) scores. Overall mean is \(M_{\text{grand}} = 11.375\).</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Raw Interactive Data Matrix -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <div>
+            <h3 class="text-lg font-bold text-white">Full Experimental Dataset (n = 40)</h3>
+            <p class="text-xs text-slate-400">Click or hover over any individual observation to inspect its score details and cell breakdown.</p>
+          </div>
+          <div id="inspector-badge" class="px-3 py-1.5 rounded-lg bg-indigo-900/60 border border-indigo-700 text-xs text-indigo-200">
+            Click any cell observation below
+          </div>
+        </div>
+
+        <div class="overflow-x-auto rounded-xl border border-slate-800 bg-slate-950">
+          <table class="w-full text-left text-xs sm:text-sm border-collapse">
+            <thead>
+              <tr class="border-b border-slate-800 bg-slate-900/90 text-slate-400 font-semibold">
+                <th class="p-3 text-left">Rows: Resolution</th>
+                <th class="p-3 text-center border-l border-slate-800 text-emerald-400">Column 1: Low Light</th>
+                <th class="p-3 text-center border-l border-slate-800 text-sky-400">Column 2: High Light</th>
+                <th class="p-3 text-center border-l border-slate-800 text-slate-300">Row Mean (\(M_{\text{Row}}\))</th>
+              </tr>
+            </thead>
+            <tbody id="raw-data-table-body" class="divide-y divide-slate-800/80">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <div id="cell-detail-card" class="mt-6 p-4 rounded-xl bg-slate-950 border border-slate-800 transition-all hidden">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2 mb-3">
+            <span class="font-mono text-sm font-bold text-indigo-400" id="detail-notation">Score X</span>
+            <span class="text-xs text-slate-400" id="detail-condition">Condition</span>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+            <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
+              <span class="text-slate-400 block">Observed Score (\(X\)):</span>
+              <span class="text-lg font-bold text-white" id="detail-value">0</span>
+            </div>
+            <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
+              <span class="text-slate-400 block">Cell Mean (\(M_{\text{Cell}}\)):</span>
+              <span class="text-lg font-bold text-emerald-400" id="detail-cell-mean">0.00</span>
+            </div>
+            <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
+              <span class="text-slate-400 block">Cell Sum (\(\sum X\)):</span>
+              <span class="text-lg font-bold text-sky-400" id="detail-cell-sum">0</span>
+            </div>
+            <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
+              <span class="text-slate-400 block">Deviation (\(X - M_{\text{Cell}}\)):</span>
+              <span class="text-lg font-bold text-amber-400" id="detail-residual">0.00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: CELL & MARGINAL MEANS MATRIX -->
+    <section id="section-matrix" class="tab-pane space-y-8 hidden">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+          <div>
+            <h3 class="text-xl font-bold text-white">Cell & Marginal Means Matrix</h3>
+            <p class="text-xs text-slate-400">Toggle perspectives below to see exactly what values are compared when computing main effects and interactions.</p>
+          </div>
+
+          <div class="flex flex-wrap gap-2 text-xs">
+            <button onclick="setMatrixHighlight('all')" id="btn-hl-all" class="matrix-btn px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800 text-slate-200 font-semibold hover:border-slate-500">All Values</button>
+            <button onclick="setMatrixHighlight('mainA')" id="btn-hl-mainA" class="matrix-btn px-3 py-1.5 rounded-lg border border-sky-800 bg-sky-950/60 text-sky-300 font-semibold hover:bg-sky-900/60">Rows Effect: Resolution</button>
+            <button onclick="setMatrixHighlight('mainB')" id="btn-hl-mainB" class="matrix-btn px-3 py-1.5 rounded-lg border border-emerald-800 bg-emerald-950/60 text-emerald-300 font-semibold hover:bg-emerald-900/60">Columns Effect: Lighting</button>
+            <button onclick="setMatrixHighlight('interaction')" id="btn-hl-interaction" class="matrix-btn px-3 py-1.5 rounded-lg border border-purple-800 bg-purple-950/60 text-purple-300 font-semibold hover:bg-purple-900/60">Interaction Cells</button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto rounded-xl border border-slate-800 bg-slate-950">
+          <table class="w-full text-xs sm:text-sm border-collapse text-center">
+            <thead>
+              <tr class="bg-slate-900/90 text-slate-400 border-b border-slate-800">
+                <th class="p-3.5 text-left">Rows: Resolution</th>
+                <th class="p-3.5 border-l border-slate-800 text-emerald-400">Column 1: Low Light</th>
+                <th class="p-3.5 border-l border-slate-800 text-emerald-400">Column 2: High Light</th>
+                <th class="p-3.5 border-l border-slate-800 text-sky-400 bg-slate-900/40">Row Mean (\(M_{\text{Row}}\))</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60">
+              <tr class="hover:bg-slate-900/50">
+                <td class="p-3 text-left font-semibold text-slate-200">Row 1: QVGA (320 × 240)</td>
+                <td class="p-3 border-l border-slate-800 cell-item font-mono font-bold" data-type="cell">8.00</td>
+                <td class="p-3 border-l border-slate-800 cell-item font-mono font-bold" data-type="cell">15.00</td>
+                <td class="p-3 border-l border-slate-800 marg-a-item font-mono font-bold text-sky-300 bg-slate-900/30">11.50</td>
+              </tr>
+              <tr class="hover:bg-slate-900/50">
+                <td class="p-3 text-left font-semibold text-slate-200">Row 2: VGA (640 × 480)</td>
+                <td class="p-3 border-l border-slate-800 cell-item font-mono font-bold" data-type="cell">9.00</td>
+                <td class="p-3 border-l border-slate-800 cell-item font-mono font-bold" data-type="cell">17.00</td>
+                <td class="p-3 border-l border-slate-800 marg-a-item font-mono font-bold text-sky-300 bg-slate-900/30">13.00</td>
+              </tr>
+              <tr class="hover:bg-slate-900/50">
+                <td class="p-3 text-left font-semibold text-slate-200">Row 3: SVGA (832 × 624)</td>
+                <td class="p-3 border-l border-slate-800 cell-item font-mono font-bold" data-type="cell">8.00</td>
+                <td class="p-3 border-l border-slate-800 cell-item font-mono font-bold" data-type="cell">16.00</td>
+                <td class="p-3 border-l border-slate-800 marg-a-item font-mono font-bold text-sky-300 bg-slate-900/30">12.00</td>
+              </tr>
+              <tr class="hover:bg-slate-900/50">
+                <td class="p-3 text-left font-semibold text-slate-200">Row 4: XGA (1024 × 768)</td>
+                <td class="p-3 border-l border-slate-800 cell-item font-mono font-bold" data-type="cell">14.50</td>
+                <td class="p-3 border-l border-slate-800 cell-item font-mono font-bold" data-type="cell">8.00</td>
+                <td class="p-3 border-l border-slate-800 marg-a-item font-mono font-bold text-sky-300 bg-slate-900/30">11.25</td>
+              </tr>
+              <tr class="hover:bg-slate-900/50">
+                <td class="p-3 text-left font-semibold text-slate-200">Row 5: UXGA (1600 × 1200)</td>
+                <td class="p-3 border-l border-slate-800 cell-item font-mono font-bold" data-type="cell">10.25</td>
+                <td class="p-3 border-l border-slate-800 cell-item font-mono font-bold" data-type="cell">8.00</td>
+                <td class="p-3 border-l border-slate-800 marg-a-item font-mono font-bold text-sky-300 bg-slate-900/30">9.125</td>
+              </tr>
+              <tr class="border-t-2 border-slate-700 bg-slate-900/90 font-semibold">
+                <td class="p-3.5 text-left text-emerald-300">Column Mean (\(M_{\text{Column}}\))</td>
+                <td class="p-3.5 border-l border-slate-800 marg-b-item font-mono font-bold text-emerald-300">9.95</td>
+                <td class="p-3.5 border-l border-slate-800 marg-b-item font-mono font-bold text-emerald-300">12.80</td>
+                <td class="p-3.5 border-l border-slate-800 grand-mean-item font-mono font-extrabold text-amber-300 bg-amber-950/20">
+                  \(M_{\text{grand}} = 11.375\)
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div id="matrix-explanation-box" class="mt-6 p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs sm:text-sm text-slate-300">
+          Select an effect above to see how differences among means are isolated in the factorial ANOVA model.
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: INTERPRETING R ANOVA OUTPUT -->
+    <section id="section-interaction" class="tab-pane space-y-8 hidden">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <div>
+            <h3 class="text-xl font-bold text-white">Interpreting Interactions from R Table Output</h3>
+            <p class="text-xs text-slate-400">Learn how to read, dissect, and interpret statistical interaction terms directly from R's ANOVA output without needing a graph.</p>
+          </div>
+          <div class="px-3 py-1 rounded-full text-xs font-semibold bg-purple-950 text-purple-300 border border-purple-800">
+            car::Anova() Type III Tests
+          </div>
+        </div>
+
+        <!-- Terminal Console View -->
+        <div class="rounded-xl border border-slate-800 bg-slate-950 p-4 font-mono text-xs sm:text-sm shadow-2xl overflow-x-auto">
+          <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-800 text-slate-500">
+            <span class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-rose-500/80 inline-block"></span>
+              <span class="w-3 h-3 rounded-full bg-amber-500/80 inline-block"></span>
+              <span class="w-3 h-3 rounded-full bg-emerald-500/80 inline-block"></span>
+              <span class="ml-2 text-slate-400 font-sans text-xs">R Console Output: car::Anova(DisplayLM, type = 3)</span>
+            </span>
+            <span class="text-[11px] text-slate-500 font-sans">Click rows to inspect decision logic</span>
+          </div>
+
+          <div class="text-slate-400 select-none pb-2">
+            > Anova(DisplayLM, type = 3)<br>
+            Anova Table (Type III tests)<br><br>
+            Response: LivesLost
+          </div>
+
+          <table class="w-full text-left border-collapse font-mono">
+            <thead>
+              <tr class="text-slate-500 border-b border-slate-800 select-none">
+                <th class="py-2 px-3">Term / Source</th>
+                <th class="py-2 px-3 text-right">Sum Sq</th>
+                <th class="py-2 px-3 text-center">Df</th>
+                <th class="py-2 px-3 text-right">F value</th>
+                <th class="py-2 px-3 text-right">Pr(&gt;F)</th>
+                <th class="py-2 px-3 text-left"></th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-900">
+              <tr onclick="explainRRow('intercept')" id="r-row-intercept" class="cursor-pointer hover:bg-slate-900/60 transition-colors">
+                <td class="py-2 px-3 text-slate-400">(Intercept) IGNORE FOR ANOVA</td>
+                <td class="py-2 px-3 text-right text-slate-300">5175.625</td>
+                <td class="py-2 px-3 text-center text-slate-300">1</td>
+                <td class="py-2 px-3 text-right text-slate-300">602.401</td>
+                <td class="py-2 px-3 text-right text-slate-300">&lt; 2e-16</td>
+                <td class="py-2 px-3 text-amber-400">***</td>
+              </tr>
+              <tr onclick="explainRRow('rows')" id="r-row-rows" class="cursor-pointer hover:bg-slate-900/60 transition-colors">
+                <td class="py-2 px-3 text-sky-400 font-semibold">Resolution</td>
+                <td class="py-2 px-3 text-right text-sky-300">65.000</td>
+                <td class="py-2 px-3 text-center text-sky-300">4</td>
+                <td class="py-2 px-3 text-right text-sky-300">1.891</td>
+                <td class="py-2 px-3 text-right text-sky-300">0.1378</td>
+                <td class="py-2 px-3 text-slate-500"></td>
+              </tr>
+              <tr onclick="explainRRow('cols')" id="r-row-cols" class="cursor-pointer hover:bg-slate-900/60 transition-colors">
+                <td class="py-2 px-3 text-emerald-400 font-semibold">LightLevel</td>
+                <td class="py-2 px-3 text-right text-emerald-300">81.225</td>
+                <td class="py-2 px-3 text-center text-emerald-300">1</td>
+                <td class="py-2 px-3 text-right text-emerald-300">9.454</td>
+                <td class="py-2 px-3 text-right text-emerald-300">0.0045</td>
+                <td class="py-2 px-3 text-emerald-400 font-bold">**</td>
+              </tr>
+              <tr onclick="explainRRow('interaction')" id="r-row-interaction" class="cursor-pointer bg-purple-950/40 border border-purple-800 hover:bg-purple-900/40 transition-colors">
+                <td class="py-2.5 px-3 text-purple-300 font-bold flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></span>
+                  Resolution:LightLevel
+                </td>
+                <td class="py-2.5 px-3 text-right text-purple-200 font-bold">367.400</td>
+                <td class="py-2.5 px-3 text-center text-purple-200 font-bold">4</td>
+                <td class="py-2.5 px-3 text-right text-purple-200 font-bold">10.691</td>
+                <td class="py-2.5 px-3 text-right text-purple-200 font-bold">1.66e-05</td>
+                <td class="py-2.5 px-3 text-purple-300 font-bold">***</td>
+              </tr>
+              <tr onclick="explainRRow('residuals')" id="r-row-residuals" class="cursor-pointer hover:bg-slate-900/60 transition-colors">
+                <td class="py-2 px-3 text-slate-400 font-semibold">Residuals</td>
+                <td class="py-2 px-3 text-right text-slate-300">257.750</td>
+                <td class="py-2 px-3 text-center text-slate-300">30</td>
+                <td class="py-2 px-3 text-right text-slate-500">NA</td>
+                <td class="py-2 px-3 text-right text-slate-500">NA</td>
+                <td class="py-2 px-3"></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="pt-3 border-t border-slate-900 text-slate-500 text-xs">
+            Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+          </div>
+        </div>
+
+        <!-- Dynamic Context Box for the selected R row -->
+        <div id="r-row-explanation" class="p-5 rounded-xl bg-purple-950/30 border border-purple-800/80 text-xs sm:text-sm text-slate-200 space-y-3">
+          <div class="flex items-center justify-between border-b border-purple-900 pb-2">
+            <span class="font-bold text-purple-300 text-sm">Target Row: Resolution:LightLevel (Interaction Term)</span>
+            <span class="text-[11px] px-2 py-0.5 rounded bg-purple-900 text-purple-200">Statistical Decision: Reject H₀</span>
+          </div>
+          <p class="leading-relaxed">
+            In R, the colon operator (<code class="bg-purple-900/60 px-1.5 py-0.5 rounded text-purple-200 font-mono">FactorA:FactorB</code>) identifies the interaction between those factors. Here, the test statistic is <strong class="text-white font-mono">F(4, 30) = 10.691</strong> with a p value of <strong class="text-white font-mono">p = 1.66e-05</strong> (which is &lt; .001).
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs pt-1">
+            <div class="bg-slate-900/90 p-3 rounded-lg border border-slate-800">
+              <span class="text-purple-300 font-semibold block mb-1">1. The Golden Rule of Factorial Tables</span>
+              <p class="text-slate-400">Always inspect the interaction row <em>before</em> interpreting main effects. Because \(p &lt; .05\), the main effects cannot be interpreted as universal or uniform statements.</p>
+            </div>
+            <div class="bg-slate-900/90 p-3 rounded-lg border border-slate-800">
+              <span class="text-purple-300 font-semibold block mb-1">2. Substantive Meaning</span>
+              <p class="text-slate-400">The difference in lives lost between Low Light and High Light is <strong>not constant</strong> across monitor resolutions; the effect of lighting is conditional on the level of resolution.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3-Step Reading Guide for Students -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
+          <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 relative">
+            <div class="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">Step 1: Locate the Colon</div>
+            <h4 class="text-sm font-bold text-white mb-2">Identify the Interaction Term</h4>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Scan down the table to find the term joined by a colon (<code class="text-indigo-300 font-mono">Resolution:LightLevel</code>). The degrees of freedom should always equal \((N_{\text{Rows}} - 1)(N_{\text{Columns}} - 1)\). Here, \((5 - 1)(2 - 1) = 4\).
+            </p>
+          </div>
+
+          <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 relative">
+            <div class="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">Step 2: Check the F & Pr(&gt;F)</div>
+            <h4 class="text-sm font-bold text-white mb-2">Evaluate Significance</h4>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Check the <code class="text-indigo-300 font-mono">Pr(&gt;F)</code> column. Because \(p = 1.66 \times 10^{-5} &lt; .05\), the interaction is statistically significant. The probability of observing differences this large under the null hypothesis is less than 0.002%.
+            </p>
+          </div>
+
+          <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 relative">
+            <div class="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">Step 3: Decide Next Analytical Action</div>
+            <h4 class="text-sm font-bold text-white mb-2">Qualify Main Effects</h4>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              When the interaction row is significant, you do <strong>not</strong> stop at reporting marginal main effects. You proceed directly to simple effects testing (e.g., via <code class="text-indigo-300 font-mono">emmeans()</code> or <code class="text-indigo-300 font-mono">phia::testInteractions()</code>) to test where the differences occur.
+            </p>
+          </div>
+        </div>
+
+        <!-- Practical R Code Card -->
+        <div class="bg-slate-950 p-5 rounded-xl border border-slate-800">
+          <h4 class="text-sm font-bold text-slate-200 mb-2">R Syntax Used to Produce this Exact Omnibus Table</h4>
+          <p class="text-xs text-slate-400 mb-3">
+            Type III sums of squares require sum to zero contrasts:
+          </p>
+          <div class="bg-slate-900 p-3 rounded font-mono text-xs text-indigo-200 overflow-x-auto">
+            options(contrasts = c("contr.sum", "contr.poly"))<br>
+            DisplayLM &lt;- lm(LivesLost ~ Resolution * LightLevel, data = DisplayData)<br>
+            Anova(DisplayLM, type = 3)
+          </div>
+        </div>
+		<div class="bg-slate-950 p-5 rounded-xl border border-slate-800">
+			<a href="factorial_anova_interaction_supplement.html" 
+			 target="_blank" 
+			 rel="noopener noreferrer" 
+			 class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-900/80 hover:bg-slate-800 border border-slate-700 hover:border-slate-600 active:bg-slate-950 text-slate-200 hover:text-white text-xs sm:text-sm font-semibold tracking-wide transition-all focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 focus:ring-offset-slate-950">
+				<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+				  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+				</svg>
+				<span>View Supplementary Interaction Plot Guide</span>
+			</a>
+		</div>
+      </div>
+    </section>
+
+    <!-- TAB 5: STEP BY STEP HAND CALCULATIONS -->
+    <section id="section-walkthrough" class="tab-pane space-y-8 hidden">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8">
+        <h3 class="text-xl font-bold text-white mb-2">Complete Step by Step Hand Calculation Walkthrough</h3>
+        <p class="text-xs text-slate-400 mb-6">
+          Follow the derivation using course lecture formulas from individual deviations all the way to ANOVA test statistics.
+        </p>
+
+        <!-- Accordion Steps -->
+        <div class="space-y-4">
+          <!-- Step 1: Sums of Squares -->
+          <div class="border border-slate-800 rounded-xl bg-slate-950 overflow-hidden">
+            <button onclick="toggleStep('calc-ss')" class="w-full text-left p-4 sm:p-5 flex justify-between items-center bg-slate-900/60 hover:bg-slate-900 transition-colors">
+              <span class="font-bold text-sm sm:text-base text-indigo-300">Step 1: Partitioning Sum of Squares (SS)</span>
+              <span id="calc-ss-icon" class="text-slate-400 font-mono text-sm">+</span>
+            </button>
+            <div id="calc-ss" class="p-5 border-t border-slate-800 space-y-6 text-xs sm:text-sm">
+              
+              <!-- Total SS -->
+              <div>
+                <h5 class="font-bold text-slate-200 mb-1">A. Total Sum of Squares (\(SS_{\text{Total}}\))</h5>
+                <p class="text-slate-400 mb-2">
+                  Lecture formula: \(\sum (X - M_{\text{grand}})^2\), summing the squared deviation of each individual observation from the grand mean (\(M_{\text{grand}} = 11.375\)) across all \(n = 40\) scores in the study:
+                </p>
+                <div class="bg-slate-900 p-3 rounded font-mono text-indigo-200 overflow-x-auto space-y-1 text-xs sm:text-sm">
+                  <div>\(SS_{\text{Total}} = \sum (X - M_{\text{grand}})^2\)</div>
+                  <div>\(= (6 - 11.375)^2 + (12 - 11.375)^2 + (6 - 11.375)^2 + \dots + (11 - 11.375)^2\)</div>
+                  <div>\(= (-5.375)^2 + (0.625)^2 + (-5.375)^2 + \dots + (-0.375)^2\)</div>
+                  <div>\(= 28.890625 + 0.390625 + 28.890625 + \dots + 0.140625 = \mathbf{759.375}\)</div>
+                </div>
+              </div>
+
+              <!-- Rows SS -->
+              <div>
+                <h5 class="font-bold text-slate-200 mb-1">B. Rows Sum of Squares (\(SS_{\text{Rows}}\))</h5>
+                <p class="text-slate-400 mb-2">
+                  Lecture formula: \(\sum n_i(M_{\text{Row}} - M_{\text{grand}})^2\), where \(n_i = 8\) scores per row, summed across all \(N_{\text{Rows}} = 5\) rows:
+                </p>
+                <div class="bg-slate-900 p-3 rounded font-mono text-sky-200 overflow-x-auto space-y-1">
+                  <div>\(SS_{\text{Rows}} = \sum n_i (M_{\text{Row}} - M_{\text{grand}})^2\)</div>
+                  <div>\(= 8 \cdot [(11.50 - 11.375)^2 + (13.00 - 11.375)^2 + (12.00 - 11.375)^2 + (11.25 - 11.375)^2 + (9.125 - 11.375)^2]\)</div>
+                  <div>\(= 8 \cdot [0.015625 + 2.640625 + 0.390625 + 0.015625 + 5.0625] = 8 \cdot 8.125 = \mathbf{65.000}\)</div>
+                </div>
+              </div>
+
+              <!-- Columns SS -->
+              <div>
+                <h5 class="font-bold text-slate-200 mb-1">C. Columns Sum of Squares (\(SS_{\text{Columns}}\))</h5>
+                <p class="text-slate-400 mb-2">
+                  Lecture formula: \(\sum n_i(M_{\text{Column}} - M_{\text{grand}})^2\), where \(n_i = 20\) scores per column, summed across both \(N_{\text{Columns}} = 2\) columns:
+                </p>
+                <div class="bg-slate-900 p-3 rounded font-mono text-emerald-200 overflow-x-auto space-y-1">
+                  <div>\(SS_{\text{Columns}} = \sum n_i (M_{\text{Column}} - M_{\text{grand}})^2\)</div>
+                  <div>\(= 20 \cdot [(9.95 - 11.375)^2 + (12.80 - 11.375)^2] = 20 \cdot [(-1.425)^2 + (1.425)^2]\)</div>
+                  <div>\(= 20 \cdot [2.030625 + 2.030625] = 20 \cdot 4.06125 = \mathbf{81.225}\)</div>
+                </div>
+              </div>
+
+              <!-- Interaction SS -->
+              <div>
+                <h5 class="font-bold text-slate-200 mb-1">D. Interaction Sum of Squares (\(SS_{\text{Interaction}}\))</h5>
+                <p class="text-slate-400 mb-2">
+                  Lecture formula: \(\sum [(M_{\text{Cell}} - M_{\text{grand}}) - (M_{\text{Row}} - M_{\text{grand}}) - (M_{\text{Column}} - M_{\text{grand}})]^2\)
+                </p>
+                <div class="bg-slate-900 p-4 rounded font-mono text-purple-200 overflow-x-auto space-y-3 text-xs">
+                  <div class="text-slate-300 font-semibold">
+                    \(SS_{\text{Interaction}} = \sum n_i [(M_{\text{Cell}} - M_{\text{grand}}) - (M_{\text{Row}} - M_{\text{grand}}) - (M_{\text{Column}} - M_{\text{grand}})]^2\)
+                  </div>
+                  
+                  <div class="text-slate-400 text-[11px]">
+                    Evaluating all 10 cells individually across the 5 rows with \(M_{\text{grand}} = 11.375\), \(M_{\text{Column 1}} = 9.95\), and \(M_{\text{Column 2}} = 12.80\):
+                  </div>
+
+                  <!-- Row 1: QVGA -->
+                  <div class="p-2.5 rounded bg-slate-950/70 border border-slate-800/80 space-y-1">
+                    <div class="text-sky-300 font-bold">Row 1: QVGA (\(M_{\text{Row 1}} = 11.50\))</div>
+                    <div>
+                      Low Light (Cell 1,1): \(4 \cdot [(8.00 - 11.375) - (11.50 - 11.375) - (9.95 - 11.375)]^2\) <br>
+                      \(= 4 \cdot [(-3.375) - (0.125) - (-1.425)]^2 = 4 \cdot [-2.075]^2 = 4 \cdot 4.305625 = \mathbf{17.2225}\)
+                    </div>
+                    <div>
+                      High Light (Cell 1,2): \(4 \cdot [(15.00 - 11.375) - (11.50 - 11.375) - (12.80 - 11.375)]^2\) <br>
+                      \(= 4 \cdot [(3.625) - (0.125) - (1.425)]^2 = 4 \cdot [2.075]^2 = 4 \cdot 4.305625 = \mathbf{17.2225}\)
+                    </div>
+                    <div class="text-slate-400 text-[11px] font-sans">Row 1 Subtotal: \(17.2225 + 17.2225 = 34.445\)</div>
+                  </div>
+
+                  <!-- Row 2: VGA -->
+                  <div class="p-2.5 rounded bg-slate-950/70 border border-slate-800/80 space-y-1">
+                    <div class="text-sky-300 font-bold">Row 2: VGA (\(M_{\text{Row 2}} = 13.00\))</div>
+                    <div>
+                      Low Light (Cell 2,1): \(4 \cdot [(9.00 - 11.375) - (13.00 - 11.375) - (9.95 - 11.375)]^2\) <br>
+                      \(= 4 \cdot [(-2.375) - (1.625) - (-1.425)]^2 = 4 \cdot [-2.575]^2 = 4 \cdot 6.630625 = \mathbf{26.5225}\)
+                    </div>
+                    <div>
+                      High Light (Cell 2,2): \(4 \cdot [(17.00 - 11.375) - (13.00 - 11.375) - (12.80 - 11.375)]^2\) <br>
+                      \(= 4 \cdot [(5.625) - (1.625) - (1.425)]^2 = 4 \cdot [2.575]^2 = 4 \cdot 6.630625 = \mathbf{26.5225}\)
+                    </div>
+                    <div class="text-slate-400 text-[11px] font-sans">Row 2 Subtotal: \(26.5225 + 26.5225 = 53.045\)</div>
+                  </div>
+
+                  <!-- Row 3: SVGA -->
+                  <div class="p-2.5 rounded bg-slate-950/70 border border-slate-800/80 space-y-1">
+                    <div class="text-sky-300 font-bold">Row 3: SVGA (\(M_{\text{Row 3}} = 12.00\))</div>
+                    <div>
+                      Low Light (Cell 3,1): \(4 \cdot [(8.00 - 11.375) - (12.00 - 11.375) - (9.95 - 11.375)]^2\) <br>
+                      \(= 4 \cdot [(-3.375) - (0.625) - (-1.425)]^2 = 4 \cdot [-2.575]^2 = 4 \cdot 6.630625 = \mathbf{26.5225}\)
+                    </div>
+                    <div>
+                      High Light (Cell 3,2): \(4 \cdot [(16.00 - 11.375) - (12.00 - 11.375) - (12.80 - 11.375)]^2\) <br>
+                      \(= 4 \cdot [(4.625) - (0.625) - (1.425)]^2 = 4 \cdot [2.575]^2 = 4 \cdot 6.630625 = \mathbf{26.5225}\)
+                    </div>
+                    <div class="text-slate-400 text-[11px] font-sans">Row 3 Subtotal: \(26.5225 + 26.5225 = 53.045\)</div>
+                  </div>
+
+                  <!-- Row 4: XGA -->
+                  <div class="p-2.5 rounded bg-slate-950/70 border border-slate-800/80 space-y-1">
+                    <div class="text-sky-300 font-bold">Row 4: XGA (\(M_{\text{Row 4}} = 11.25\))</div>
+                    <div>
+                      Low Light (Cell 4,1): \(4 \cdot [(14.50 - 11.375) - (11.25 - 11.375) - (9.95 - 11.375)]^2\) <br>
+                      \(= 4 \cdot [(3.125) - (-0.125) - (-1.425)]^2 = 4 \cdot [4.675]^2 = 4 \cdot 21.855625 = \mathbf{87.4225}\)
+                    </div>
+                    <div>
+                      High Light (Cell 4,2): \(4 \cdot [(8.00 - 11.375) - (11.25 - 11.375) - (12.80 - 11.375)]^2\) <br>
+                      \(= 4 \cdot [(-3.375) - (-0.125) - (1.425)]^2 = 4 \cdot [-4.675]^2 = 4 \cdot 21.855625 = \mathbf{87.4225}\)
+                    </div>
+                    <div class="text-slate-400 text-[11px] font-sans">Row 4 Subtotal: \(87.4225 + 87.4225 = 174.845\)</div>
+                  </div>
+
+                  <!-- Row 5: UXGA -->
+                  <div class="p-2.5 rounded bg-slate-950/70 border border-slate-800/80 space-y-1">
+                    <div class="text-sky-300 font-bold">Row 5: UXGA (\(M_{\text{Row 5}} = 9.125\))</div>
+                    <div>
+                      Low Light (Cell 5,1): \(4 \cdot [(10.25 - 11.375) - (9.125 - 11.375) - (9.95 - 11.375)]^2\) <br>
+                      \(= 4 \cdot [(-1.125) - (-2.250) - (-1.425)]^2 = 4 \cdot [2.550]^2 = 4 \cdot 6.5025 = \mathbf{26.0100}\)
+                    </div>
+                    <div>
+                      High Light (Cell 5,2): \(4 \cdot [(8.00 - 11.375) - (9.125 - 11.375) - (12.80 - 11.375)]^2\) <br>
+                      \(= 4 \cdot [(-3.375) - (-2.250) - (1.425)]^2 = 4 \cdot [-2.550]^2 = 4 \cdot 6.5025 = \mathbf{26.0100}\)
+                    </div>
+                    <div class="text-slate-400 text-[11px] font-sans">Row 5 Subtotal: \(26.0100 + 26.0100 = 52.020\)</div>
+                  </div>
+                  
+                  <div class="pt-2 border-t border-slate-800 text-purple-300 font-bold">
+                    \(SS_{\text{Interaction}} = 34.445 + 53.045 + 53.045 + 174.845 + 52.020 = \mathbf{367.400}\)
+                  </div>
+                </div>
+              </div>
+
+              <!-- Within SS -->
+              <div>
+                <h5 class="font-bold text-slate-200 mb-1">E. Within / Residual Sum of Squares (\(SS_{\text{Within}}\))</h5>
+                <p class="text-slate-400 mb-2">
+                  Lecture formula: \(\sum (X - M_{\text{Cell}})^2\), summing squared deviations of each observation from its own cell mean across all 10 cells:
+                </p>
+                <div class="bg-slate-900 p-3 rounded font-mono text-amber-200 overflow-x-auto space-y-1">
+                  <div>\(SS_{\text{Within}} = \sum (X - M_{\text{Cell}})^2\)</div>
+                  <div>\(= 24 + 24 + 30 + 30 + 24 + 36 + 37 + 26 + 6.75 + 20 = \mathbf{257.750}\)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Degrees of Freedom -->
+          <div class="border border-slate-800 rounded-xl bg-slate-950 overflow-hidden">
+            <button onclick="toggleStep('calc-df')" class="w-full text-left p-4 sm:p-5 flex justify-between items-center bg-slate-900/60 hover:bg-slate-900 transition-colors">
+              <span class="font-bold text-sm sm:text-base text-indigo-300">Step 2: Degrees of Freedom (\(df\))</span>
+              <span id="calc-df-icon" class="text-slate-400 font-mono text-sm">+</span>
+            </button>
+            <div id="calc-df" class="p-5 border-t border-slate-800 space-y-3 text-xs sm:text-sm hidden">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-slate-900 p-3.5 rounded-lg border border-slate-800">
+                  <span class="font-bold text-emerald-300 block mb-1">\(df_{\text{Columns}}\)</span>
+                  <p class="text-slate-400 font-mono">\(N_{\text{Columns}} - 1 = 2 - 1 = \mathbf{1}\)</p>
+                </div>
+                <div class="bg-slate-900 p-3.5 rounded-lg border border-slate-800">
+                  <span class="font-bold text-sky-300 block mb-1">\(df_{\text{Rows}}\)</span>
+                  <p class="text-slate-400 font-mono">\(N_{\text{Rows}} - 1 = 5 - 1 = \mathbf{4}\)</p>
+                </div>
+                <div class="bg-slate-900 p-3.5 rounded-lg border border-slate-800">
+                  <span class="font-bold text-purple-300 block mb-1">\(df_{\text{Interaction}}\)</span>
+                  <p class="text-slate-400 font-mono">\((N_{\text{Rows}} - 1)(N_{\text{Columns}} - 1) = 4 \cdot 1 = \mathbf{4}\)</p>
+                </div>
+                <div class="bg-slate-900 p-3.5 rounded-lg border border-slate-800">
+                  <span class="font-bold text-amber-300 block mb-1">\(df_{\text{Within}}\)</span>
+                  <p class="text-slate-400 font-mono">\(n - (\# \text{ of cells}) = 40 - 10 = \mathbf{30}\)</p>
+                </div>
+              </div>
+              <div class="bg-slate-900 p-3 rounded border border-slate-800 text-slate-300 font-mono text-xs">
+                Total degrees of freedom: \(df_{\text{Total}} = n - 1 = 40 - 1 = \mathbf{39}\)
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3: Mean Squares & F Ratios -->
+          <div class="border border-slate-800 rounded-xl bg-slate-950 overflow-hidden">
+            <button onclick="toggleStep('calc-ms')" class="w-full text-left p-4 sm:p-5 flex justify-between items-center bg-slate-900/60 hover:bg-slate-900 transition-colors">
+              <span class="font-bold text-sm sm:text-base text-indigo-300">Step 3: Mean Squares (\(MS\)) and \(F\) Ratios</span>
+              <span id="calc-ms-icon" class="text-slate-400 font-mono text-sm">+</span>
+            </button>
+            <div id="calc-ms" class="p-5 border-t border-slate-800 space-y-4 text-xs sm:text-sm hidden">
+              <p class="text-slate-400">Each effect Mean Square is computed by dividing its \(SS\) by its \(df\). The common error variance is \(MS_{\text{Within}}\):</p>
+              
+              <div class="bg-slate-900 p-3 rounded font-mono text-slate-200">
+                \(MS_{\text{Within}} = \frac{SS_{\text{Within}}}{df_{\text{Within}}} = \frac{257.750}{30} = \mathbf{8.5917}\)
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-slate-900 p-3.5 rounded-lg border border-slate-800 space-y-2">
+                  <span class="font-bold text-emerald-300">Between: Columns (Lighting)</span>
+                  <div class="font-mono text-xs text-slate-300">\(MS_{\text{Columns}} = \frac{81.225}{1} = 81.225\)</div>
+                  <div class="font-mono text-xs text-emerald-400 font-bold">\(F = \frac{81.225}{8.5917} = \mathbf{9.454}\)</div>
+                  <div class="text-[11px] text-slate-400">\(p = .0045\) <br>Result: <strong class="text-emerald-400">Significant (\(p < .01\))</strong></div>
+                </div>
+
+                <div class="bg-slate-900 p-3.5 rounded-lg border border-slate-800 space-y-2">
+                  <span class="font-bold text-sky-300">Between: Rows (Resolution)</span>
+                  <div class="font-mono text-xs text-slate-300">\(MS_{\text{Rows}} = \frac{65.000}{4} = 16.250\)</div>
+                  <div class="font-mono text-xs text-sky-400 font-bold">\(F = \frac{16.250}{8.5917} = \mathbf{1.891}\)</div>
+                  <div class="text-[11px] text-slate-400">\(p = .138\) <br>Result: <em>Not Significant</em></div>
+                </div>
+
+                <div class="bg-slate-900 p-3.5 rounded-lg border border-slate-800 space-y-2">
+                  <span class="font-bold text-purple-300">Interaction</span>
+                  <div class="font-mono text-xs text-slate-300">\(MS_{\text{Interaction}} = \frac{367.400}{4} = 91.850\)</div>
+                  <div class="font-mono text-xs text-purple-400 font-bold">\(F = \frac{91.850}{8.5917} = \mathbf{10.691}\)</div>
+                  <div class="text-[11px] text-slate-400">\(p = 1.66 \times 10^{-5}\) <br>Result: <strong class="text-purple-400">Significant (\(p < .001\))</strong></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 4: Effect Size (Partial Eta Squared) -->
+          <div class="border border-slate-800 rounded-xl bg-slate-950 overflow-hidden">
+            <button onclick="toggleStep('calc-eta')" class="w-full text-left p-4 sm:p-5 flex justify-between items-center bg-slate-900/60 hover:bg-slate-900 transition-colors">
+              <span class="font-bold text-sm sm:text-base text-indigo-300">Step 4: Effect Sizes (\(\eta_p^2\))</span>
+              <span id="calc-eta-icon" class="text-slate-400 font-mono text-sm">+</span>
+            </button>
+            <div id="calc-eta" class="p-5 border-t border-slate-800 space-y-4 text-xs sm:text-sm hidden">
+              <p class="text-slate-400">
+                In factorial ANOVA, partial eta squared represents the proportion of variance explained by a specific factor:
+              </p>
+              <div class="bg-slate-900 p-3 rounded font-mono text-indigo-200">
+                \(\eta_p^2 = \frac{SS_{\text{Effect}}}{SS_{\text{Effect}} + SS_{\text{Within}}}\)
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-slate-900 p-3.5 rounded-lg border border-slate-800">
+                  <span class="font-bold text-emerald-300 block mb-1">\(\eta_p^2\) Columns (Lighting)</span>
+                  <div class="font-mono text-xs text-slate-300">\( \frac{81.225}{81.225 + 257.750} = \mathbf{0.240}\)</div>
+                </div>
+                <div class="bg-slate-900 p-3.5 rounded-lg border border-slate-800">
+                  <span class="font-bold text-sky-300 block mb-1">\(\eta_p^2\) Rows (Resolution)</span>
+                  <div class="font-mono text-xs text-slate-300">\( \frac{65.000}{65.000 + 257.750} = \mathbf{0.201}\)</div>
+                </div>
+                <div class="bg-slate-900 p-3.5 rounded-lg border border-slate-800">
+                  <span class="font-bold text-purple-300 block mb-1">\(\eta_p^2\) Interaction</span>
+                  <div class="font-mono text-xs text-slate-300">\( \frac{367.400}{367.400 + 257.750} = \mathbf{0.588}\)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 6: ANOVA SUMMARY TABLE & REPORTING -->
+    <section id="section-summary" class="tab-pane space-y-8 hidden">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8">
+        <h3 class="text-xl font-bold text-white mb-4">Course Aligned ANOVA Summary Table</h3>
+        <p class="text-xs text-slate-400 mb-6">Standard Type III ANOVA summary table aligned with R's <code class="text-indigo-300 font-mono">car::Anova()</code> output.</p>
+
+        <div class="overflow-x-auto rounded-xl border border-slate-800 bg-slate-950 p-2">
+          <table class="w-full text-xs sm:text-sm border-collapse text-left">
+            <thead>
+              <tr class="border-b-2 border-slate-700 text-slate-300 font-semibold">
+                <th class="py-3 px-4">Source</th>
+                <th class="py-3 px-4 text-right">\(SS\)</th>
+                <th class="py-3 px-4 text-center">\(df\)</th>
+                <th class="py-3 px-4 text-right">\(MS\)</th>
+                <th class="py-3 px-4 text-right">\(F\)</th>
+                <th class="py-3 px-4 text-right">\(p\)</th>
+                <th class="py-3 px-4 text-right">\(\eta_p^2\)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/80 font-mono">
+              <tr>
+                <td class="py-3 px-4 font-sans text-slate-200">Between: Columns (Lighting)</td>
+                <td class="py-3 px-4 text-right">81.225</td>
+                <td class="py-3 px-4 text-center">1</td>
+                <td class="py-3 px-4 text-right">81.225</td>
+                <td class="py-3 px-4 text-right text-emerald-400 font-bold">9.454</td>
+                <td class="py-3 px-4 text-right text-emerald-400 font-bold">.004</td>
+                <td class="py-3 px-4 text-right">.240</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4 font-sans text-slate-200">Rows (Resolution)</td>
+                <td class="py-3 px-4 text-right">65.000</td>
+                <td class="py-3 px-4 text-center">4</td>
+                <td class="py-3 px-4 text-right">16.250</td>
+                <td class="py-3 px-4 text-right text-slate-400">1.891</td>
+                <td class="py-3 px-4 text-right text-slate-400">.138</td>
+                <td class="py-3 px-4 text-right">.201</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4 font-sans text-slate-200">Interaction</td>
+                <td class="py-3 px-4 text-right">367.400</td>
+                <td class="py-3 px-4 text-center">4</td>
+                <td class="py-3 px-4 text-right">91.850</td>
+                <td class="py-3 px-4 text-right text-purple-400 font-bold">10.691</td>
+                <td class="py-3 px-4 text-right text-purple-400 font-bold">&lt; .001</td>
+                <td class="py-3 px-4 text-right">.588</td>
+              </tr>
+              <tr class="text-slate-400">
+                <td class="py-3 px-4 font-sans">Within</td>
+                <td class="py-3 px-4 text-right">257.750</td>
+                <td class="py-3 px-4 text-center">30</td>
+                <td class="py-3 px-4 text-right">8.592</td>
+                <td class="py-3 px-4 text-right"></td>
+                <td class="py-3 px-4 text-right"></td>
+                <td class="py-3 px-4 text-right"></td>
+              </tr>
+              <tr class="border-t-2 border-slate-700 font-bold text-slate-200">
+                <td class="py-3 px-4 font-sans">Total</td>
+                <td class="py-3 px-4 text-right">759.375</td>
+                <td class="py-3 px-4 text-center">39</td>
+                <td class="py-3 px-4 text-right"></td>
+                <td class="py-3 px-4 text-right"></td>
+                <td class="py-3 px-4 text-right"></td>
+                <td class="py-3 px-4 text-right"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Instructor Formula Architecture Matching Slide -->
+        <div class="mt-6 p-5 rounded-xl bg-slate-950 border border-slate-800">
+          <h4 class="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-3">Formula Reference Architecture (Matching Lecture Slide)</h4>
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs font-mono text-slate-300 border-collapse">
+              <thead>
+                <tr class="border-b border-slate-800 text-slate-400 font-semibold bg-slate-900/60">
+                  <th class="p-2.5 text-left font-sans">Source</th>
+                  <th class="p-2.5 text-left font-sans">SS Formula</th>
+                  <th class="p-2.5 text-left font-sans">df Formula</th>
+                  <th class="p-2.5 text-left font-sans">MS Formula</th>
+                  <th class="p-2.5 text-left font-sans">F Formula</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60">
+                <tr>
+                  <td class="p-2.5 text-emerald-300 font-sans font-semibold">Between: Columns</td>
+                  <td class="p-2.5">\(\sum n_i(M_{\text{Column}} - M_{\text{grand}})^2\)</td>
+                  <td class="p-2.5">\(N_{\text{Columns}} - 1\)</td>
+                  <td class="p-2.5">\(SS_{\text{Columns}} / df_{\text{Columns}}\)</td>
+                  <td class="p-2.5 text-emerald-400">\(MS_{\text{Columns}} / MS_{\text{Within}}\)</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-sky-300 font-sans font-semibold">Rows</td>
+                  <td class="p-2.5">\(\sum n_i(M_{\text{Row}} - M_{\text{grand}})^2\)</td>
+                  <td class="p-2.5">\(N_{\text{Rows}} - 1\)</td>
+                  <td class="p-2.5">\(SS_{\text{Rows}} / df_{\text{Rows}}\)</td>
+                  <td class="p-2.5 text-sky-400">\(MS_{\text{Rows}} / MS_{\text{Within}}\)</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-purple-300 font-sans font-semibold">Interaction</td>
+                  <td class="p-2.5">\(\sum [(M_{\text{Cell}} - M_{\text{grand}}) - (M_{\text{Row}} - M_{\text{grand}}) - (M_{\text{Column}} - M_{\text{grand}})]^2\)</td>
+                  <td class="p-2.5">\((N_{\text{Rows}} - 1)(N_{\text{Columns}} - 1)\)</td>
+                  <td class="p-2.5">\(SS_{\text{Interaction}} / df_{\text{Interaction}}\)</td>
+                  <td class="p-2.5 text-purple-400">\(MS_{\text{Interaction}} / MS_{\text{Within}}\)</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-amber-300 font-sans font-semibold">Within:</td>
+                  <td class="p-2.5">\(\sum (X - M_{\text{Cell}})^2\)</td>
+                  <td class="p-2.5">\(n - (\# \text{ of cells})\)</td>
+                  <td class="p-2.5">\(SS_{\text{Within}} / df_{\text{Within}}\)</td>
+                  <td class="p-2.5 text-slate-500"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200 font-sans font-semibold">Total</td>
+                  <td class="p-2.5">\(\sum (X - M_{\text{grand}})^2\)</td>
+                  <td class="p-2.5">\(n - 1\)</td>
+                  <td class="p-2.5"></td>
+                  <td class="p-2.5 text-slate-500"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Definitions legend block matching slide definitions -->
+          <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
+            <div>\(\sum\) = sum across all scores</div>
+            <div>\(M_{\text{Cell}}\) = mean of a score's cell</div>
+            <div>\(M_{\text{Row}}\) = mean of a score's row</div>
+            <div>\(M_{\text{Column}}\) = mean of a score's column</div>
+            <div>\(M_{\text{grand}}\) = grand mean of all scores</div>
+            <div>\(N_{\text{Cells}}\) = number of cells</div>
+            <div>\(N_{\text{Rows}}\) = number of rows</div>
+            <div>\(N_{\text{Columns}}\) = number of columns</div>
+            <div>\(X\) = each score</div>
+            <div>\(n\) = total number of scores</div>
+          </div>
+        </div>
+
+        <!-- Formal Write-up Template Card -->
+        <div class="mt-8 bg-slate-950 border border-slate-800 rounded-xl p-5">
+          <div class="flex items-center justify-between mb-3">
+            <h4 class="text-sm font-bold text-indigo-300 uppercase tracking-wider">Formal APA 7th Results Section Paragraph</h4>
+            <button onclick="copyWriteUp()" class="text-xs px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded text-slate-300 transition-colors">
+              Copy Text
+            </button>
+          </div>
+          <div id="apa-writeup-text" class="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans bg-slate-900 p-4 rounded-lg border border-slate-800">
+            A 2 (Lighting: Low vs. High) × 5 (Resolution: QVGA, VGA, SVGA, XGA, UXGA) between subjects factorial ANOVA was conducted to assess differences in video game difficulty (measured in number of lives used). The main effect of graphics resolution was not statistically significant, \(F(4, 30) = 1.89, p = .138, \eta_p^2 = .201\). In contrast, the main effect of lighting intensity was statistically significant, \(F(1, 30) = 9.45, p = .004, \eta_p^2 = .240\), with players in high lighting consuming more lives (\(M = 12.80, SD = 4.76\)) than those in low lighting (\(M = 9.95, SD = 3.69\)). Crucially, this main effect was qualified by a statistically significant Resolution × Lighting interaction effect, \(F(4, 30) = 10.69, p < .001, \eta_p^2 = .588\). Because the interaction effect reached statistical significance in the ANOVA table, the main effect of lighting cannot be interpreted as uniform across screen types, and simple main effects analyses must be consulted to determine where lighting differences emerge.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 7: PRACTICE SCRATCHPAD & QUIZ -->
+    <section id="section-practice" class="tab-pane space-y-8 hidden">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8">
+        <h3 class="text-xl font-bold text-white mb-2">Student Self Check: Interpreting ANOVA Outputs</h3>
+        <p class="text-xs text-slate-400 mb-6">
+          Test your grasp of interpreting R factorial ANOVA tables. Type or select your answers below to verify your solutions with instant feedback.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Question 1: Degrees of Freedom Interaction -->
+          <div class="bg-slate-950 p-5 rounded-xl border border-slate-800">
+            <span class="text-xs font-bold text-indigo-400 uppercase tracking-wide">Question 1</span>
+            <p class="text-sm text-slate-200 mt-1 mb-3">From the R ANOVA table, what are the degrees of freedom for the interaction row?</p>
+            <div class="flex gap-2">
+              <input type="number" id="input-q1" placeholder="Enter value" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500">
+              <button onclick="checkQuestion(1, 4)" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-xs font-semibold text-white">Check</button>
+            </div>
+            <p id="feedback-q1" class="text-xs mt-2 min-h-[1.25rem]"></p>
+          </div>
+
+          <!-- Question 2: Error df -->
+          <div class="bg-slate-950 p-5 rounded-xl border border-slate-800">
+            <span class="text-xs font-bold text-indigo-400 uppercase tracking-wide">Question 2</span>
+            <p class="text-sm text-slate-200 mt-1 mb-3">What are the degrees of freedom for the Residuals row?</p>
+            <div class="flex gap-2">
+              <input type="number" id="input-q2" placeholder="Enter value" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500">
+              <button onclick="checkQuestion(2, 30)" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-xs font-semibold text-white">Check</button>
+            </div>
+            <p id="feedback-q2" class="text-xs mt-2 min-h-[1.25rem]"></p>
+          </div>
+
+          <!-- Question 3: Partial Eta Squared -->
+          <div class="bg-slate-950 p-5 rounded-xl border border-slate-800">
+            <span class="text-xs font-bold text-indigo-400 uppercase tracking-wide">Question 3</span>
+            <p class="text-sm text-slate-200 mt-1 mb-3">Using R's table, calculate partial eta squared for the interaction (\(SS_{\text{Int}} / [SS_{\text{Int}} + SS_{\text{Res}}]\), round to 3 decimals):</p>
+            <div class="flex gap-2">
+              <input type="number" step="0.001" id="input-q3" placeholder="e.g., 0.588" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500">
+              <button onclick="checkQuestionFloat(3, 0.588, 0.005)" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-xs font-semibold text-white">Check</button>
+            </div>
+            <p id="feedback-q3" class="text-xs mt-2 min-h-[1.25rem]"></p>
+          </div>
+
+          <!-- Question 4: Table Driven Analytical Action -->
+          <div class="bg-slate-950 p-5 rounded-xl border border-slate-800">
+            <span class="text-xs font-bold text-indigo-400 uppercase tracking-wide">Question 4</span>
+            <p class="text-sm text-slate-200 mt-1 mb-3">When the interaction row is statistically significant (\(p &lt; .05\)), what is your next analytical step?</p>
+            <div class="flex gap-2">
+              <select id="input-q4" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500">
+                <option value="">Select answer...</option>
+                <option value="stop">Stop analysis and report only the LightLevel main effect</option>
+                <option value="simple">Conduct simple effects testing because main effects are conditional</option>
+                <option value="ignore">Ignore the interaction because Resolution is non significant</option>
+              </select>
+              <button onclick="checkSelect(4, 'simple')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-xs font-semibold text-white">Check</button>
+            </div>
+            <p id="feedback-q4" class="text-xs mt-2 min-h-[1.25rem]"></p>
+          </div>
+        </div>
+
+        <div id="toast-message" class="hidden mt-6 p-4 rounded-xl bg-slate-800 text-slate-100 text-sm border border-slate-700 flex items-center justify-between">
+          <span id="toast-text">Notification message</span>
+          <button onclick="document.getElementById('toast-message').classList.add('hidden')" class="text-slate-400 hover:text-white text-xs font-bold">DISMISS</button>
+        </div>
+
+        <!-- FACTORIAL ANOVA INTERPRETATION WORKSHEET APPENDED BELOW -->
+        <div class="mt-12 pt-10 border-t border-slate-800 space-y-10">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-950 text-indigo-300 border border-indigo-800 mb-3">
+              <span>Results Section Laboratory Practice</span>
+            </div>
+            <h3 class="text-2xl font-extrabold text-white tracking-tight">Factorial ANOVA Interpretation Worksheet</h3>
+            <p class="text-sm text-slate-300 mt-2 max-w-4xl leading-relaxed">
+              Examine the omnibus Type III ANOVA tables and select the correct follow up analytical pathway. You are provided with both marginal means comparisons and conditional simple effects comparisons generated via <code class="font-mono text-indigo-300">emmeans()</code>. Determine which follow up is mathematically and substantively warranted, then draft a complete APA results section paragraph.
+            </p>
+          </div>
+
+          <!-- DATASET 1 -->
+          <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6">
+            <div class="border-b border-slate-800 pb-4">
+              <span class="text-xs font-bold uppercase tracking-wider text-sky-400">Dataset 1</span>
+              <h4 class="text-xl font-bold text-white mt-1">Study Method and Room Environment</h4>
+              <p class="text-xs text-slate-400 mt-1">
+                A 2 (Method: Active Recall vs Passive Review) × 2 (Environment: Quiet Library vs Noisy Cafe) between subjects design assessing exam score performance (N = 80, n = 20 per cell).
+              </p>
+            </div>
+
+            <!-- R Output Box -->
+            <div class="space-y-4 font-mono text-xs">
+              <!-- Omnibus Table -->
+              <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 overflow-x-auto shadow-inner">
+                <div class="text-slate-400 mb-2 font-sans text-xs font-bold text-slate-300">Omnibus Test: car::Anova(exam_model, type = 3)</div>
+                <div class="text-slate-500 mb-1">
+                  Anova Table (Type III tests)<br>
+                  Response: ExamScore
+                </div>
+                <table class="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr class="text-slate-400 border-b border-slate-800">
+                      <th class="py-1.5 px-2">Source</th>
+                      <th class="py-1.5 px-2 text-right">Sum Sq</th>
+                      <th class="py-1.5 px-2 text-center">Df</th>
+                      <th class="py-1.5 px-2 text-right">F value</th>
+                      <th class="py-1.5 px-2 text-right">Pr(&gt;F)</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-800/60 text-slate-200">
+                    <tr>
+                      <td class="py-1.5 px-2 text-slate-400">(Intercept)</td>
+                      <td class="py-1.5 px-2 text-right">462400.0</td>
+                      <td class="py-1.5 px-2 text-center">1</td>
+                      <td class="py-1.5 px-2 text-right">6165.33</td>
+                      <td class="py-1.5 px-2 text-right">&lt; 2.2e-16</td>
+                    </tr>
+                    <tr>
+                      <td class="py-1.5 px-2 text-sky-300">Method</td>
+                      <td class="py-1.5 px-2 text-right">1051.2</td>
+                      <td class="py-1.5 px-2 text-center">1</td>
+                      <td class="py-1.5 px-2 text-right">14.016</td>
+                      <td class="py-1.5 px-2 text-right">0.000346</td>
+                    </tr>
+                    <tr>
+                      <td class="py-1.5 px-2 text-emerald-300">Environment</td>
+                      <td class="py-1.5 px-2 text-right">180.0</td>
+                      <td class="py-1.5 px-2 text-center">1</td>
+                      <td class="py-1.5 px-2 text-right">2.400</td>
+                      <td class="py-1.5 px-2 text-right">0.125431</td>
+                    </tr>
+                    <tr>
+                      <td class="py-1.5 px-2 text-purple-300">Method:Environment</td>
+                      <td class="py-1.5 px-2 text-right">15.6</td>
+                      <td class="py-1.5 px-2 text-center">1</td>
+                      <td class="py-1.5 px-2 text-right">0.208</td>
+                      <td class="py-1.5 px-2 text-right">0.649645</td>
+                    </tr>
+                    <tr>
+                      <td class="py-1.5 px-2 text-slate-400">Residuals</td>
+                      <td class="py-1.5 px-2 text-right">5700.0</td>
+                      <td class="py-1.5 px-2 text-center">76</td>
+                      <td class="py-1.5 px-2 text-right"></td>
+                      <td class="py-1.5 px-2 text-right"></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Follow up Options Grid -->
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <!-- Option A -->
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 overflow-x-auto">
+                  <div class="text-xs font-bold text-sky-400 font-sans mb-1">Option A: Marginal Means Comparison</div>
+                  <div class="text-indigo-200 mb-2">method_means &lt;- emmeans(exam_model, pairwise ~ Method)</div>
+                  <pre class="text-[11px] text-slate-300 leading-tight">
+$emmeans
+ Method         emmean    SE df lower.CL upper.CL
+ Active Recall    79.6 1.37 76     76.9     82.3
+ Passive Review   72.4 1.37 76     69.7     75.1
+
+Confidence level used: 0.95 
+
+$contrasts
+ contrast                      estimate   SE df t.ratio p.value
+ Active Recall - Passive Review    7.25 1.94 76   3.744  0.0003</pre>
+                </div>
+
+                <!-- Option B -->
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 overflow-x-auto">
+                  <div class="text-xs font-bold text-purple-400 font-sans mb-1">Option B: Conditional Simple Effects Comparison</div>
+                  <div class="text-indigo-200 mb-2">method_simple &lt;- emmeans(exam_model, pairwise ~ Method | Environment)</div>
+                  <pre class="text-[11px] text-slate-300 leading-tight">
+$emmeans
+Environment = Quiet Library:
+ Method         emmean    SE df lower.CL upper.CL
+ Active Recall    81.0 1.94 76     77.1     84.9
+ Passive Review   73.0 1.94 76     69.1     76.9
+
+Environment = Noisy Cafe:
+ Method         emmean    SE df lower.CL upper.CL
+ Active Recall    78.2 1.94 76     74.3     82.1
+ Passive Review   71.8 1.94 76     67.9     75.7
+
+$contrasts
+Environment = Quiet Library:
+ contrast                      estimate   SE df t.ratio p.value
+ Active Recall - Passive Review    8.00 2.74 76   2.921  0.0046
+
+Environment = Noisy Cafe:
+ contrast                      estimate   SE df t.ratio p.value
+ Active Recall - Passive Review    6.40 2.74 76   2.337  0.0221</pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- Student Pathway Decision and Writing Space -->
+            <div class="space-y-4 pt-2">
+              <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
+                <label class="text-xs font-bold text-slate-300 uppercase tracking-wide block mb-2">Analytical Decision Step</label>
+                <p class="text-xs text-slate-400 mb-2">Based on the Anova() table, which follow up output represents the correct statistical path to interpret?</p>
+                <div class="flex flex-wrap gap-4 text-xs">
+                  <label class="flex items-center gap-2 cursor-pointer text-slate-300 hover:text-white">
+                    <input type="radio" name="d1_choice" value="optionA" class="accent-indigo-500">
+                    <span>Option A (Marginal Means)</span>
+                  </label>
+                  <label class="flex items-center gap-2 cursor-pointer text-slate-300 hover:text-white">
+                    <input type="radio" name="d1_choice" value="optionB" class="accent-indigo-500">
+                    <span>Option B (Conditional Simple Effects)</span>
+                  </label>
+                  <button onclick="checkWorksheetChoice(1, 'optionA')" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded text-xs transition-colors">Verify Pathway</button>
+                </div>
+                <p id="d1-choice-feedback" class="text-xs mt-2 min-h-[1rem]"></p>
+              </div>
+
+              <div>
+                <label for="student_writeup_1" class="text-xs font-bold text-slate-300 uppercase tracking-wide block mb-1">
+                  Draft Results Section (APA 7th Format)
+                </label>
+                <p class="text-xs text-slate-400 mb-2">
+                  Draft your paragraph. Report the factorial design, omnibus effects with statistical notation (F, df, p, effect size), and follow up comparisons from the correct emmeans block.
+                </p>
+                <textarea id="student_writeup_1" rows="5" placeholder="A 2 (Method: Active Recall vs. Passive Review) x 2 (Environment: Quiet Library vs. Noisy Cafe) between subjects factorial ANOVA was conducted to examine..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 font-sans leading-relaxed"></textarea>
+              </div>
+
+              <div>
+                <button onclick="toggleStep('d1-sample-sol')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs font-semibold text-slate-200 transition-colors">
+                  Toggle Example Solution
+                </button>
+                <div id="d1-sample-sol" class="mt-3 p-4 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-300 space-y-2 hidden">
+                  <div class="font-bold text-indigo-300">Model Results Paragraph:</div>
+                  <p class="leading-relaxed font-sans">
+                    A 2 (Study Method: Active Recall vs. Passive Review) × 2 (Environment: Quiet Library vs. Noisy Cafe) between subjects factorial ANOVA was conducted on exam scores. The Method × Environment interaction effect was not statistically significant, F(1, 76) = 0.21, p = .650. The main effect of environment was also not statistically significant, F(1, 76) = 2.40, p = .125. However, there was a statistically significant main effect of study method, F(1, 76) = 14.02, p &lt; .001. Pairwise marginal comparisons using emmeans indicated that students utilizing active recall achieved significantly higher exam scores (M = 79.6, SE = 1.37) than students utilizing passive review (M = 72.4, SE = 1.37), t(76) = 3.74, p &lt; .001. Because the interaction was not statistically significant, this main effect can be interpreted across environments without decomposing conditional simple effects.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- DATASET 2 -->
+          <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6">
+            <div class="border-b border-slate-800 pb-4">
+              <span class="text-xs font-bold uppercase tracking-wider text-purple-400">Dataset 2</span>
+              <h4 class="text-xl font-bold text-white mt-1">Caffeine Dosage and Task Difficulty</h4>
+              <p class="text-xs text-slate-400 mt-1">
+                A 2 (Caffeine: Placebo vs 200mg Caffeine) × 2 (Difficulty: Simple vs Complex) between subjects design assessing cognitive reaction time in milliseconds (N = 60, n = 15 per cell).
+              </p>
+            </div>
+
+            <!-- R Output Box -->
+            <div class="space-y-4 font-mono text-xs">
+              <!-- Omnibus Table -->
+              <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 overflow-x-auto shadow-inner">
+                <div class="text-slate-400 mb-2 font-sans text-xs font-bold text-slate-300">Omnibus Test: car::Anova(rt_model, type = 3)</div>
+                <div class="text-slate-500 mb-1">
+                  Anova Table (Type III tests)<br>
+                  Response: ReactionTime
+                </div>
+                <table class="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr class="text-slate-400 border-b border-slate-800">
+                      <th class="py-1.5 px-2">Source</th>
+                      <th class="py-1.5 px-2 text-right">Sum Sq</th>
+                      <th class="py-1.5 px-2 text-center">Df</th>
+                      <th class="py-1.5 px-2 text-right">F value</th>
+                      <th class="py-1.5 px-2 text-right">Pr(&gt;F)</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-800/60 text-slate-200">
+                    <tr>
+                      <td class="py-1.5 px-2 text-slate-400">(Intercept)</td>
+                      <td class="py-1.5 px-2 text-right">18496000</td>
+                      <td class="py-1.5 px-2 text-center">1</td>
+                      <td class="py-1.5 px-2 text-right">10275.55</td>
+                      <td class="py-1.5 px-2 text-right">&lt; 2.2e-16</td>
+                    </tr>
+                    <tr>
+                      <td class="py-1.5 px-2 text-sky-300">Caffeine</td>
+                      <td class="py-1.5 px-2 text-right">11250</td>
+                      <td class="py-1.5 px-2 text-center">1</td>
+                      <td class="py-1.5 px-2 text-right">6.250</td>
+                      <td class="py-1.5 px-2 text-right">0.01538</td>
+                    </tr>
+                    <tr>
+                      <td class="py-1.5 px-2 text-emerald-300">Difficulty</td>
+                      <td class="py-1.5 px-2 text-right">58800</td>
+                      <td class="py-1.5 px-2 text-center">1</td>
+                      <td class="py-1.5 px-2 text-right">32.667</td>
+                      <td class="py-1.5 px-2 text-right">4.88e-07</td>
+                    </tr>
+                    <tr>
+                      <td class="py-1.5 px-2 text-purple-300">Caffeine:Difficulty</td>
+                      <td class="py-1.5 px-2 text-right">20100</td>
+                      <td class="py-1.5 px-2 text-center">1</td>
+                      <td class="py-1.5 px-2 text-right">11.167</td>
+                      <td class="py-1.5 px-2 text-right">0.00148</td>
+                    </tr>
+                    <tr>
+                      <td class="py-1.5 px-2 text-slate-400">Residuals</td>
+                      <td class="py-1.5 px-2 text-right">100800</td>
+                      <td class="py-1.5 px-2 text-center">56</td>
+                      <td class="py-1.5 px-2 text-right"></td>
+                      <td class="py-1.5 px-2 text-right"></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Follow up Options Grid -->
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <!-- Option A -->
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 overflow-x-auto">
+                  <div class="text-xs font-bold text-sky-400 font-sans mb-1">Option A: Marginal Means Comparison</div>
+                  <div class="text-indigo-200 mb-2">caffeine_means &lt;- emmeans(rt_model, pairwise ~ Caffeine)</div>
+                  <pre class="text-[11px] text-slate-300 leading-tight">
+$emmeans
+ Caffeine      emmean   SE df lower.CL upper.CL
+ Placebo          568 7.75 56      552      584
+ 200mg Caffeine   541 7.75 56      525      556
+
+Confidence level used: 0.95 
+
+$contrasts
+ contrast                 estimate   SE df t.ratio p.value
+ Placebo - 200mg Caffeine     27.4 11.0 56   2.500  0.0154</pre>
+                </div>
+
+                <!-- Option B -->
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 overflow-x-auto">
+                  <div class="text-xs font-bold text-purple-400 font-sans mb-1">Option B: Conditional Simple Effects Comparison</div>
+                  <div class="text-indigo-200 mb-2">caffeine_simple &lt;- emmeans(rt_model, pairwise ~ Caffeine | Difficulty)</div>
+                  <pre class="text-[11px] text-slate-300 leading-tight">
+$emmeans
+Difficulty = Simple:
+ Caffeine      emmean   SE df lower.CL upper.CL
+ Placebo          539 11.0 56      517      561
+ 200mg Caffeine   473 11.0 56      451      495
+
+Difficulty = Complex:
+ Caffeine      emmean   SE df lower.CL upper.CL
+ Placebo          597 11.0 56      575      619
+ 200mg Caffeine   609 11.0 56      587      631
+
+$contrasts
+Difficulty = Simple:
+ contrast                 estimate   SE df t.ratio p.value
+ Placebo - 200mg Caffeine     64.0 15.5 56   4.131  0.0001
+
+Difficulty = Complex:
+ contrast                 estimate   SE df t.ratio p.value
+ Placebo - 200mg Caffeine    -12.0 15.5 56  -0.775  0.4418</pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- Student Pathway Decision and Writing Space -->
+            <div class="space-y-4 pt-2">
+              <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
+                <label class="text-xs font-bold text-slate-300 uppercase tracking-wide block mb-2">Analytical Decision Step</label>
+                <p class="text-xs text-slate-400 mb-2">Based on the Anova() table, which follow up output represents the correct statistical path to interpret?</p>
+                <div class="flex flex-wrap gap-4 text-xs">
+                  <label class="flex items-center gap-2 cursor-pointer text-slate-300 hover:text-white">
+                    <input type="radio" name="d2_choice" value="optionA" class="accent-indigo-500">
+                    <span>Option A (Marginal Means)</span>
+                  </label>
+                  <label class="flex items-center gap-2 cursor-pointer text-slate-300 hover:text-white">
+                    <input type="radio" name="d2_choice" value="optionB" class="accent-indigo-500">
+                    <span>Option B (Conditional Simple Effects)</span>
+                  </label>
+                  <button onclick="checkWorksheetChoice(2, 'optionB')" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded text-xs transition-colors">Verify Pathway</button>
+                </div>
+                <p id="d2-choice-feedback" class="text-xs mt-2 min-h-[1rem]"></p>
+              </div>
+
+              <div>
+                <label for="student_writeup_2" class="text-xs font-bold text-slate-300 uppercase tracking-wide block mb-1">
+                  Draft Results Section (APA 7th Format)
+                </label>
+                <p class="text-xs text-slate-400 mb-2">
+                  Draft your paragraph. Report the factorial design, omnibus effects with statistical notation (F, df, p, effect size), and follow up comparisons from the correct emmeans block.
+                </p>
+                <textarea id="student_writeup_2" rows="5" placeholder="A 2 (Caffeine: Placebo vs. 200mg Caffeine) x 2 (Difficulty: Simple vs. Complex) between subjects factorial ANOVA was conducted to examine..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 font-sans leading-relaxed"></textarea>
+              </div>
+
+              <div>
+                <button onclick="toggleStep('d2-sample-sol')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs font-semibold text-slate-200 transition-colors">
+                  Toggle Example Solution
+                </button>
+                <div id="d2-sample-sol" class="mt-3 p-4 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-300 space-y-2 hidden">
+                  <div class="font-bold text-indigo-300">Model Results Paragraph:</div>
+                  <p class="leading-relaxed font-sans">
+                    A 2 (Caffeine: Placebo vs. 200mg Caffeine) × 2 (Task Difficulty: Simple vs. Complex) between subjects factorial ANOVA was conducted on reaction times. The main effect of caffeine was statistically significant, F(1, 56) = 6.25, p = .015, as was the main effect of task difficulty, F(1, 56) = 32.67, p &lt; .001. However, both main effects were qualified by a statistically significant Caffeine × Task Difficulty interaction effect, F(1, 56) = 11.17, p = .001. Analysis of simple effects using emmeans revealed that for simple tasks, participants receiving 200mg caffeine exhibited significantly faster reaction times (M = 473 ms, SE = 11.0) than those receiving placebo (M = 539 ms, SE = 11.0), t(56) = 4.13, p &lt; .001. Conversely, for complex tasks, reaction times did not significantly differ between placebo (M = 597 ms, SE = 11.0) and 200mg caffeine conditions (M = 609 ms, SE = 11.0), t(56) = -0.78, p = .442.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4">
+      <p>Psy 5480: Experimental Design &bullet; Interactive Courseware & Student Learning Module</p>
+      <p class="mt-1 text-slate-600">Calculations using Type III car::Anova() in R (n = 40)</p>
+    </div>
+  </footer>
+
+  <!-- Interactive JavaScript Logic -->
+  <script>
+    const rawData = [
+      {
+        resIndex: 1,
+        resolution: "QVGA (320x240)",
+        low: [6, 12, 6, 8],
+        high: [17, 11, 17, 15]
+      },
+      {
+        resIndex: 2,
+        resolution: "VGA (640x480)",
+        low: [13, 6, 10, 7],
+        high: [21, 14, 18, 15]
+      },
+      {
+        resIndex: 3,
+        resolution: "SVGA (832x624)",
+        low: [8, 10, 4, 10],
+        high: [17, 11, 17, 19]
+      },
+      {
+        resIndex: 4,
+        resolution: "XGA (1024x768)",
+        low: [18, 12, 17, 11],
+        high: [4, 8, 11, 9]
+      },
+      {
+        resIndex: 5,
+        resolution: "UXGA (1600x1200)",
+        low: [12, 11, 9, 9],
+        high: [7, 5, 9, 11]
+      }
+    ];
+
+    function initDataTable() {
+      const tbody = document.getElementById('raw-data-table-body');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      rawData.forEach((row, i) => {
+        const rowMean = ((row.low.reduce((a,b)=>a+b,0) + row.high.reduce((a,b)=>a+b,0)) / 8).toFixed(3);
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-900/40 transition-colors";
+
+        let lowHTML = row.low.map((val, k) => `
+          <button onclick="inspectScore(${i+1}, 1, ${k+1}, ${val})" 
+                  class="score-pill inline-flex items-center px-2 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500 text-emerald-300 font-mono text-xs cursor-pointer transition-all hover:scale-105 mr-1 mb-1">
+            <span class="text-[10px] text-slate-500 mr-1.5">Score</span>
+            <span class="font-bold">${val}</span>
+          </button>
+        `).join('');
+
+        let highHTML = row.high.map((val, k) => `
+          <button onclick="inspectScore(${i+1}, 2, ${k+1}, ${val})" 
+                  class="score-pill inline-flex items-center px-2 py-1 rounded bg-slate-900 border border-slate-800 hover:border-sky-500 text-sky-300 font-mono text-xs cursor-pointer transition-all hover:scale-105 mr-1 mb-1">
+            <span class="text-[10px] text-slate-500 mr-1.5">Score</span>
+            <span class="font-bold">${val}</span>
+          </button>
+        `).join('');
+
+        tr.innerHTML = `
+          <td class="p-3 font-semibold text-slate-200">Row ${i+1}: ${row.resolution}</td>
+          <td class="p-3 border-l border-slate-800 text-center">${lowHTML}</td>
+          <td class="p-3 border-l border-slate-800 text-center">${highHTML}</td>
+          <td class="p-3 border-l border-slate-800 text-center font-mono font-bold text-slate-300">${rowMean}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function inspectScore(i, j, k, val) {
+      const card = document.getElementById('cell-detail-card');
+      const badge = document.getElementById('inspector-badge');
+      const notLabel = document.getElementById('detail-notation');
+      const condLabel = document.getElementById('detail-condition');
+      const valLabel = document.getElementById('detail-value');
+      const meanLabel = document.getElementById('detail-cell-mean');
+      const sumLabel = document.getElementById('detail-cell-sum');
+      const residLabel = document.getElementById('detail-residual');
+
+      const row = rawData[i - 1];
+      const scores = j === 1 ? row.low : row.high;
+      const cellSum = scores.reduce((a, b) => a + b, 0);
+      const cellMean = cellSum / scores.length;
+      const residual = (val - cellMean).toFixed(2);
+      const lightingText = j === 1 ? "Column 1 (Low Light)" : "Column 2 (High Light)";
+
+      notLabel.textContent = `Score X in Row ${i}, Col ${j}`;
+      condLabel.textContent = `${row.resolution} | ${lightingText} (Participant ${k})`;
+      valLabel.textContent = val;
+      meanLabel.textContent = cellMean.toFixed(2);
+      sumLabel.textContent = cellSum;
+      residLabel.textContent = (residual > 0 ? `+${residual}` : residual);
+
+      card.classList.remove('hidden');
+      badge.textContent = `Viewing Score X = ${val} (Row ${i}, Col ${j})`;
+    }
+
+    function switchTab(targetId) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.nav-tab').forEach(btn => {
+        btn.classList.remove('bg-indigo-600', 'text-white', 'font-semibold');
+        btn.classList.add('text-slate-400', 'hover:bg-slate-800', 'hover:text-slate-100');
+      });
+
+      const activeSection = document.getElementById(`section-${targetId}`);
+      if (activeSection) {
+        activeSection.classList.remove('hidden');
+      }
+
+      const activeBtn = document.querySelector(`.nav-tab[data-target="${targetId}"]`);
+      if (activeBtn) {
+        activeBtn.classList.remove('text-slate-400', 'hover:bg-slate-800', 'hover:text-slate-100');
+        activeBtn.classList.add('bg-indigo-600', 'text-white', 'font-semibold');
+      }
+
+      if (window.renderMathInElement) {
+        renderMathInElement(document.body);
+      }
+    }
+
+    function setMatrixHighlight(mode) {
+      const cellItems = document.querySelectorAll('.cell-item');
+      const margAItems = document.querySelectorAll('.marg-a-item');
+      const margBItems = document.querySelectorAll('.marg-b-item');
+      const grandItem = document.querySelector('.grand-mean-item');
+      const explBox = document.getElementById('matrix-explanation-box');
+
+      [...cellItems, ...margAItems, ...margBItems, grandItem].forEach(el => {
+        if (el) el.classList.remove('ring-2', 'ring-sky-400', 'ring-emerald-400', 'ring-purple-400', 'opacity-30', 'bg-slate-800');
+      });
+
+      if (mode === 'all') {
+        explBox.innerHTML = `<strong>Overview of All Means:</strong> 10 individual cell means (\\(M_{\\text{Cell}}\\), \\(n_i = 4\\)), 5 row marginal means for Resolution (\\(M_{\\text{Row}}\\), \\(n_i = 8\\)), 2 column marginal means for Lighting (\\(M_{\\text{Column}}\\), \\(n_i = 20\\)), and the Grand Mean (\\(M_{\\text{grand}} = 11.375\\), \\(n = 40\\)).`;
+      } else if (mode === 'mainA') {
+        cellItems.forEach(el => el.classList.add('opacity-30'));
+        margBItems.forEach(el => el.classList.add('opacity-30'));
+        margAItems.forEach(el => el.classList.add('ring-2', 'ring-sky-400', 'bg-slate-800'));
+        explBox.innerHTML = `<strong class="text-sky-300">Rows Main Effect (Resolution):</strong> We compare only the 5 row marginal means \\(M_{\\text{Row}}\\) (\\(11.50, 13.00, 12.00, 11.25, 9.125\\)). In R's Type III ANOVA table, \\(F(4, 30) = 1.891, p = .138\\) (no overall main effect).`;
+      } else if (mode === 'mainB') {
+        cellItems.forEach(el => el.classList.add('opacity-30'));
+        margAItems.forEach(el => el.classList.add('opacity-30'));
+        margBItems.forEach(el => el.classList.add('ring-2', 'ring-emerald-400', 'bg-slate-800'));
+        explBox.innerHTML = `<strong class="text-emerald-300">Columns Main Effect (Lighting):</strong> We compare the 2 column marginal means \\(M_{\\text{Column}}\\): Low Light (\\(9.95\\)) versus High Light (\\(12.80\\)). In R's Type III ANOVA table, \\(F(1, 30) = 9.454, p = .0045\\). However, this main effect must be qualified by the interaction.`;
+      } else if (mode === 'interaction') {
+        margAItems.forEach(el => el.classList.add('opacity-30'));
+        margBItems.forEach(el => el.classList.add('opacity-30'));
+        cellItems.forEach(el => el.classList.add('ring-2', 'ring-purple-400', 'bg-slate-800'));
+        explBox.innerHTML = `<strong class="text-purple-300">Interaction Effect:</strong> We test whether the differences between lighting conditions vary across resolution tiers. In R's Type III ANOVA table, \\(F(4, 30) = 10.691, p < .001\\).`;
+      }
+
+      if (window.renderMathInElement) {
+        renderMathInElement(explBox);
+      }
+    }
+
+    function explainRRow(rowKey) {
+      const box = document.getElementById('r-row-explanation');
+      document.querySelectorAll('#section-interaction tbody tr').forEach(r => {
+        r.classList.remove('bg-purple-950/40', 'border', 'border-purple-800', 'bg-slate-900/80');
+      });
+
+      const selected = document.getElementById(`r-row-${rowKey}`);
+      if (selected) {
+        selected.classList.add('bg-slate-900/80', 'border', 'border-indigo-600');
+      }
+
+      if (rowKey === 'interaction') {
+        box.innerHTML = `
+          <div class="flex items-center justify-between border-b border-purple-900 pb-2">
+            <span class="font-bold text-purple-300 text-sm">Target Row: Resolution:LightLevel (Interaction Term)</span>
+            <span class="text-[11px] px-2 py-0.5 rounded bg-purple-900 text-purple-200">Statistical Decision: Reject H₀</span>
+          </div>
+          <p class="leading-relaxed">
+            In R, the colon operator (<code class="bg-purple-900/60 px-1.5 py-0.5 rounded text-purple-200 font-mono">FactorA:FactorB</code>) identifies the interaction between those factors. Here, the test statistic is <strong class="text-white font-mono">F(4, 30) = 10.691</strong> with a p value of <strong class="text-white font-mono">p = 1.66e-05</strong> (which is &lt; .001).
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs pt-1">
+            <div class="bg-slate-900/90 p-3 rounded-lg border border-slate-800">
+              <span class="text-purple-300 font-semibold block mb-1">1. The Golden Rule of Factorial Tables</span>
+              <p class="text-slate-400">Always inspect the interaction row <em>before</em> interpreting main effects. Because \\(p < .05\\), the main effects cannot be interpreted as universal statements.</p>
+            </div>
+            <div class="bg-slate-900/90 p-3 rounded-lg border border-slate-800">
+              <span class="text-purple-300 font-semibold block mb-1">2. Substantive Meaning</span>
+              <p class="text-slate-400">The difference in lives lost between Low Light and High Light is <strong>not constant</strong> across monitor resolutions; the effect of lighting is conditional on the level of resolution.</p>
+            </div>
+          </div>
+        `;
+      } else if (rowKey === 'rows') {
+        box.innerHTML = `
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <span class="font-bold text-sky-300 text-sm">Target Row: Resolution (Main Effect of Rows)</span>
+            <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">Statistical Decision: Fail to Reject H₀</span>
+          </div>
+          <p class="leading-relaxed">
+            This row tests whether the 5 resolution levels differ when averaged across lighting levels. With <strong class="text-white font-mono">F(4, 30) = 1.891</strong> and <strong class="text-white font-mono">p = 0.1378</strong>, there is no statistically significant main effect of graphics resolution at the \\(\\alpha = .05\\) level.
+          </p>
+        `;
+      } else if (rowKey === 'cols') {
+        box.innerHTML = `
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <span class="font-bold text-emerald-300 text-sm">Target Row: LightLevel (Main Effect of Columns)</span>
+            <span class="text-[11px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">Statistical Decision: Reject H₀</span>
+          </div>
+          <p class="leading-relaxed">
+            This row tests whether the marginal means of Low Light (9.95) and High Light (12.80) differ. With <strong class="text-white font-mono">F(1, 30) = 9.454</strong> and <strong class="text-white font-mono">p = 0.0045</strong>, it is statistically significant. However, because the interaction row below it is also significant, you must state that this effect depends on the resolution condition.
+          </p>
+        `;
+      } else if (rowKey === 'residuals') {
+        box.innerHTML = `
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <span class="font-bold text-slate-300 text-sm">Target Row: Residuals (Within Cell Error)</span>
+            <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">Denominator Variance (MS_Within)</span>
+          </div>
+          <p class="leading-relaxed">
+            The Residuals row represents unexplained within cell error variation. With <strong class="text-white font-mono">SS = 257.750</strong> and <strong class="text-white font-mono">df = 30</strong>, the error variance is <strong class="text-white font-mono">MS = 257.750 / 30 = 8.5917</strong>. This is the exact denominator used to compute every F ratio in the table.
+          </p>
+        `;
+      } else if (rowKey === 'intercept') {
+        box.innerHTML = `
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <span class="font-bold text-slate-300 text-sm">Target Row: (Intercept) IGNORE FOR ANOVA</span>
+            <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">Grand Mean Test</span>
+          </div>
+          <p class="leading-relaxed">
+            In Type III tests with sum to zero contrasts (<code class="font-mono text-indigo-300">contr.sum</code>), the Intercept row tests whether the grand mean (\\(M_{\\text{grand}} = 11.375\\)) is significantly different from zero: <strong class="text-white font-mono">F(1, 30) = 602.401, p &lt; .001</strong>.
+          </p>
+        `;
+      }
+
+      if (window.renderMathInElement) {
+        renderMathInElement(box);
+      }
+    }
+
+    function toggleStep(id) {
+      const content = document.getElementById(id);
+      const icon = document.getElementById(`${id}-icon`);
+      if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        if (icon) icon.textContent = '-';
+      } else {
+        content.classList.add('hidden');
+        if (icon) icon.textContent = '+';
+      }
+    }
+
+    function checkQuestion(qNum, target) {
+      const val = parseInt(document.getElementById(`input-q${qNum}`).value, 10);
+      const feedback = document.getElementById(`feedback-q${qNum}`);
+      if (isNaN(val)) {
+        feedback.innerHTML = `<span class="text-amber-400">Please enter a valid numeric integer.</span>`;
+        return;
+      }
+      if (val === target) {
+        feedback.innerHTML = `<span class="text-emerald-400 font-semibold">Correct! Exact match from R's ANOVA output.</span>`;
+      } else {
+        feedback.innerHTML = `<span class="text-rose-400">Not quite. Read the Df column directly from the R table.</span>`;
+      }
+    }
+
+    function checkQuestionFloat(qNum, target, tolerance) {
+      const val = parseFloat(document.getElementById(`input-q${qNum}`).value);
+      const feedback = document.getElementById(`feedback-q${qNum}`);
+      if (isNaN(val)) {
+        feedback.innerHTML = `<span class="text-amber-400">Please enter a decimal number.</span>`;
+        return;
+      }
+      if (Math.abs(val - target) <= tolerance) {
+        feedback.innerHTML = `<span class="text-emerald-400 font-semibold">Correct! \(\\eta_p^2 = 367.400 / (367.400 + 257.750) \\approx 0.588\)</span>`;
+      } else {
+        feedback.innerHTML = `<span class="text-rose-400">Incorrect. Compute \(SS_{\\text{Int}} / (SS_{\\text{Int}} + SS_{\\text{Res}})\).</span>`;
+      }
+      if (window.renderMathInElement) renderMathInElement(feedback);
+    }
+
+    function checkSelect(qNum, target) {
+      const val = document.getElementById(`input-q${qNum}`).value;
+      const feedback = document.getElementById(`feedback-q${qNum}`);
+      if (!val) {
+        feedback.innerHTML = `<span class="text-amber-400">Please select an option.</span>`;
+        return;
+      }
+      if (val === target) {
+        feedback.innerHTML = `<span class="text-emerald-400 font-semibold">Correct! When the interaction row in R is significant, you must conduct simple effects tests because main effects are conditional.</span>`;
+      } else {
+        feedback.innerHTML = `<span class="text-rose-400">Incorrect. A significant interaction qualifies the main effects and demands follow up simple effects.</span>`;
+      }
+    }
+
+    function checkWorksheetChoice(datasetNum, targetVal) {
+      const selected = document.querySelector(`input[name="d${datasetNum}_choice"]:checked`);
+      const feedback = document.getElementById(`d${datasetNum}-choice-feedback`);
+      if (!selected) {
+        feedback.innerHTML = `<span class="text-amber-400">Please pick an option first.</span>`;
+        return;
+      }
+      if (selected.value === targetVal) {
+        if (targetVal === 'optionA') {
+          feedback.innerHTML = `<span class="text-emerald-400 font-semibold">Correct pathway. The interaction row in the ANOVA table indicates that the effect of one factor does not depend on the other, making marginal main effects appropriate to report.</span>`;
+        } else {
+          feedback.innerHTML = `<span class="text-emerald-400 font-semibold">Correct pathway. The interaction row in the ANOVA table indicates that the effect of one factor depends on the other, meaning marginal means are conditional and simple effects must be analyzed.</span>`;
+        }
+      } else {
+        feedback.innerHTML = `<span class="text-rose-400">Incorrect pathway. Inspect the interaction term in the Anova() table first to decide whether marginal means or conditional simple effects are warranted.</span>`;
+      }
+    }
+
+    function copyWriteUp() {
+      const textToCopy = document.getElementById('apa-writeup-text').innerText;
+      const textArea = document.createElement("textarea");
+      textArea.value = textToCopy;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-999999px";
+      textArea.style.top = "-999999px";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      
+      try {
+        const successful = document.execCommand('copy');
+        showToast(successful ? "APA write up copied to clipboard!" : "Could not copy automatically. Please copy manually.");
+      } catch (err) {
+        showToast("Copy error. Please copy text manually.");
+      }
+      document.body.removeChild(textArea);
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast-message');
+      const text = document.getElementById('toast-text');
+      if (toast && text) {
+        text.textContent = msg;
+        toast.classList.remove('hidden');
+        setTimeout(() => {
+          toast.classList.add('hidden');
+        }, 4000);
+      }
+    }
+
+    window.onload = function() {
+      initDataTable();
+      setMatrixHighlight('all');
+    };
+  </script>
+</body>
+</html>

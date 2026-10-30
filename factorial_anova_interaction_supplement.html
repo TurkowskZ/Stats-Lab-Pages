@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Factorial ANOVA Interaction Supplement</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              blue: '#2563eb',
+              green: '#059669',
+              dark: '#090d16',
+              card: '#111827',
+              border: '#1f293d',
+              accent: '#3b82f6'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #0b0f19;
+      color: #f3f4f6;
+      font-family: 'Inter', sans-serif;
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2563eb;
+      border-radius: 3px;
+    }
+    .custom-shadow {
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+    }
+    .grid-line {
+      stroke: #1e293b;
+      stroke-dasharray: 4 4;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-blue-600 selection:text-white">
+
+  <!-- Header -->
+  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-lg shadow-inner">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
+            Factorial ANOVA Interaction Supplement
+            <span class="text-xs px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 font-medium">Visual Guide</span>
+          </h1>
+          <p class="text-xs text-slate-400">Interpret main effects and interaction patterns across experimental factorial designs</p>
+        </div>
+      </div>
+
+      <!-- Mode Switcher -->
+      <div class="flex items-center bg-slate-800/80 p-1 rounded-xl border border-slate-700/60 text-xs">
+        <button id="viewPresetBtn" onclick="switchMainTab('presets')" class="px-3.5 py-1.5 rounded-lg font-medium transition duration-150 bg-blue-600 text-white shadow">
+          Core Scenarios
+        </button>
+        <button id="viewSandboxBtn" onclick="switchMainTab('sandbox')" class="px-3.5 py-1.5 rounded-lg font-medium transition duration-150 text-slate-300 hover:text-white">
+          Interactive Sandbox
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- PRESETS VIEW -->
+    <div id="presetsSection" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      
+      <!-- Scenarios Selector Sidebar -->
+      <div class="lg:col-span-4 flex flex-col gap-3">
+        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-xs uppercase tracking-wider font-semibold text-slate-400">Scenarios Overview</h2>
+            <span class="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-mono">10 Scenarios</span>
+          </div>
+          
+          <nav id="scenarioNavList" class="space-y-1.5 max-h-[calc(100vh-220px)] overflow-y-auto pr-1">
+            <!-- Dynamically populated buttons -->
+          </nav>
+        </div>
+
+        <!-- Legend Box Quick Info -->
+        <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 text-xs space-y-2.5">
+          <div class="font-semibold text-slate-300 flex items-center gap-2">
+            <span>Visual Legend</span>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div class="flex items-center gap-2 bg-slate-800/40 p-2 rounded-lg border border-slate-700/40">
+              <span class="w-3 h-3 rounded-full bg-blue-500 inline-block shadow-sm shadow-blue-500/50"></span>
+              <span class="font-medium text-slate-200">B1 Factor Level</span>
+            </div>
+            <div class="flex items-center gap-2 bg-slate-800/40 p-2 rounded-lg border border-slate-700/40">
+              <span class="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[10px] border-b-emerald-500 inline-block"></span>
+              <span class="font-medium text-slate-200">B2 Factor Level</span>
+            </div>
+          </div>
+          <p class="text-slate-400 leading-relaxed pt-1">
+            Parallel trajectories denote zero interaction effect. Divergence, convergence, or crossed trajectories denote interaction effects.
+          </p>
+        </div>
+      </div>
+
+      <!-- Scenario Display Workspace -->
+      <div class="lg:col-span-8 flex flex-col gap-6">
+
+        <!-- Top Title Banner -->
+        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 custom-shadow">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-4 mb-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <span id="scenarioIndexBadge" class="px-2 py-0.5 rounded text-xs font-mono bg-blue-500/10 border border-blue-500/30 text-blue-400 font-semibold">Scenario 1</span>
+                <span id="scenarioCategoryBadge" class="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-400">Two Factor Design</span>
+              </div>
+              <h2 id="scenarioTitle" class="text-xl font-bold text-white mt-1">Main effect of A</h2>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="navigateScenario(-1)" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Previous Scenario">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+              </button>
+              <button onclick="navigateScenario(1)" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Next Scenario">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Plot Container -->
+          <div class="relative bg-slate-950/70 rounded-xl p-4 border border-slate-800/80 flex flex-col items-center justify-center">
+            <div id="chartContainer" class="w-full flex items-center justify-center min-h-[340px]">
+              <!-- Dynamic SVG will be rendered here -->
+            </div>
+            <div id="plotTooltip" class="absolute hidden pointer-events-none bg-slate-900/95 border border-slate-700 text-slate-100 px-3 py-1.5 rounded-lg text-xs font-mono shadow-xl transition-all z-20"></div>
+          </div>
+        </div>
+
+        <!-- Data Contingency Tables and Marginal Breakdown -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+          
+          <!-- Table Section -->
+          <div class="md:col-span-7 bg-slate-900/80 border border-slate-800 rounded-2xl p-5 custom-shadow">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-semibold text-slate-200">Cell Means and Marginal Means</h3>
+              <span class="text-xs text-slate-400 font-medium">Marginal Mean Analysis</span>
+            </div>
+            <div id="tablesRenderArea" class="space-y-4">
+              <!-- Dynamically populated tables -->
+            </div>
+            <p class="text-xs text-slate-400 mt-3 pt-3 border-t border-slate-800/80 italic">
+              Row marginals evaluate factor A. Column marginals evaluate factor B.
+            </p>
+          </div>
+
+          <!-- Statistical Verdict Section -->
+          <div class="md:col-span-5 bg-slate-900/80 border border-slate-800 rounded-2xl p-5 custom-shadow flex flex-col justify-between">
+            <div>
+              <h3 class="text-sm font-semibold text-slate-200 mb-3">ANOVA Effects Diagnosis</h3>
+              <div id="effectsDiagnosisList" class="space-y-2.5">
+                <!-- Effects checklist -->
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-slate-800/80">
+              <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Interpretation Note</div>
+              <p id="scenarioDescription" class="text-xs text-slate-300 leading-relaxed">
+                <!-- Dynamically populated -->
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- INTERACTIVE SANDBOX SECTION -->
+    <div id="sandboxSection" class="hidden space-y-6">
+      
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 custom-shadow">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-4 mb-6">
+          <div>
+            <h2 class="text-xl font-bold text-white">Interactive Factorial Sandbox</h2>
+            <p class="text-xs text-slate-400 mt-1">Adjust cell values in real time to observe instant graphical transitions and statistical calculations</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="resetSandboxDefaults()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-300 hover:text-white transition">
+              Reset Sandbox
+            </button>
+            <button onclick="loadScenarioIntoSandbox(5)" class="px-3 py-1.5 rounded-lg bg-blue-600/30 hover:bg-blue-600/40 text-blue-300 border border-blue-500/30 text-xs font-medium transition">
+              Load Classic Cross Pattern
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          
+          <!-- Sandbox Controls -->
+          <div class="lg:col-span-5 space-y-6">
+            <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800 space-y-4">
+              <span class="text-xs uppercase font-semibold tracking-wider text-slate-400 block">Edit Cell Means</span>
+              
+              <div class="space-y-4">
+                <div class="p-3 bg-slate-900/90 rounded-lg border border-slate-800">
+                  <div class="flex justify-between items-center mb-1">
+                    <span class="text-xs font-semibold text-blue-400">Cell (A1, B1)</span>
+                    <span id="val_A1_B1" class="text-xs font-mono font-bold text-white">10</span>
+                  </div>
+                  <input type="range" min="0" max="50" value="10" step="1" id="slider_A1_B1" oninput="updateSandboxFromSlider('A1_B1', this.value)" class="w-full accent-blue-500 cursor-pointer">
+                </div>
+
+                <div class="p-3 bg-slate-900/90 rounded-lg border border-slate-800">
+                  <div class="flex justify-between items-center mb-1">
+                    <span class="text-xs font-semibold text-emerald-400">Cell (A1, B2)</span>
+                    <span id="val_A1_B2" class="text-xs font-mono font-bold text-white">20</span>
+                  </div>
+                  <input type="range" min="0" max="50" value="20" step="1" id="slider_A1_B2" oninput="updateSandboxFromSlider('A1_B2', this.value)" class="w-full accent-emerald-500 cursor-pointer">
+                </div>
+
+                <div class="p-3 bg-slate-900/90 rounded-lg border border-slate-800">
+                  <div class="flex justify-between items-center mb-1">
+                    <span class="text-xs font-semibold text-blue-400">Cell (A2, B1)</span>
+                    <span id="val_A2_B1" class="text-xs font-mono font-bold text-white">20</span>
+                  </div>
+                  <input type="range" min="0" max="50" value="20" step="1" id="slider_A2_B1" oninput="updateSandboxFromSlider('A2_B1', this.value)" class="w-full accent-blue-500 cursor-pointer">
+                </div>
+
+                <div class="p-3 bg-slate-900/90 rounded-lg border border-slate-800">
+                  <div class="flex justify-between items-center mb-1">
+                    <span class="text-xs font-semibold text-emerald-400">Cell (A2, B2)</span>
+                    <span id="val_A2_B2" class="text-xs font-mono font-bold text-white">10</span>
+                  </div>
+                  <input type="range" min="0" max="50" value="10" step="1" id="slider_A2_B2" oninput="updateSandboxFromSlider('A2_B2', this.value)" class="w-full accent-emerald-500 cursor-pointer">
+                </div>
+              </div>
+            </div>
+
+            <!-- Sandbox Computed Table -->
+            <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+              <span class="text-xs uppercase font-semibold tracking-wider text-slate-400 block mb-3">Live Mean Contingency Table</span>
+              <div id="sandboxTableContainer"></div>
+            </div>
+
+          </div>
+
+          <!-- Sandbox Live Plot & Diagnostics -->
+          <div class="lg:col-span-7 space-y-6">
+            
+            <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 flex flex-col items-center justify-center">
+              <div class="w-full flex items-center justify-between pb-2 mb-2 border-b border-slate-800/80">
+                <span class="text-xs font-semibold text-slate-300">Live Reaction Norm Plot</span>
+                <div class="flex items-center gap-4 text-xs font-mono">
+                  <span class="text-blue-400 flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span> B1 Slope: <span id="slopeB1" class="font-bold">0</span></span>
+                  <span class="text-emerald-400 flex items-center gap-1.5"><span class="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-b-[7px] border-b-emerald-500 inline-block"></span> B2 Slope: <span id="slopeB2" class="font-bold">0</span></span>
+                </div>
+              </div>
+              <div id="sandboxChartArea" class="w-full flex justify-center py-2 min-h-[320px]">
+                <!-- Dynamic SVG will render here -->
+              </div>
+            </div>
+
+            <!-- Real-time Mathematical Diagnostic -->
+            <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+              <span class="text-xs uppercase font-semibold tracking-wider text-slate-400 block mb-3">Mathematical Effect Evaluation</span>
+              <div id="sandboxDiagnosticText" class="space-y-2 text-xs leading-relaxed text-slate-300">
+                <!-- Diagnostic bullets -->
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800/80 py-5 bg-slate-950 text-center text-xs text-slate-400">
+    <div class="max-w-7xl mx-auto px-4">
+      Factorial ANOVA Visual Reference Guide &bull; Educational Supplement for Factorial ANOVA Experimental Designs
+    </div>
+  </footer>
+
+  <!-- Core JavaScript Logic -->
+  <script>
+    // Document scenario data exactly as presented in the uploaded supplement
+    const scenarios = [
+      {
+        id: 1,
+        title: "Main effect of A",
+        category: "Two factor design",
+        isThreeWay: false,
+        data: {
+          A1: { B1: 10, B2: 10 },
+          A2: { B1: 20, B2: 20 }
+        },
+        yRange: [0, 25],
+        yTicks: [10, 15, 20],
+        effects: {
+          mainA: true,
+          mainB: false,
+          interaction: false
+        },
+        explanation: "Mean response shifts dramatically from level A1 (average 10) to level A2 (average 20). Meanwhile, factor B levels display identical scores at both levels (average 15 for both B1 and B2). The slopes of B1 and B2 are identical and completely superimpose, confirming the absence of an interaction effect."
+      },
+      {
+        id: 2,
+        title: "Main effect of B",
+        category: "Two factor design",
+        isThreeWay: false,
+        data: {
+          A1: { B1: 10, B2: 20 },
+          A2: { B1: 10, B2: 20 }
+        },
+        yRange: [0, 25],
+        yTicks: [10, 15, 20],
+        effects: {
+          mainA: false,
+          mainB: true,
+          interaction: false
+        },
+        explanation: "Scores for B2 (mean 20) are consistently higher than for B1 (mean 10), producing a prominent main effect of factor B. Conversely, shifting from level A1 to A2 yields zero change in score across either B condition (both row means equal 15). Both horizontal trajectories remain parallel with zero slope."
+      },
+      {
+        id: 3,
+        title: "Main effect of A and B (no interaction)",
+        category: "Two factor design",
+        isThreeWay: false,
+        data: {
+          A1: { B1: 10, B2: 20 },
+          A2: { B1: 20, B2: 30 }
+        },
+        yRange: [0, 35],
+        yTicks: [10, 15, 20, 25, 30],
+        effects: {
+          mainA: true,
+          mainB: true,
+          interaction: false
+        },
+        explanation: "Main effect of A is evident since marginal mean increases from 15 (A1) to 25 (A2). Main effect of B is evident since B2 (mean 25) consistently exceeds B1 (mean 15). The lines for B1 and B2 possess identical upward slopes of +10, which confirms parallel lines and hence no interaction effect."
+      },
+      {
+        id: 4,
+        title: "No effect",
+        category: "Two factor design",
+        isThreeWay: false,
+        data: {
+          A1: { B1: 15, B2: 15 },
+          A2: { B1: 15, B2: 15 }
+        },
+        yRange: [10, 20],
+        yTicks: [12, 13, 14, 15, 16, 17, 18],
+        effects: {
+          mainA: false,
+          mainB: false,
+          interaction: false
+        },
+        explanation: "All combinations of factor A and factor B yield identical responses of 15. The row marginals are identical (15 and 15), column marginals are identical (15 and 15), and the reaction norms are flat lines lying on top of each other. No main effects and no interaction effect exist."
+      },
+      {
+        id: 5,
+        title: "Two factor interaction with no main effect",
+        category: "Two factor design",
+        isThreeWay: false,
+        data: {
+          A1: { B1: 10, B2: 20 },
+          A2: { B1: 20, B2: 10 }
+        },
+        yRange: [0, 25],
+        yTicks: [10, 15, 20],
+        effects: {
+          mainA: false,
+          mainB: false,
+          interaction: true
+        },
+        explanation: "A classic disordinal cross interaction. Notice that the row means for A1 and A2 are both 15, hiding any main effect of A. Similarly, column means for B1 and B2 are both 15, hiding any main effect of B. However, the effect of factor A completely reverses depending on the level of B, demonstrating a severe interaction effect."
+      },
+      {
+        id: 6,
+        title: "Two factor interaction with main effects of both A and B",
+        category: "Two factor design",
+        isThreeWay: false,
+        data: {
+          A1: { B1: 10, B2: 20 },
+          A2: { B1: 20, B2: 40 }
+        },
+        yRange: [0, 45],
+        yTicks: [10, 20, 30, 40],
+        effects: {
+          mainA: true,
+          mainB: true,
+          interaction: true
+        },
+        explanation: "A ordinal spreading interaction. Row means increase from 15 (A1) to 30 (A2), establishing a main effect of A. Column means shift from 15 (B1) to 30 (B2), establishing a main effect of B. The slope of B1 is +10 whereas the slope of B2 is +20; non parallel lines signal a significant two factor interaction."
+      },
+      {
+        id: 7,
+        title: "Another two factor interaction with main effects of both A and B",
+        category: "Two factor design",
+        isThreeWay: false,
+        data: {
+          A1: { B1: 40, B2: 10 },
+          A2: { B1: 20, B2: 20 }
+        },
+        yRange: [0, 45],
+        yTicks: [10, 20, 30, 40],
+        effects: {
+          mainA: true,
+          mainB: true,
+          interaction: true
+        },
+        explanation: "Row marginal mean for A1 is 25 while for A2 it is 20 (main effect of A). Column marginal mean for B1 is 30 while for B2 it is 15 (main effect of B). The trajectory for B1 drops by 20 points while the trajectory for B2 rises by 10 points. Strongly non parallel converging lines verify a robust interaction effect."
+      },
+      {
+        id: 8,
+        title: "Three way interaction",
+        category: "Three factor design",
+        isThreeWay: true,
+        data: {
+          C1: {
+            A1: { B1: 40, B2: 10 },
+            A2: { B1: 20, B2: 20 }
+          },
+          C2: {
+            A1: { B1: 15, B2: 30 },
+            A2: { B1: 35, B2: 10 }
+          }
+        },
+        yRange: [0, 45],
+        yTicks: [10, 20, 30, 40],
+        effects: {
+          interactionABC: true,
+          notes: "The nature of the interaction between factor A and factor B differs between level C1 and level C2."
+        },
+        explanation: "At level C1, the two lines converge toward score 20 at A2. At level C2, the lines form an opposing X pattern where B1 starts low and rises while B2 starts high and drops. Because the two factor interaction between A and B looks fundamentally different across the slices of factor C, a three way interaction is present."
+      },
+      {
+        id: 9,
+        title: "Two way interaction with three variables, no main effect of C",
+        category: "Three factor design",
+        isThreeWay: true,
+        data: {
+          C1: {
+            A1: { B1: 40, B2: 40 },
+            A2: { B1: 40, B2: 20 }
+          },
+          C2: {
+            A1: { B1: 40, B2: 40 },
+            A2: { B1: 40, B2: 20 }
+          }
+        },
+        yRange: [10, 48],
+        yTicks: [15, 20, 25, 30, 35, 40, 45],
+        effects: {
+          mainC: false,
+          interactionAB: true,
+          interactionABC: false,
+          notes: "Identical A by B interaction across both levels of C. Overall marginal mean for C1 equals C2 (35)."
+        },
+        explanation: "In both C1 and C2, B1 stays flat at 40 while B2 plummets from 40 down to 20. Because the A by B interaction patterns are identical in both panels, there is no three way interaction. Furthermore, the mean score for slice C1 is 35 and the mean score for slice C2 is 35, confirming no main effect of factor C."
+      },
+      {
+        id: 10,
+        title: "Two way interaction with three variables, with main effect of C",
+        category: "Three factor design",
+        isThreeWay: true,
+        data: {
+          C1: {
+            A1: { B1: 40, B2: 40 },
+            A2: { B1: 40, B2: 20 }
+          },
+          C2: {
+            A1: { B1: 30, B2: 30 },
+            A2: { B1: 30, B2: 10 }
+          }
+        },
+        yRange: [5, 45],
+        yTicks: [10, 20, 30, 40],
+        effects: {
+          mainC: true,
+          interactionAB: true,
+          interactionABC: false,
+          notes: "Consistent A by B interaction pattern, but all scores at C2 are shifted downward by 10 points relative to C1."
+        },
+        explanation: "Within both C1 and C2, B1 remains horizontal while B2 drops by 20 units. This shows an identical A by B interaction across both slices, meaning no three way interaction. However, every cell at C2 is exactly 10 units lower than at C1 (average at C1 is 35, average at C2 is 25), producing a significant main effect of C."
+      }
+    ];
+
+    let currentScenarioIndex = 0;
+
+    // Sandbox state
+    let sandboxData = {
+      A1: { B1: 10, B2: 20 },
+      A2: { B1: 20, B2: 10 }
+    };
+
+    // Initialize Navigation List
+    function initNavigation() {
+      const nav = document.getElementById('scenarioNavList');
+      nav.innerHTML = '';
+      scenarios.forEach((s, idx) => {
+        const btn = document.createElement('button');
+        btn.id = `navBtn_${idx}`;
+        btn.className = `w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium transition flex items-center justify-between group ${
+          idx === currentScenarioIndex 
+            ? 'bg-blue-600/20 text-blue-300 border border-blue-500/40 shadow' 
+            : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent'
+        }`;
+        btn.onclick = () => selectScenario(idx);
+        
+        btn.innerHTML = `
+          <div class="flex items-center gap-2.5 truncate">
+            <span class="w-5 h-5 rounded-md flex items-center justify-center text-[10px] font-mono ${
+              idx === currentScenarioIndex ? 'bg-blue-500 text-white font-bold' : 'bg-slate-800 text-slate-400 group-hover:text-white'
+            }">${idx + 1}</span>
+            <span class="truncate">${s.title}</span>
+          </div>
+          <span class="text-[10px] px-1.5 py-0.5 rounded ${s.isThreeWay ? 'bg-purple-900/40 text-purple-300 border border-purple-700/30' : 'bg-slate-800 text-slate-400'}">
+            ${s.isThreeWay ? '3 factors' : '2 factors'}
+          </span>
+        `;
+        nav.appendChild(btn);
+      });
+    }
+
+    function selectScenario(index) {
+      currentScenarioIndex = index;
+      renderCurrentScenario();
+      updateNavHighlight();
+    }
+
+    function navigateScenario(delta) {
+      let next = currentScenarioIndex + delta;
+      if (next < 0) next = scenarios.length - 1;
+      if (next >= scenarios.length) next = 0;
+      selectScenario(next);
+    }
+
+    function updateNavHighlight() {
+      scenarios.forEach((_, idx) => {
+        const btn = document.getElementById(`navBtn_${idx}`);
+        if (!btn) return;
+        if (idx === currentScenarioIndex) {
+          btn.className = 'w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium transition flex items-center justify-between group bg-blue-600/20 text-blue-300 border border-blue-500/40 shadow';
+          const badge = btn.querySelector('span:first-child');
+          if (badge) badge.className = 'w-5 h-5 rounded-md flex items-center justify-center text-[10px] font-mono bg-blue-500 text-white font-bold';
+        } else {
+          btn.className = 'w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium transition flex items-center justify-between group text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent';
+          const badge = btn.querySelector('span:first-child');
+          if (badge) badge.className = 'w-5 h-5 rounded-md flex items-center justify-center text-[10px] font-mono bg-slate-800 text-slate-400 group-hover:text-white';
+        }
+      });
+    }
+
+    // Render Preset View Content
+    function renderCurrentScenario() {
+      const sc = scenarios[currentScenarioIndex];
+      document.getElementById('scenarioIndexBadge').innerText = `Scenario ${sc.id}`;
+      document.getElementById('scenarioCategoryBadge').innerText = sc.category;
+      document.getElementById('scenarioTitle').innerText = sc.title;
+      document.getElementById('scenarioDescription').innerText = sc.explanation;
+
+      // Render Charts
+      const chartArea = document.getElementById('chartContainer');
+      chartArea.innerHTML = '';
+      if (!sc.isThreeWay) {
+        chartArea.appendChild(createSvgPlot(sc.data, sc.yRange, sc.yTicks, null, 500, 320));
+      } else {
+        // Multi panel rendering for 3-way designs
+        const wrapper = document.createElement('div');
+        wrapper.className = 'w-full grid grid-cols-1 md:grid-cols-2 gap-4';
+        
+        const panelC1 = document.createElement('div');
+        panelC1.className = 'flex flex-col items-center bg-slate-900/50 p-2 rounded-xl border border-slate-800/80';
+        panelC1.innerHTML = '<div class="text-xs font-bold text-slate-200 mb-1 tracking-wide">Level C1</div>';
+        panelC1.appendChild(createSvgPlot(sc.data.C1, sc.yRange, sc.yTicks, 'C1', 320, 290));
+
+        const panelC2 = document.createElement('div');
+        panelC2.className = 'flex flex-col items-center bg-slate-900/50 p-2 rounded-xl border border-slate-800/80';
+        panelC2.innerHTML = '<div class="text-xs font-bold text-slate-200 mb-1 tracking-wide">Level C2</div>';
+        panelC2.appendChild(createSvgPlot(sc.data.C2, sc.yRange, sc.yTicks, 'C2', 320, 290));
+
+        wrapper.appendChild(panelC1);
+        wrapper.appendChild(panelC2);
+        chartArea.appendChild(wrapper);
+      }
+
+      // Render Tables
+      renderContingencyTables(sc);
+
+      // Render ANOVA Diagnosis
+      renderDiagnosis(sc);
+    }
+
+    // SVG Plot Generator
+    function createSvgPlot(data, yDomain, yTicks, panelTitle = null, width = 480, height = 300) {
+      const margin = { top: 30, right: 30, bottom: 45, left: 55 };
+      const w = width - margin.left - margin.right;
+      const h = height - margin.top - margin.bottom;
+
+      const [yMin, yMax] = yDomain;
+      const yScale = val => h - ((val - yMin) / (yMax - yMin)) * h;
+
+      // X positions
+      const xA1 = w * 0.28;
+      const xA2 = w * 0.72;
+
+      // Coordinates
+      const b1_1 = { x: xA1, y: yScale(data.A1.B1), val: data.A1.B1 };
+      const b1_2 = { x: xA2, y: yScale(data.A2.B1), val: data.A2.B1 };
+      const b2_1 = { x: xA1, y: yScale(data.A1.B2), val: data.A1.B2 };
+      const b2_2 = { x: xA2, y: yScale(data.A2.B2), val: data.A2.B2 };
+
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+      svg.setAttribute('class', 'w-full h-auto max-w-full drop-shadow');
+
+      // Group with margin transform
+      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      g.setAttribute('transform', `translate(${margin.left}, ${margin.top})`);
+
+      // Draw Outer Box Border (matching R plot style)
+      const borderRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      borderRect.setAttribute('x', 0);
+      borderRect.setAttribute('y', 0);
+      borderRect.setAttribute('width', w);
+      borderRect.setAttribute('height', h);
+      borderRect.setAttribute('fill', '#070b14');
+      borderRect.setAttribute('stroke', '#334155');
+      borderRect.setAttribute('stroke-width', '1.5');
+      g.appendChild(borderRect);
+
+      // Horizontal subtle grid lines
+      yTicks.forEach(tick => {
+        const yPos = yScale(tick);
+        const gridLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        gridLine.setAttribute('x1', 0);
+        gridLine.setAttribute('x2', w);
+        gridLine.setAttribute('y1', yPos);
+        gridLine.setAttribute('y2', yPos);
+        gridLine.setAttribute('stroke', '#1e293b');
+        gridLine.setAttribute('stroke-width', '1');
+        gridLine.setAttribute('stroke-dasharray', '3 3');
+        g.appendChild(gridLine);
+
+        // Tick mark on left axis
+        const tickMark = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        tickMark.setAttribute('x1', -6);
+        tickMark.setAttribute('x2', 0);
+        tickMark.setAttribute('y1', yPos);
+        tickMark.setAttribute('y2', yPos);
+        tickMark.setAttribute('stroke', '#94a3b8');
+        tickMark.setAttribute('stroke-width', '1.5');
+        g.appendChild(tickMark);
+
+        // Y tick label
+        const tickText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        tickText.setAttribute('x', -12);
+        tickText.setAttribute('y', yPos + 4);
+        tickText.setAttribute('text-anchor', 'end');
+        tickText.setAttribute('fill', '#94a3b8');
+        tickText.setAttribute('font-size', '12px');
+        tickText.setAttribute('font-family', 'Inter, sans-serif');
+        tickText.textContent = tick;
+        g.appendChild(tickText);
+      });
+
+      // Y Axis Label
+      const yLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      yLabel.setAttribute('transform', 'rotate(-90)');
+      yLabel.setAttribute('x', -h / 2);
+      yLabel.setAttribute('y', -36);
+      yLabel.setAttribute('text-anchor', 'middle');
+      yLabel.setAttribute('fill', '#cbd5e1');
+      yLabel.setAttribute('font-size', '13px');
+      yLabel.setAttribute('font-weight', '500');
+      yLabel.textContent = 'Score';
+      g.appendChild(yLabel);
+
+      // X Ticks & Labels
+      [{ x: xA1, label: 'A1' }, { x: xA2, label: 'A2' }].forEach(xItem => {
+        const xTick = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        xTick.setAttribute('x1', xItem.x);
+        xTick.setAttribute('x2', xItem.x);
+        xTick.setAttribute('y1', h);
+        xTick.setAttribute('y2', h + 6);
+        xTick.setAttribute('stroke', '#94a3b8');
+        xTick.setAttribute('stroke-width', '1.5');
+        g.appendChild(xTick);
+
+        const xText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        xText.setAttribute('x', xItem.x);
+        xText.setAttribute('y', h + 24);
+        xText.setAttribute('text-anchor', 'middle');
+        xText.setAttribute('fill', '#e2e8f0');
+        xText.setAttribute('font-size', '13px');
+        xText.setAttribute('font-weight', '600');
+        xText.textContent = xItem.label;
+        g.appendChild(xText);
+      });
+
+      // Connecting Lines
+      // Check if both lines completely overlap (like scenario 1 or scenario 4)
+      const isOverlapping = (b1_1.val === b2_1.val && b1_2.val === b2_2.val);
+
+      // B1 Line (Blue)
+      const lineB1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      lineB1.setAttribute('x1', b1_1.x);
+      lineB1.setAttribute('y1', b1_1.y);
+      lineB1.setAttribute('x2', b1_2.x);
+      lineB1.setAttribute('y2', b1_2.y);
+      lineB1.setAttribute('stroke', '#2563eb');
+      lineB1.setAttribute('stroke-width', isOverlapping ? '4' : '3');
+      lineB1.setAttribute('stroke-linecap', 'round');
+      g.appendChild(lineB1);
+
+      // B2 Line (Emerald Green)
+      const lineB2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      lineB2.setAttribute('x1', b2_1.x);
+      lineB2.setAttribute('y1', b2_1.y);
+      lineB2.setAttribute('x2', b2_2.x);
+      lineB2.setAttribute('y2', b2_2.y);
+      lineB2.setAttribute('stroke', '#059669');
+      lineB2.setAttribute('stroke-width', isOverlapping ? '2.5' : '3');
+      if (isOverlapping) {
+        lineB2.setAttribute('stroke-dasharray', '8 4');
+      }
+      lineB2.setAttribute('stroke-linecap', 'round');
+      g.appendChild(lineB2);
+
+      // Point Markers & Hover Interactivity
+      const addPoint = (pt, color, shape, label) => {
+        const pointGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        pointGroup.setAttribute('class', 'cursor-pointer transition-transform hover:scale-125');
+
+        if (shape === 'circle') {
+          const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          circle.setAttribute('cx', pt.x);
+          circle.setAttribute('cy', pt.y);
+          circle.setAttribute('r', '5.5');
+          circle.setAttribute('fill', color);
+          circle.setAttribute('stroke', '#ffffff');
+          circle.setAttribute('stroke-width', '1.5');
+          pointGroup.appendChild(circle);
+        } else {
+          // Triangle
+          const size = 6.5;
+          const tri = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+          const points = `${pt.x},${pt.y - size} ${pt.x - size},${pt.y + size} ${pt.x + size},${pt.y + size}`;
+          tri.setAttribute('points', points);
+          tri.setAttribute('fill', color);
+          tri.setAttribute('stroke', '#ffffff');
+          tri.setAttribute('stroke-width', '1.5');
+          pointGroup.appendChild(tri);
+        }
+
+        // Invisible larger hit area
+        const hit = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        hit.setAttribute('cx', pt.x);
+        hit.setAttribute('cy', pt.y);
+        hit.setAttribute('r', '14');
+        hit.setAttribute('fill', 'transparent');
+        pointGroup.appendChild(hit);
+
+        // Tooltip events
+        pointGroup.addEventListener('mouseenter', (e) => {
+          showTooltip(e, `${label}: ${pt.val}`);
+        });
+        pointGroup.addEventListener('mousemove', (e) => {
+          updateTooltipPosition(e);
+        });
+        pointGroup.addEventListener('mouseleave', hideTooltip);
+
+        g.appendChild(pointGroup);
+      };
+
+      // Plot Points
+      addPoint(b1_1, '#2563eb', 'circle', 'B1 at A1');
+      addPoint(b1_2, '#2563eb', 'circle', 'B1 at A2');
+      addPoint(b2_1, '#059669', 'triangle', 'B2 at A1');
+      addPoint(b2_2, '#059669', 'triangle', 'B2 at A2');
+
+      // Embedded Legend inside graph (R style top left)
+      const legendX = 14;
+      const legendY = 16;
+      
+      const legBg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      legBg.setAttribute('x', legendX);
+      legBg.setAttribute('y', legendY);
+      legBg.setAttribute('width', 76);
+      legBg.setAttribute('height', 52);
+      legBg.setAttribute('rx', 6);
+      legBg.setAttribute('fill', 'rgba(15, 23, 42, 0.7)');
+      legBg.setAttribute('stroke', '#334155');
+      legBg.setAttribute('stroke-width', '1');
+      g.appendChild(legBg);
+
+      // B1 legend entry
+      const legB1Line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      legB1Line.setAttribute('x1', legendX + 8);
+      legB1Line.setAttribute('x2', legendX + 32);
+      legB1Line.setAttribute('y1', legendY + 16);
+      legB1Line.setAttribute('y2', legendY + 16);
+      legB1Line.setAttribute('stroke', '#2563eb');
+      legB1Line.setAttribute('stroke-width', '2.5');
+      g.appendChild(legB1Line);
+
+      const legB1Circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      legB1Circle.setAttribute('cx', legendX + 20);
+      legB1Circle.setAttribute('cy', legendY + 16);
+      legB1Circle.setAttribute('r', '4');
+      legB1Circle.setAttribute('fill', '#2563eb');
+      g.appendChild(legB1Circle);
+
+      const legB1Text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      legB1Text.setAttribute('x', legendX + 40);
+      legB1Text.setAttribute('y', legendY + 20);
+      legB1Text.setAttribute('fill', '#f1f5f9');
+      legB1Text.setAttribute('font-size', '12px');
+      legB1Text.setAttribute('font-weight', '600');
+      legB1Text.textContent = 'B1';
+      g.appendChild(legB1Text);
+
+      // B2 legend entry
+      const legB2Line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      legB2Line.setAttribute('x1', legendX + 8);
+      legB2Line.setAttribute('x2', legendX + 32);
+      legB2Line.setAttribute('y1', legendY + 36);
+      legB2Line.setAttribute('y2', legendY + 36);
+      legB2Line.setAttribute('stroke', '#059669');
+      legB2Line.setAttribute('stroke-width', '2.5');
+      g.appendChild(legB2Line);
+
+      const legB2Tri = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+      const triPoints = `${legendX + 20},${legendY + 32} ${legendX + 16},${legendY + 40} ${legendX + 24},${legendY + 40}`;
+      legB2Tri.setAttribute('points', triPoints);
+      legB2Tri.setAttribute('fill', '#059669');
+      g.appendChild(legB2Tri);
+
+      const legB2Text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      legB2Text.setAttribute('x', legendX + 40);
+      legB2Text.setAttribute('y', legendY + 40);
+      legB2Text.setAttribute('fill', '#f1f5f9');
+      legB2Text.setAttribute('font-size', '12px');
+      legB2Text.setAttribute('font-weight', '600');
+      legB2Text.textContent = 'B2';
+      g.appendChild(legB2Text);
+
+      svg.appendChild(g);
+      return svg;
+    }
+
+    // Tooltip Helpers
+    const tooltipEl = document.getElementById('plotTooltip');
+    function showTooltip(evt, text) {
+      tooltipEl.textContent = text;
+      tooltipEl.classList.remove('hidden');
+      updateTooltipPosition(evt);
+    }
+    function updateTooltipPosition(evt) {
+      const parentRect = tooltipEl.parentElement.getBoundingClientRect();
+      const x = evt.clientX - parentRect.left + 15;
+      const y = evt.clientY - parentRect.top - 15;
+      tooltipEl.style.left = `${x}px`;
+      tooltipEl.style.top = `${y}px`;
+    }
+    function hideTooltip() {
+      tooltipEl.classList.add('hidden');
+    }
+
+    // Render Table Helper
+    function renderContingencyTables(sc) {
+      const container = document.getElementById('tablesRenderArea');
+      container.innerHTML = '';
+
+      if (!sc.isThreeWay) {
+        container.appendChild(buildTableMarkup(sc.data));
+      } else {
+        const grid = document.createElement('div');
+        grid.className = 'grid grid-cols-1 gap-4';
+
+        const wrap1 = document.createElement('div');
+        wrap1.innerHTML = '<div class="text-xs font-semibold text-slate-300 mb-1.5 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-400"></span> Level C1 Slice</div>';
+        wrap1.appendChild(buildTableMarkup(sc.data.C1));
+
+        const wrap2 = document.createElement('div');
+        wrap2.innerHTML = '<div class="text-xs font-semibold text-slate-300 mb-1.5 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> Level C2 Slice</div>';
+        wrap2.appendChild(buildTableMarkup(sc.data.C2));
+
+        grid.appendChild(wrap1);
+        grid.appendChild(wrap2);
+        container.appendChild(grid);
+      }
+    }
+
+    function buildTableMarkup(data) {
+      const rowMeanA1 = ((data.A1.B1 + data.A1.B2) / 2).toFixed(1);
+      const rowMeanA2 = ((data.A2.B1 + data.A2.B2) / 2).toFixed(1);
+      const colMeanB1 = ((data.A1.B1 + data.A2.B1) / 2).toFixed(1);
+      const colMeanB2 = ((data.A1.B2 + data.A2.B2) / 2).toFixed(1);
+      const grandMean = ((parseFloat(rowMeanA1) + parseFloat(rowMeanA2)) / 2).toFixed(1);
+
+      const tableWrapper = document.createElement('div');
+      tableWrapper.className = 'overflow-x-auto rounded-xl border border-slate-800 bg-slate-950/60 shadow-inner';
+
+      tableWrapper.innerHTML = `
+        <table class="w-full text-xs text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-900/90 text-slate-400 font-semibold border-b border-slate-800">
+              <th class="p-2.5 pl-3 border-r border-slate-800 font-mono text-slate-500">Factors</th>
+              <th class="p-2.5 text-center text-blue-400 font-bold border-r border-slate-800/80">B1</th>
+              <th class="p-2.5 text-center text-emerald-400 font-bold border-r border-slate-800/80">B2</th>
+              <th class="p-2.5 text-center text-amber-300/90 font-medium bg-amber-950/20">Marginal Mean (A)</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800/70 font-mono">
+            <tr>
+              <td class="p-2.5 pl-3 font-semibold text-slate-300 bg-slate-900/40 border-r border-slate-800">A1</td>
+              <td class="p-2.5 text-center text-slate-100 border-r border-slate-800/60">${data.A1.B1}</td>
+              <td class="p-2.5 text-center text-slate-100 border-r border-slate-800/60">${data.A1.B2}</td>
+              <td class="p-2.5 text-center font-bold text-amber-300 bg-amber-950/10">${rowMeanA1}</td>
+            </tr>
+            <tr>
+              <td class="p-2.5 pl-3 font-semibold text-slate-300 bg-slate-900/40 border-r border-slate-800">A2</td>
+              <td class="p-2.5 text-center text-slate-100 border-r border-slate-800/60">${data.A2.B1}</td>
+              <td class="p-2.5 text-center text-slate-100 border-r border-slate-800/60">${data.A2.B2}</td>
+              <td class="p-2.5 text-center font-bold text-amber-300 bg-amber-950/10">${rowMeanA2}</td>
+            </tr>
+            <tr class="bg-slate-900/80 border-t-2 border-slate-800 font-semibold">
+              <td class="p-2.5 pl-3 text-cyan-300 border-r border-slate-800">Marginal Mean (B)</td>
+              <td class="p-2.5 text-center text-cyan-300 border-r border-slate-800/60">${colMeanB1}</td>
+              <td class="p-2.5 text-center text-cyan-300 border-r border-slate-800/60">${colMeanB2}</td>
+              <td class="p-2.5 text-center text-slate-300 bg-slate-800/50">${grandMean} (Grand)</td>
+            </tr>
+          </tbody>
+        </table>
+      `;
+
+      return tableWrapper;
+    }
+
+    // Render Verdict Badges
+    function renderDiagnosis(sc) {
+      const container = document.getElementById('effectsDiagnosisList');
+      container.innerHTML = '';
+
+      if (!sc.isThreeWay) {
+        const effA = sc.effects.mainA;
+        const effB = sc.effects.mainB;
+        const effAB = sc.effects.interaction;
+
+        container.appendChild(createDiagnosisRow('Main Effect of A', effA, effA ? 'Marginal mean across A1 and A2 differs significantly' : 'Marginal means across A levels are identical'));
+        container.appendChild(createDiagnosisRow('Main Effect of B', effB, effB ? 'Marginal mean across B1 and B2 differs significantly' : 'Marginal means across B levels are identical'));
+        container.appendChild(createDiagnosisRow('Two Factor Interaction', effAB, effAB ? 'Lines deviate from parallel, effects are conditional' : 'Lines are parallel, factor effects are independent'));
+      } else {
+        if (sc.effects.interactionABC !== undefined) {
+          container.appendChild(createDiagnosisRow('Three Way Interaction', sc.effects.interactionABC, sc.effects.interactionABC ? 'The A by B interaction differs across levels of C' : 'The A by B interaction is constant across levels of C'));
+        }
+        if (sc.effects.mainC !== undefined) {
+          container.appendChild(createDiagnosisRow('Main Effect of Factor C', sc.effects.mainC, sc.effects.mainC ? 'Overall average score shifts substantially across C1 and C2' : 'Average score across C1 equals that across C2'));
+        }
+        if (sc.effects.interactionAB !== undefined) {
+          container.appendChild(createDiagnosisRow('Two Way Interaction (A by B)', sc.effects.interactionAB, 'Slopes of B1 and B2 diverge within each panel'));
+        }
+      }
+    }
+
+    function createDiagnosisRow(name, isPresent, detail) {
+      const row = document.createElement('div');
+      row.className = `p-2.5 rounded-xl border flex items-start gap-3 text-xs transition ${
+        isPresent 
+          ? 'bg-blue-950/30 border-blue-800/60 text-blue-200' 
+          : 'bg-slate-900/60 border-slate-800/60 text-slate-400'
+      }`;
+
+      const iconSvg = isPresent 
+        ? `<svg class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg>`
+        : `<svg class="w-4 h-4 text-slate-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>`;
+
+      row.innerHTML = `
+        ${iconSvg}
+        <div>
+          <div class="font-semibold flex items-center gap-2 ${isPresent ? 'text-white' : 'text-slate-400'}">
+            ${name}
+            <span class="text-[10px] px-2 py-0.2 rounded-full font-bold uppercase tracking-wider ${
+              isPresent ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-slate-800 text-slate-500'
+            }">${isPresent ? 'Present' : 'Not Present'}</span>
+          </div>
+          <div class="text-[11px] text-slate-400 mt-0.5">${detail}</div>
+        </div>
+      `;
+      return row;
+    }
+
+    // Switch Main Tabs
+    function switchMainTab(tab) {
+      const presetsSec = document.getElementById('presetsSection');
+      const sandboxSec = document.getElementById('sandboxSection');
+      const presetBtn = document.getElementById('viewPresetBtn');
+      const sandboxBtn = document.getElementById('viewSandboxBtn');
+
+      if (tab === 'presets') {
+        presetsSec.classList.remove('hidden');
+        sandboxSec.classList.add('hidden');
+        presetBtn.className = 'px-3.5 py-1.5 rounded-lg font-medium transition duration-150 bg-blue-600 text-white shadow';
+        sandboxBtn.className = 'px-3.5 py-1.5 rounded-lg font-medium transition duration-150 text-slate-300 hover:text-white';
+      } else {
+        presetsSec.classList.add('hidden');
+        sandboxSec.classList.remove('hidden');
+        sandboxBtn.className = 'px-3.5 py-1.5 rounded-lg font-medium transition duration-150 bg-blue-600 text-white shadow';
+        presetBtn.className = 'px-3.5 py-1.5 rounded-lg font-medium transition duration-150 text-slate-300 hover:text-white';
+        renderSandbox();
+      }
+    }
+
+    // SANDBOX INTERACTIVE LOGIC
+    function updateSandboxFromSlider(key, val) {
+      const num = parseFloat(val);
+      document.getElementById(`val_${key}`).innerText = num;
+      if (key === 'A1_B1') sandboxData.A1.B1 = num;
+      if (key === 'A1_B2') sandboxData.A1.B2 = num;
+      if (key === 'A2_B1') sandboxData.A2.B1 = num;
+      if (key === 'A2_B2') sandboxData.A2.B2 = num;
+      renderSandbox();
+    }
+
+    function resetSandboxDefaults() {
+      setSandboxValues(10, 20, 20, 10);
+    }
+
+    function loadScenarioIntoSandbox(scenarioId) {
+      const target = scenarios.find(s => s.id === scenarioId);
+      if (target && !target.isThreeWay) {
+        setSandboxValues(target.data.A1.B1, target.data.A1.B2, target.data.A2.B1, target.data.A2.B2);
+      }
+    }
+
+    function setSandboxValues(a1b1, a1b2, a2b1, a2b2) {
+      sandboxData = {
+        A1: { B1: a1b1, B2: a1b2 },
+        A2: { B1: a2b1, B2: a2b2 }
+      };
+      document.getElementById('slider_A1_B1').value = a1b1;
+      document.getElementById('val_A1_B1').innerText = a1b1;
+      document.getElementById('slider_A1_B2').value = a1b2;
+      document.getElementById('val_A1_B2').innerText = a1b2;
+      document.getElementById('slider_A2_B1').value = a2b1;
+      document.getElementById('val_A2_B1').innerText = a2b1;
+      document.getElementById('slider_A2_B2').value = a2b2;
+      document.getElementById('val_A2_B2').innerText = a2b2;
+      renderSandbox();
+    }
+
+    function renderSandbox() {
+      // Calculate dynamic max domain for plot
+      const allVals = [
+        sandboxData.A1.B1,
+        sandboxData.A1.B2,
+        sandboxData.A2.B1,
+        sandboxData.A2.B2
+      ];
+      const maxVal = Math.max(...allVals, 30);
+      const minVal = Math.min(...allVals, 0);
+      const yMax = Math.ceil((maxVal + 5) / 10) * 10;
+      const yMin = Math.floor(Math.max(0, minVal - 5) / 10) * 10;
+      
+      const step = Math.max(5, Math.round((yMax - yMin) / 5));
+      const ticks = [];
+      for (let t = yMin; t <= yMax; t += step) {
+        ticks.push(t);
+      }
+
+      // Render Plot
+      const area = document.getElementById('sandboxChartArea');
+      area.innerHTML = '';
+      area.appendChild(createSvgPlot(sandboxData, [yMin, yMax], ticks, 'Sandbox', 480, 310));
+
+      // Calculate slopes
+      const slopeB1 = sandboxData.A2.B1 - sandboxData.A1.B1;
+      const slopeB2 = sandboxData.A2.B2 - sandboxData.A1.B2;
+      document.getElementById('slopeB1').innerText = (slopeB1 >= 0 ? '+' : '') + slopeB1;
+      document.getElementById('slopeB2').innerText = (slopeB2 >= 0 ? '+' : '') + slopeB2;
+
+      // Render Table
+      const tableArea = document.getElementById('sandboxTableContainer');
+      tableArea.innerHTML = '';
+      tableArea.appendChild(buildTableMarkup(sandboxData));
+
+      // Mathematical Evaluation
+      evaluateSandboxEffects(slopeB1, slopeB2);
+    }
+
+    function evaluateSandboxEffects(slopeB1, slopeB2) {
+      const meanA1 = (sandboxData.A1.B1 + sandboxData.A1.B2) / 2;
+      const meanA2 = (sandboxData.A2.B1 + sandboxData.A2.B2) / 2;
+      const meanB1 = (sandboxData.A1.B1 + sandboxData.A2.B1) / 2;
+      const meanB2 = (sandboxData.A1.B2 + sandboxData.A2.B2) / 2;
+
+      const diffA = Math.abs(meanA1 - meanA2);
+      const diffB = Math.abs(meanB1 - meanB2);
+      const diffSlope = Math.abs(slopeB1 - slopeB2);
+
+      const hasMainA = diffA > 0.001;
+      const hasMainB = diffB > 0.001;
+      const hasInteraction = diffSlope > 0.001;
+
+      const diagArea = document.getElementById('sandboxDiagnosticText');
+      diagArea.innerHTML = `
+        <div class="p-2.5 rounded-lg ${hasMainA ? 'bg-blue-900/20 text-blue-300 border border-blue-800/40' : 'bg-slate-900/60 text-slate-400'}">
+          <span class="font-bold">Factor A Main Effect:</span> ${hasMainA ? `Present. Marginal mean shifts by ${diffA.toFixed(1)} points between A1 (${meanA1.toFixed(1)}) and A2 (${meanA2.toFixed(1)}).` : `Zero main effect. Marginal mean across both levels of A is exactly ${meanA1.toFixed(1)}.`}
+        </div>
+        <div class="p-2.5 rounded-lg ${hasMainB ? 'bg-emerald-900/20 text-emerald-300 border border-emerald-800/40' : 'bg-slate-900/60 text-slate-400'}">
+          <span class="font-bold">Factor B Main Effect:</span> ${hasMainB ? `Present. Marginal mean shifts by ${diffB.toFixed(1)} points between B1 (${meanB1.toFixed(1)}) and B2 (${meanB2.toFixed(1)}).` : `Zero main effect. Marginal mean across both levels of B is exactly ${meanB1.toFixed(1)}.`}
+        </div>
+        <div class="p-2.5 rounded-lg ${hasInteraction ? 'bg-amber-900/20 text-amber-300 border border-amber-800/40' : 'bg-slate-900/60 text-slate-400'}">
+          <span class="font-bold">Two Factor Interaction:</span> ${hasInteraction ? `Present. The slope for B1 (${slopeB1 >= 0 ? '+' : ''}${slopeB1}) does not match the slope for B2 (${slopeB2 >= 0 ? '+' : ''}${slopeB2}). The lines are non parallel.` : `Zero interaction. Both lines share identical slope (${slopeB1}), demonstrating true parallelism.`}
+        </div>
+      `;
+    }
+
+    // Keyboard navigation
+    window.addEventListener('keydown', (e) => {
+      if (document.getElementById('presetsSection').classList.contains('hidden')) return;
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        navigateScenario(1);
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        navigateScenario(-1);
+      }
+    });
+
+    // Run on startup
+    window.onload = function() {
+      initNavigation();
+      selectScenario(0);
+    };
+  </script>
+</body>
+</html>
