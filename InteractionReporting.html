@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ANOVA Interaction Lab: The APA 7 Reporting Guide</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f7ff',
+              100: '#e0effe',
+              200: '#bae0fd',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#075985',
+              900: '#0c4a6e',
+            },
+            slate: {
+              850: '#151e2e',
+              900: '#0f172a',
+              950: '#020617',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom Scrollbar & Aesthetics */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+    .badge-glow {
+      box-shadow: 0 0 15px rgba(244, 63, 94, 0.35);
+    }
+    .success-glow {
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.25);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen selection:bg-brand-500 selection:text-white antialiased">
+
+  <!-- Navigation Bar -->
+  <header class="sticky top-0 z-50 backdrop-blur-md bg-slate-950/80 border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-brand-500/20">
+          <i data-lucide="calculator" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <span class="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white via-slate-200 to-brand-200 bg-clip-text text-transparent">ANOVA Lab Hub</span>
+          <span class="ml-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-800 text-brand-300 border border-brand-500/30">APA 7 Edition</span>
+        </div>
+      </div>
+      <nav class="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-300">
+        <a href="#golden-rule" class="hover:text-white transition-colors">Golden Rule</a>
+        <a href="#spot-the-flags" class="hover:text-white transition-colors">Spot Red Flags</a>
+        <a href="#decision-tree" class="hover:text-white transition-colors">Decision Tree</a>
+        <a href="#apa-builder" class="hover:text-white transition-colors">Sentence Builder</a>
+      </nav>
+      <div class="flex items-center space-x-3">
+        <button onclick="scrollToSection('apa-builder')" class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-brand-600 hover:bg-brand-500 text-white transition-all shadow-md shadow-brand-600/30 active:scale-95">
+          <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
+          <span>Practice Lab</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-16">
+
+    <!-- Hero / Golden Rule Section -->
+    <section id="golden-rule" class="relative overflow-hidden rounded-3xl bg-gradient-to-b from-slate-900 to-slate-900/40 border border-slate-800 p-8 sm:p-12 shadow-2xl">
+      <div class="absolute -right-24 -top-24 w-96 h-96 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -left-24 -bottom-24 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="relative z-10 max-w-4xl space-y-6">
+        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 text-xs font-semibold border border-amber-500/30">
+          <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i>
+          <span>The #1 Mistake in Factorial ANOVA Lab Reports</span>
+        </div>
+        <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
+          When an Interaction is Significant, <br class="hidden sm:inline"/>
+          <span class="bg-gradient-to-r from-amber-400 via-rose-400 to-indigo-400 bg-clip-text text-transparent">Main Effects Are Qualified.</span>
+        </h1>
+        <p class="text-slate-300 text-base sm:text-lg leading-relaxed max-w-3xl">
+          Never interpret or run global post-hoc tests on marginal main effects as if they tell the whole story. 
+          A significant interaction means that <strong>the effect of Factor A changes depending on the level of Factor B</strong>. 
+          To report this accurately, you must slice the data into conditional <em>simple effects</em>.
+        </p>
+
+        <!-- Quick Architecture Matrix -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+          <div class="p-5 rounded-2xl bg-slate-950/60 border border-slate-800/80 space-y-2.5">
+            <div class="flex items-center space-x-2 text-brand-400 font-semibold text-sm">
+              <i data-lucide="layers" class="w-4 h-4"></i>
+              <span>2-Way Interaction (e.g., Factor A × Factor C)</span>
+            </div>
+            <p class="text-xs text-slate-400 leading-normal">
+              Decompose into <strong>Simple Main Effects</strong>: Test the effect of one factor at each single level of the second factor (e.g., comparing Factor C levels within Level 1 of A, Level 2 of A, and Level 3 of A).
+            </p>
+          </div>
+          <div class="p-5 rounded-2xl bg-slate-950/60 border border-slate-800/80 space-y-2.5">
+            <div class="flex items-center space-x-2 text-indigo-400 font-semibold text-sm">
+              <i data-lucide="git-branch" class="w-4 h-4"></i>
+              <span>3-Way Interaction (e.g., A × B × C)</span>
+            </div>
+            <p class="text-xs text-slate-400 leading-normal">
+              Decompose into <strong>Simple Simple Effects</strong>: Test the effect of Factor A across the four combinations of Factors B and C (e.g., Political Orientation compared within Non-Voters with Kids, Voters without Kids, etc.).
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Tool 1: Spot the Red Flags -->
+    <section id="spot-the-flags" class="space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+          <div class="text-xs font-bold text-brand-400 uppercase tracking-widest mb-1 flex items-center gap-1.5">
+            <i data-lucide="search-code" class="w-3.5 h-3.5"></i> Tool 1: Inspection Desk
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">Spot the Red Flags</h2>
+          <p class="text-sm text-slate-400 mt-1">Here is a classic student draft with 5 critical APA & statistical flaws. Click the highlighted areas or toggle auto-reveal to analyze why instructors deduct points.</p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button id="toggle-all-critique-btn" onclick="toggleAllCritiques()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all flex items-center space-x-1.5">
+            <i data-lucide="eye" class="w-4 h-4"></i>
+            <span id="toggle-all-text">Reveal All 5 Red Flags</span>
+          </button>
+          <button onclick="resetCritiques()" class="px-3 py-2 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-800 transition-all" title="Reset highlights">
+            <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <!-- Draft Container -->
+        <div class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-xl relative">
+          <div class="flex items-center justify-between pb-4 border-b border-slate-800 text-xs text-slate-400">
+            <div class="flex items-center space-x-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+              <span class="font-mono">Draft_Sample_Report.docx</span>
+            </div>
+            <span class="text-rose-400 font-medium">5 Serious Mistakes Detected</span>
+          </div>
+
+          <!-- Paragraph with interactive spans -->
+          <div class="text-slate-200 font-serif leading-relaxed text-base sm:text-lg space-y-4 select-none">
+            <p>
+              Measurements of our OUTCOMEVARIABLE were taken at three levels of FACTOR A (one, two, and three), two levels of FACTOR B (one and two), and two levels of FACTOR C (one and two) resulting in a 3x2x2 experimental design. The ANOVA omnibus returned a significant main effect across FACTOR A (F(2, 48) = 61.980, p &lt; .001, 
+              <span class="error-node cursor-pointer bg-rose-950/60 border-b-2 border-rose-500 text-rose-200 px-1 rounded transition-all hover:bg-rose-900/80 font-mono text-sm" onclick="selectError(1)" id="err-1">
+                Ƞ2partial = .721
+              </span>) and a significant interaction between FACTOR A and C (F(2, 48) = 5.96, 
+              <span class="error-node cursor-pointer bg-rose-950/60 border-b-2 border-rose-500 text-rose-200 px-1 rounded transition-all hover:bg-rose-900/80 font-mono text-sm" onclick="selectError(2)" id="err-2">
+                p &lt; .005
+              </span>, Ƞ2partial = .199).
+            </p>
+            <p>
+              <span class="error-node cursor-pointer bg-rose-950/60 border-b-2 border-rose-500 text-rose-200 px-1 rounded transition-all hover:bg-rose-900/80" onclick="selectError(3)" id="err-3">
+                Follow up Tukey HSD comparisons showed that all levels of FACTOR A were significantly different from one another (p &lt; .001). Level one (M = 2.78) was lower than level two (M = 3.23) which was lower than level three (M = 3.5).
+              </span>
+            </p>
+            <p>
+              <span class="error-node cursor-pointer bg-rose-950/60 border-b-2 border-rose-500 text-rose-200 px-1 rounded transition-all hover:bg-rose-900/80" onclick="selectError(4)" id="err-4">
+                Because there were only two levels of FACTOR C the interaction was analyzed at each level of FACTOR A across FACTOR C.
+              </span> 
+              <span class="error-node cursor-pointer bg-rose-950/60 border-b-2 border-rose-500 text-rose-200 px-1 rounded transition-all hover:bg-rose-900/80" onclick="selectError(5)" id="err-5">
+                At level one of FACTOR A, level one of FACTOR C (M = 2.94) was significantly higher than level two (M = 2.61, p = .001).
+              </span>
+            </p>
+          </div>
+
+          <div class="pt-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-500">
+            <span>Tip: Click any red-underlined segment to load its critique card.</span>
+            <span class="font-mono font-medium text-slate-400" id="detected-counter">0 of 5 Inspected</span>
+          </div>
+        </div>
+
+        <!-- Feedback & Critique Side Panel -->
+        <div class="lg:col-span-5 space-y-4">
+          <div id="critique-empty" class="h-full min-h-[320px] rounded-2xl border border-dashed border-slate-800 bg-slate-900/40 p-8 flex flex-col items-center justify-center text-center space-y-3">
+            <div class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-slate-400">
+              <i data-lucide="mouse-pointer-click" class="w-6 h-6"></i>
+            </div>
+            <h3 class="text-white font-semibold text-base">Select a Marked Phrase</h3>
+            <p class="text-xs text-slate-400 max-w-xs">Click any highlighted section in the draft to examine why it violates statistical theory or APA 7 formatting guidelines.</p>
+          </div>
+
+          <div id="critique-card" class="hidden rounded-2xl border border-slate-700 bg-slate-900 p-6 space-y-4 shadow-xl">
+            <div class="flex items-start justify-between">
+              <div>
+                <span id="critique-tag" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-rose-500/20 text-rose-400 border border-rose-500/30">
+                  Critical Violation
+                </span>
+                <h3 id="critique-title" class="text-lg font-bold text-white mt-2">Error Title</h3>
+              </div>
+              <span id="critique-id" class="text-xs font-mono px-2 py-1 bg-slate-800 text-slate-400 rounded-md">Error 1</span>
+            </div>
+
+            <div class="space-y-3 text-sm">
+              <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 text-rose-300 font-mono text-xs" id="critique-bad-text">
+                "bad snippet"
+              </div>
+              <div>
+                <h4 class="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">What's Wrong:</h4>
+                <p id="critique-explanation" class="text-slate-400 text-xs sm:text-sm leading-relaxed"></p>
+              </div>
+              <div>
+                <h4 class="text-xs font-semibold text-emerald-400 uppercase tracking-wider mb-1 flex items-center gap-1">
+                  <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> The APA 7 Correct Fix:
+                </h4>
+                <div id="critique-fix" class="p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-200 text-xs sm:text-sm font-mono leading-relaxed"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Tool 2: The Decision Tree -->
+    <section id="decision-tree" class="space-y-6">
+      <div>
+        <div class="text-xs font-bold text-indigo-400 uppercase tracking-widest mb-1 flex items-center gap-1.5">
+          <i data-lucide="git-merge" class="w-3.5 h-3.5"></i> Tool 2: Statistical Navigator
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">The Decision Tree: "What Do I Run Next?"</h2>
+        <p class="text-sm text-slate-400 mt-1">Select your omnibus outcome to get the exact `emmeans` R code snippet and APA 7 reporting sentence.</p>
+      </div>
+
+      <!-- Selector Pills -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <button onclick="setDecisionBranch('A')" id="btn-branch-A" class="decision-pill p-4 rounded-xl border text-left transition-all bg-slate-900 border-slate-800 hover:border-slate-700">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-slate-400 font-mono">Branch A</span>
+            <span class="w-2 h-2 rounded-full bg-slate-600 branch-indicator"></span>
+          </div>
+          <h4 class="text-sm font-bold text-white">Interaction is NOT Significant</h4>
+          <p class="text-xs text-slate-400 mt-1">p &ge; .05 across all 2-way and 3-way interaction terms.</p>
+        </button>
+
+        <button onclick="setDecisionBranch('B')" id="btn-branch-B" class="decision-pill p-4 rounded-xl border text-left transition-all bg-brand-950/50 border-brand-500/50 shadow-md shadow-brand-500/10">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-brand-300 font-mono">Branch B (Most Common)</span>
+            <span class="w-2 h-2 rounded-full bg-brand-400 branch-indicator"></span>
+          </div>
+          <h4 class="text-sm font-bold text-white">2-Way Interaction IS Significant</h4>
+          <p class="text-xs text-slate-400 mt-1">Factor A × Factor C is significant (e.g., p = .005).</p>
+        </button>
+
+        <button onclick="setDecisionBranch('C')" id="btn-branch-C" class="decision-pill p-4 rounded-xl border text-left transition-all bg-slate-900 border-slate-800 hover:border-slate-700">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-slate-400 font-mono">Branch C</span>
+            <span class="w-2 h-2 rounded-full bg-slate-600 branch-indicator"></span>
+          </div>
+          <h4 class="text-sm font-bold text-white">3-Way Interaction IS Significant</h4>
+          <p class="text-xs text-slate-400 mt-1">Factor A × Factor B × Factor C is significant (p &lt; .001).</p>
+        </button>
+      </div>
+
+      <!-- Decision Output Dynamic Box -->
+      <div class="rounded-2xl bg-slate-900 border border-slate-800 p-6 sm:p-8 space-y-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-800 gap-3">
+          <div>
+            <span id="branch-badge" class="px-2.5 py-1 rounded-md text-xs font-bold bg-brand-600/20 text-brand-300 border border-brand-500/30">
+              Scenario: 2-Way Interaction is Significant
+            </span>
+            <h3 id="branch-title" class="text-xl font-bold text-white mt-2">Decompose into Simple Main Effects</h3>
+          </div>
+          <div class="text-xs text-slate-400 bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800 flex items-center gap-1.5">
+            <i data-lucide="info" class="w-3.5 h-3.5 text-brand-400"></i>
+            <span id="branch-rule-summary">Main effects are qualified. Interpret simple effects across slices.</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- R Code Block -->
+          <div class="lg:col-span-6 space-y-2">
+            <div class="flex items-center justify-between text-xs font-medium text-slate-400">
+              <span class="flex items-center gap-1"><i data-lucide="code" class="w-3.5 h-3.5"></i> R Syntax (`emmeans`)</span>
+              <button onclick="copyRCode()" class="hover:text-white transition-colors flex items-center gap-1">
+                <i data-lucide="copy" class="w-3.5 h-3.5"></i> <span id="copy-btn-text">Copy Code</span>
+              </button>
+            </div>
+            <pre class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs sm:text-sm font-mono text-brand-300 overflow-x-auto leading-relaxed" id="code-snippet">
+# Fit the linear model
+model <- lm(Score ~ FactorA * FactorC, data = my_data)
+
+# Decompose interaction: Test Factor C at each level of Factor A
+emmeans(model, pairwise ~ FactorC | FactorA, adjust = "none")$contrasts</pre>
+          </div>
+
+          <!-- APA 7 Wording Template -->
+          <div class="lg:col-span-6 space-y-2">
+            <div class="flex items-center justify-between text-xs font-medium text-slate-400">
+              <span class="flex items-center gap-1"><i data-lucide="file-text" class="w-3.5 h-3.5"></i> Correct APA 7 Lab Reporting Template</span>
+              <span class="text-emerald-400 text-[11px] font-semibold">Strict APA Standard</span>
+            </div>
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs sm:text-sm text-slate-300 leading-relaxed font-serif" id="apa-snippet">
+              Because the main effect of Factor A was qualified by the Factor A × Factor C interaction, simple effects of Factor C were evaluated at each level of Factor A. At Level 1 of Factor A, participants in Level 1 of Factor C (<span class="italic">M</span> = 2.94, <span class="italic">SD</span> = 0.35) scored significantly higher than those in Level 2 (<span class="italic">M</span> = 2.61, <span class="italic">SD</span> = 0.31), <span class="italic">t</span>(48) = 3.35, <span class="italic">p</span> = .001. Conversely, the effect of Factor C was non-significant at Level 2 (<span class="italic">p</span> = .672) and Level 3 (<span class="italic">p</span> = .525).
+            </div>
+          </div>
+        </div>
+
+        <!-- Instructor Commentary -->
+        <div class="p-4 rounded-xl bg-slate-950/70 border border-slate-800 text-xs text-slate-400 space-y-1">
+          <div class="font-semibold text-slate-300 flex items-center gap-1">
+            <i data-lucide="graduation-cap" class="w-4 h-4 text-brand-400"></i> Instructor's Lab Guidance:
+          </div>
+          <p id="branch-notes">
+            Notice that we report the test for every level of Factor A (Level 1, Level 2, and Level 3). Stopping after finding one significant level is a fatal grading error! All slices must be reported.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Tool 3: Sentence Builder / Mad-Libs -->
+    <section id="apa-builder" class="space-y-6">
+      <div>
+        <div class="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1 flex items-center gap-1.5">
+          <i data-lucide="puzzle" class="w-3.5 h-3.5"></i> Tool 3: The APA Sentence Builder
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">Interactive Lab Drill</h2>
+        <p class="text-sm text-slate-400 mt-1">Assemble the 4 structural components of a 2-way interaction simple-effects write-up in correct chronological order.</p>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-xl">
+        
+        <!-- Scenario Description -->
+        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs text-slate-300 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-white uppercase text-[11px] tracking-wider">Lab Exercise Prompt</span>
+            <span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 text-[10px] font-mono border border-amber-500/20">F(2, 48) = 5.96, p = .005</span>
+          </div>
+          <p>
+            You performed a 3 × 2 × 2 ANOVA on student test scores. Factor A (3 levels) interacted significantly with Factor C (2 levels), <span class="font-mono text-brand-300">F(2, 48) = 5.96, p = .005, &eta;<sub>p</sub><sup>2</sup> = .20</span>. Assemble the scientific report below by clicking the blocks in the correct chronological flow.
+          </p>
+        </div>
+
+        <!-- Available Blocks Deck -->
+        <div class="space-y-2">
+          <label class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center justify-between">
+            <span>Available Sentence Blocks (Click to Add to Your Report):</span>
+            <span id="remaining-count" class="text-brand-400 font-mono">4 blocks remaining</span>
+          </label>
+          <div id="deck-container" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <!-- Dynamically populated via JS -->
+          </div>
+        </div>
+
+        <!-- Assembly Tray -->
+        <div class="space-y-2 pt-4">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              Your Assembled Report:
+            </label>
+            <div class="flex items-center space-x-2">
+              <button onclick="clearTray()" class="text-xs text-slate-400 hover:text-slate-200 px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 transition-colors">
+                Reset Order
+              </button>
+            </div>
+          </div>
+          <div id="tray-container" class="min-h-[140px] bg-slate-950 p-4 rounded-xl border-2 border-dashed border-slate-800 space-y-2.5 transition-all flex flex-col justify-center">
+            <div id="tray-placeholder" class="text-center text-xs text-slate-500 py-6">
+              Click the blocks above to build your paragraph step-by-step.
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Validation Status Alert -->
+        <div id="validation-box" class="hidden p-4 rounded-xl border text-xs sm:text-sm flex items-start space-x-3 transition-all">
+          <div id="validation-icon" class="mt-0.5"></div>
+          <div>
+            <h5 id="validation-heading" class="font-bold"></h5>
+            <p id="validation-message" class="text-xs mt-0.5 leading-relaxed"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick APA 7 Checklist Cards -->
+    <section class="space-y-6">
+      <div>
+        <div class="text-xs font-bold text-brand-400 uppercase tracking-widest mb-1 flex items-center gap-1.5">
+          <i data-lucide="bookmark" class="w-3.5 h-3.5"></i> Reference Corner
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">APA 7th Edition Rules Cheat Sheet</h2>
+        <p class="text-sm text-slate-400 mt-1">Keep these formatting rules handy when proofreading your lab submissions.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-3">
+          <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold">
+            01
+          </div>
+          <h4 class="text-base font-bold text-white">No Leading Zeros</h4>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Do not put a zero before decimals for numbers that cannot exceed 1.0. This applies directly to <span class="italic">p</span> values (<span class="font-mono text-emerald-300">p = .042</span>, not <span class="line-through text-slate-500">p = 0.042</span>) and partial eta squared (<span class="font-mono text-emerald-300">&eta;<sub>p</sub><sup>2</sup> = .18</span>).
+          </p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-3">
+          <div class="w-8 h-8 rounded-lg bg-brand-500/10 text-brand-400 flex items-center justify-center font-bold">
+            02
+          </div>
+          <h4 class="text-base font-bold text-white">Exact Probabilities</h4>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Report exact <span class="italic">p</span> values to 2 or 3 decimal places (e.g., <span class="font-mono text-brand-300">p = .004</span>, <span class="font-mono text-brand-300">p = .088</span>). Never report arbitrary ranges like <span class="line-through text-slate-500">p &lt; .05</span> or <span class="line-through text-slate-500">p &lt; .005</span>. The only exception is values smaller than .001, which are reported as <span class="font-mono text-brand-300">p &lt; .001</span>.
+          </p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-3">
+          <div class="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center font-bold">
+            03
+          </div>
+          <h4 class="text-base font-bold text-white">Always Report SDs</h4>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Every reported cell or marginal mean must be accompanied by its standard deviation or standard error in parentheses: <span class="font-mono text-indigo-300">(M = 3.25, SD = 0.42)</span>. Standalone means are incomplete statistical summaries in APA format.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-slate-800 bg-slate-950 py-8 text-center text-xs text-slate-500 space-y-2">
+    <p>Designed for Psychological & Behavioral Statistics Labs &bull; Fully compliant with APA Publication Manual (7th Edition)</p>
+    <p class="text-slate-600">Built for seamless classroom demonstration and interactive student training.</p>
+  </footer>
+
+  <!-- Interactive JavaScript Engine -->
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // ==========================================
+    // Tool 1: Spot the Red Flags Data & Logic
+    // ==========================================
+    const errorData = {
+      1: {
+        title: "Corrupted Cyrillic & Bad Notation for Eta Squared",
+        tag: "Formatting / Encoding Error",
+        badText: "Ƞ2partial = .721",
+        explanation: "The student used the Cyrillic letter 'Ƞ' instead of italicized Greek eta squared (η²), and placed the word 'partial' in standard text instead of subscript. APA 7 explicitly requires: italic Greek eta with subscript 'p' and superscript '2': η_p².",
+        fix: "η_p² = .72  (or ηp² in plain text; round to two decimals: .72)"
+      },
+      2: {
+        title: "Non-Standard Inexact P-Value",
+        tag: "APA 7 Style Rule",
+        badText: "p < .005",
+        explanation: "APA 7 forbids arbitrary threshold reporting (such as p < .05, p < .01, or p < .005) when an exact value is known. You must state the exact p-value down to two or three decimal places. The only inequality allowed is 'p < .001'.",
+        fix: "p = .005"
+      },
+      3: {
+        title: "Interpreting Main Effects in the Presence of an Interaction",
+        tag: "Critical Statistical Violation",
+        badText: "Follow up Tukey HSD comparisons showed that all levels of FACTOR A were significantly different from one another (p < .001). Level one (M = 2.78)...",
+        explanation: "Factor A is involved in a significant Factor A × Factor C interaction! Running global Tukey tests across the marginal means of Factor A ignores the moderator and provides false, unqualified conclusions. You must decompose the interaction via simple effects instead.",
+        fix: "Omit global Tukey main effect tests. Instead state: 'Because the main effect of Factor A was qualified by the Factor A × Factor C interaction, simple effects were examined...'"
+      },
+      4: {
+        title: "Bizarre / False Statistical Justification",
+        tag: "Methodological Reasoning Error",
+        badText: "Because there were only two levels of FACTOR C the interaction was analyzed at each level of FACTOR A across FACTOR C.",
+        explanation: "The number of levels in Factor C does not dictate the direction of simple effects slicing! Slicing Factor C across Factor A is valid and parsimonious because 2-level contrasts require no post-hoc adjustment, but students shouldn't claim it as a mandatory statistical rule.",
+        fix: "'To unpack the interaction, simple effects of Factor C were evaluated at each level of Factor A...'"
+      },
+      5: {
+        title: "Incomplete Slicing / Abandoned Analysis",
+        tag: "Incomplete Reporting",
+        badText: "At level one of FACTOR A, level one of FACTOR C (M = 2.94) was significantly higher than level two (M = 2.61, p = .001).",
+        explanation: "Factor A has 3 levels! The student inspected Level 1, saw a significant difference, and completely forgot to report Level 2 and Level 3! An interaction report is only complete when all slices of the moderator are reported (including test statistics, SDs, and non-significant results).",
+        fix: "Report all three slices: At Level 1, Factor C was significant (M = 2.94, SD = 0.35 vs M = 2.61, SD = 0.31, p = .001). At Level 2, no difference was found (p = .672). At Level 3, no difference was found (p = .525)."
+      }
+    };
+
+    let inspectedErrors = new Set();
+    let allRevealed = false;
+
+    function selectError(id) {
+      inspectedErrors.add(id);
+      updateInspectedCounter();
+
+      // UI updates
+      document.querySelectorAll('.error-node').forEach(el => {
+        el.classList.remove('ring-2', 'ring-rose-400', 'bg-rose-900/90');
+      });
+      const activeEl = document.getElementById(`err-${id}`);
+      if (activeEl) {
+        activeEl.classList.add('ring-2', 'ring-rose-400', 'bg-rose-900/90');
+      }
+
+      const card = document.getElementById('critique-card');
+      const empty = document.getElementById('critique-empty');
+      const err = errorData[id];
+
+      document.getElementById('critique-id').innerText = `Error #${id}`;
+      document.getElementById('critique-tag').innerText = err.tag;
+      document.getElementById('critique-title').innerText = err.title;
+      document.getElementById('critique-bad-text').innerText = err.badText;
+      document.getElementById('critique-explanation').innerText = err.explanation;
+      document.getElementById('critique-fix').innerText = err.fix;
+
+      empty.classList.add('hidden');
+      card.classList.remove('hidden');
+    }
+
+    function toggleAllCritiques() {
+      allRevealed = !allRevealed;
+      const btnText = document.getElementById('toggle-all-text');
+      
+      document.querySelectorAll('.error-node').forEach((el, index) => {
+        const id = index + 1;
+        inspectedErrors.add(id);
+        if (allRevealed) {
+          el.classList.add('bg-rose-900/70', 'text-white', 'underline');
+        } else {
+          el.classList.remove('bg-rose-900/70', 'text-white', 'underline', 'ring-2', 'ring-rose-400');
+        }
+      });
+
+      if (allRevealed) {
+        btnText.innerText = "Hide Error Highlights";
+        selectError(1);
+      } else {
+        btnText.innerText = "Reveal All 5 Red Flags";
+        resetCritiques();
+      }
+      updateInspectedCounter();
+    }
+
+    function resetCritiques() {
+      inspectedErrors.clear();
+      document.querySelectorAll('.error-node').forEach(el => {
+        el.classList.remove('ring-2', 'ring-rose-400', 'bg-rose-900/90', 'bg-rose-900/70', 'text-white', 'underline');
+      });
+      document.getElementById('critique-empty').classList.remove('hidden');
+      document.getElementById('critique-card').classList.add('hidden');
+      allRevealed = false;
+      document.getElementById('toggle-all-text').innerText = "Reveal All 5 Red Flags";
+      updateInspectedCounter();
+    }
+
+    function updateInspectedCounter() {
+      const counter = document.getElementById('detected-counter');
+      counter.innerText = `${inspectedErrors.size} of 5 Inspected`;
+      if (inspectedErrors.size === 5) {
+        counter.classList.add('text-emerald-400');
+      } else {
+        counter.classList.remove('text-emerald-400');
+      }
+    }
+
+
+    // ==========================================
+    // Tool 2: Decision Tree Data & Logic
+    // ==========================================
+    const decisionBranches = {
+      'A': {
+        badge: "Scenario A: Interaction Not Significant (p >= .05)",
+        title: "Report Marginal Main Effects & Post-Hocs",
+        summary: "Because factors act independently, marginal main effects represent reality.",
+        rCode: `# Linear model
+model <- lm(Score ~ FactorA + FactorB, data = my_data)
+
+# Test marginal main effects post-hoc if Factor has > 2 levels
+emmeans(model, pairwise ~ FactorA, adjust = "tukey")$contrasts`,
+        apa: "The omnibus ANOVA revealed a significant main effect of Factor A, F(2, 54) = 14.22, p < .001, η_p² = .35. The Factor A × Factor B interaction was not statistically significant, F(2, 54) = 0.84, p = .437, η_p² = .03. Post-hoc Tukey HSD tests on the marginal means indicated that Level 1 (M = 3.42, SD = 0.38) scored significantly higher than Level 3 (M = 2.11, SD = 0.40, p < .001).",
+        notes: "Here, and ONLY here, is it appropriate to conduct Tukey tests across the marginal means of Factor A, because there is no interaction qualifying those means."
+      },
+      'B': {
+        badge: "Scenario B: 2-Way Interaction Significant (p < .05)",
+        title: "Decompose into Simple Main Effects",
+        summary: "Main effects are qualified. Slices of one factor are tested across the other.",
+        rCode: `# Full factorial model
+model <- lm(Score ~ FactorA * FactorC, data = my_data)
+
+# Decompose interaction: Test Factor C at each level of Factor A
+emmeans(model, pairwise ~ FactorC | FactorA, adjust = "none")$contrasts`,
+        apa: "Because the main effect of Factor A was qualified by the Factor A × Factor C interaction, F(2, 48) = 5.96, p = .005, η_p² = .20, simple effects of Factor C were evaluated at each level of Factor A. At Level 1 of Factor A, participants in Level 1 of Factor C (M = 2.94, SD = 0.35) scored significantly higher than those in Level 2 (M = 2.61, SD = 0.31), t(48) = 3.35, p = .001. Conversely, the effect of Factor C was non-significant at Level 2 (p = .672) and Level 3 (p = .525).",
+        notes: "Notice that we report the test for every level of Factor A (Level 1, Level 2, and Level 3). Stopping after finding one significant level is a fatal grading error! All slices must be reported."
+      },
+      'C': {
+        badge: "Scenario C: 3-Way Interaction Significant (p < .05)",
+        title: "Decompose into Simple Simple Pairwise Effects",
+        summary: "Two-way interactions are qualified! Slices of Factor A are tested across B × C.",
+        rCode: `# 3-Way Full Factorial Linear Model
+model <- lm(Score ~ Politics * Kids * Vote, data = ReportingExampleData)
+
+# Test simple simple effects of Politics at each Kids x Vote combination
+emmeans(model, pairwise ~ Politics | Kids * Vote, adjust = "none")$contrasts`,
+        apa: "The omnibus ANOVA revealed a significant three-way Kids × Vote × Politics interaction, F(2, 48) = 19.56, p < .001, η_p² = .45, qualifying all lower-order effects. Simple simple pairwise effects of political orientation were tested across all combinations of parental and voting status. Among non-voting participants with children, conservatives scored significantly lower (M = 20.00, SD = 6.52) than liberals (M = 33.00, SD = 7.00, p = .001) and moderates (M = 35.00, SD = 4.53, p < .001). Conversely, among voting participants with children, conservatives expressed the highest attitude scores (M = 36.00, SD = 4.00), scoring significantly higher than liberals (M = 28.00, SD = 7.52, p = .038) and moderates (M = 18.00, SD = 5.70, p < .001).",
+        notes: "In a 3-way interaction, the 2-way interaction pattern completely changes across levels of the 3rd variable (e.g., conservatives switch from lowest to highest support). Always highlight this reversal to students."
+      }
+    };
+
+    function setDecisionBranch(branchKey) {
+      // Highlight pills
+      ['A', 'B', 'C'].forEach(key => {
+        const btn = document.getElementById(`btn-branch-${key}`);
+        const indicator = btn.querySelector('.branch-indicator');
+        if (key === branchKey) {
+          btn.className = "decision-pill p-4 rounded-xl border text-left transition-all bg-brand-950/50 border-brand-500/50 shadow-md shadow-brand-500/10";
+          indicator.className = "w-2 h-2 rounded-full bg-brand-400 branch-indicator";
+        } else {
+          btn.className = "decision-pill p-4 rounded-xl border text-left transition-all bg-slate-900 border-slate-800 hover:border-slate-700";
+          indicator.className = "w-2 h-2 rounded-full bg-slate-600 branch-indicator";
+        }
+      });
+
+      const data = decisionBranches[branchKey];
+      document.getElementById('branch-badge').innerText = data.badge;
+      document.getElementById('branch-title').innerText = data.title;
+      document.getElementById('branch-rule-summary').innerText = data.summary;
+      document.getElementById('code-snippet').innerText = data.rCode;
+      document.getElementById('apa-snippet').innerText = data.apa;
+      document.getElementById('branch-notes').innerText = data.notes;
+    }
+
+    function copyRCode() {
+      const code = document.getElementById('code-snippet').innerText;
+      // Using execCommand for iframe compatibility
+      const tempTextArea = document.createElement("textarea");
+      tempTextArea.value = code;
+      document.body.appendChild(tempTextArea);
+      tempTextArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempTextArea);
+
+      const copyBtn = document.getElementById('copy-btn-text');
+      copyBtn.innerText = "Copied!";
+      setTimeout(() => { copyBtn.innerText = "Copy Code"; }, 2000);
+    }
+
+
+    // ==========================================
+    // Tool 3: APA Sentence Builder (Mad-Libs)
+    // ==========================================
+    const builderBlocks = [
+      {
+        id: 1,
+        step: 1,
+        title: "Omnibus Results & Effect Sizes",
+        badge: "Omnibus Statistical Tests",
+        text: "The 3 × 2 × 2 ANOVA yielded a significant main effect of Factor A, F(2, 48) = 61.98, p < .001, η_p² = .72, which was qualified by a significant Factor A × Factor C interaction, F(2, 48) = 5.96, p = .005, η_p² = .20."
+      },
+      {
+        id: 2,
+        step: 2,
+        title: "Decomposition Strategy & Slicing Rationale",
+        badge: "Analytical Strategy",
+        text: "Because the interaction was significant, the marginal main effect of Factor A was not interpreted directly; instead, simple effects of Factor C were evaluated at each level of Factor A."
+      },
+      {
+        id: 3,
+        step: 3,
+        title: "Primary Simple Comparison (Level 1 Slice)",
+        badge: "Simple Pairwise Effects",
+        text: "At Level 1 of Factor A, participants at Level 1 of Factor C scored significantly higher (M = 2.94, SD = 0.35) than those at Level 2 (M = 2.61, SD = 0.31), t(48) = 3.35, p = .001."
+      },
+      {
+        id: 4,
+        step: 4,
+        title: "Remaining Moderator Slices (Levels 2 & 3)",
+        badge: "Complete Slice Follow-up",
+        text: "Conversely, the difference between Factor C levels was non-significant at Level 2 of Factor A (p = .672) as well as at Level 3 of Factor A (p = .525)."
+      }
+    ];
+
+    let currentTray = [];
+
+    function initBuilder() {
+      // Shuffle deck on load
+      const shuffled = [...builderBlocks].sort(() => Math.random() - 0.5);
+      renderDeck(shuffled);
+      renderTray();
+    }
+
+    function renderDeck(blocks) {
+      const deck = document.getElementById('deck-container');
+      deck.innerHTML = '';
+      
+      const unselected = blocks.filter(b => !currentTray.some(t => t.id === b.id));
+      document.getElementById('remaining-count').innerText = `${unselected.length} blocks remaining`;
+
+      unselected.forEach(block => {
+        const div = document.createElement('div');
+        div.className = "p-3.5 rounded-xl bg-slate-950 border border-slate-800 hover:border-brand-500/60 hover:bg-slate-900 transition-all cursor-pointer group flex flex-col justify-between";
+        div.onclick = () => addToTray(block);
+        div.innerHTML = `
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[11px] font-semibold text-brand-400 group-hover:text-brand-300 font-mono">${block.badge}</span>
+            <i data-lucide="plus-circle" class="w-4 h-4 text-slate-500 group-hover:text-brand-400 transition-colors"></i>
+          </div>
+          <p class="text-xs text-slate-300 font-serif leading-relaxed line-clamp-3">${block.text}</p>
+        `;
+        deck.appendChild(div);
+      });
+      lucide.createIcons();
+    }
+
+    function addToTray(block) {
+      if (currentTray.some(b => b.id === block.id)) return;
+      currentTray.push(block);
+      renderDeck(builderBlocks);
+      renderTray();
+      validateTray();
+    }
+
+    function removeFromTray(index) {
+      currentTray.splice(index, 1);
+      renderDeck(builderBlocks);
+      renderTray();
+      validateTray();
+    }
+
+    function clearTray() {
+      currentTray = [];
+      renderDeck(builderBlocks);
+      renderTray();
+      validateTray();
+    }
+
+    function renderTray() {
+      const tray = document.getElementById('tray-container');
+      const placeholder = document.getElementById('tray-placeholder');
+
+      if (currentTray.length === 0) {
+        tray.innerHTML = `
+          <div id="tray-placeholder" class="text-center text-xs text-slate-500 py-6">
+            Click the blocks above to build your paragraph step-by-step in proper logical order.
+          </div>
+        `;
+        return;
+      }
+
+      tray.innerHTML = '';
+      currentTray.forEach((block, idx) => {
+        const div = document.createElement('div');
+        div.className = "p-3 rounded-lg bg-slate-900 border border-slate-700/80 flex items-start justify-between space-x-3 text-xs sm:text-sm animate-fade-in";
+        div.innerHTML = `
+          <div class="space-y-1">
+            <span class="text-[10px] font-bold font-mono text-brand-300 uppercase bg-brand-950 px-2 py-0.5 rounded border border-brand-800/40">${block.title}</span>
+            <p class="text-slate-200 font-serif leading-relaxed mt-1">${block.text}</p>
+          </div>
+          <button onclick="removeFromTray(${idx})" class="text-slate-500 hover:text-rose-400 p-1" title="Remove block">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        `;
+        tray.appendChild(div);
+      });
+      lucide.createIcons();
+    }
+
+    function validateTray() {
+      const box = document.getElementById('validation-box');
+      const heading = document.getElementById('validation-heading');
+      const msg = document.getElementById('validation-message');
+      const icon = document.getElementById('validation-icon');
+
+      if (currentTray.length === 0) {
+        box.classList.add('hidden');
+        return;
+      }
+
+      box.classList.remove('hidden');
+
+      // Check chronological order of currentTray
+      let isSequential = true;
+      for (let i = 0; i < currentTray.length; i++) {
+        if (currentTray[i].step !== i + 1) {
+          isSequential = false;
+          break;
+        }
+      }
+
+      if (isSequential && currentTray.length === 4) {
+        // Complete & correct
+        box.className = "p-4 rounded-xl border border-emerald-500/40 bg-emerald-950/40 text-emerald-200 flex items-start space-x-3 success-glow";
+        heading.innerText = "Masterclass Perfect! APA 7 Compliant";
+        msg.innerText = "Excellent work. You correctly stated the omnibus qualification first, declared the slicing rationale, and reported both significant AND non-significant levels across all moderator slices.";
+        icon.innerHTML = `<i data-lucide="award" class="w-5 h-5 text-emerald-400"></i>`;
+      } else if (isSequential) {
+        // Correct so far, but incomplete
+        box.className = "p-4 rounded-xl border border-brand-500/30 bg-brand-950/40 text-brand-200 flex items-start space-x-3";
+        heading.innerText = `Logical Progress (${currentTray.length} of 4 steps placed)`;
+        msg.innerText = "So far your paragraph structure follows statistical guidelines. Add the remaining sections to complete the write-up.";
+        icon.innerHTML = `<i data-lucide="arrow-right-circle" class="w-5 h-5 text-brand-400"></i>`;
+      } else {
+        // Logical order error
+        box.className = "p-4 rounded-xl border border-rose-500/40 bg-rose-950/40 text-rose-200 flex items-start space-x-3 badge-glow";
+        heading.innerText = "Order Sequence Issue Detected";
+        msg.innerText = "APA reports must transition from omnibus context -> analytical decomposition rule -> detailed slice breakdowns. Reset or rearrange the blocks so the argument builds coherently.";
+        icon.innerHTML = `<i data-lucide="alert-triangle" class="w-5 h-5 text-rose-400"></i>`;
+      }
+      lucide.createIcons();
+    }
+
+    function scrollToSection(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    // Initialize builder on load
+    window.onload = function() {
+      initBuilder();
+      setDecisionBranch('B'); // Default to 2-way scenario
+    };
+  </script>
+</body>
+</html>
