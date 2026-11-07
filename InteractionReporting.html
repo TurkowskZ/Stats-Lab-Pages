@@ -104,16 +104,14 @@
       <div class="relative z-10 max-w-4xl space-y-6">
         <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 text-xs font-semibold border border-amber-500/30">
           <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i>
-          <span>The #1 Mistake in Factorial ANOVA Lab Reports</span>
+          <span>The Critical Rule in Factorial ANOVA Lab Reports</span>
         </div>
         <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
           When an Interaction is Significant, <br class="hidden sm:inline"/>
           <span class="bg-gradient-to-r from-amber-400 via-rose-400 to-indigo-400 bg-clip-text text-transparent">Main Effects Are Qualified.</span>
         </h1>
         <p class="text-slate-300 text-base sm:text-lg leading-relaxed max-w-3xl">
-          Never interpret or run global post-hoc tests on marginal main effects as if they tell the whole story. 
-          A significant interaction means that <strong>the effect of Factor A changes depending on the level of Factor B</strong>. 
-          To report this accurately, you must slice the data into conditional <em>simple effects</em>.
+          Never interpret or run post-hoc tests on marginal main effects as if they tell the whole story. A significant interaction means that <strong>the effect of Factor A depends on the level of Factor B</strong>. Decompose the omnibus outcome into simple effects and report the exact test statistics including <strong>pairwise t-ratios, degrees of freedom, exact p-values, means, and standard deviations</strong>.
         </p>
 
         <!-- Quick Architecture Matrix -->
@@ -133,7 +131,7 @@
               <span>3-Way Interaction (e.g., A × B × C)</span>
             </div>
             <p class="text-xs text-slate-400 leading-normal">
-              Decompose into <strong>Simple Simple Effects</strong>: Test the effect of Factor A across the four combinations of Factors B and C (e.g., Political Orientation compared within Non-Voters with Kids, Voters without Kids, etc.).
+              Decompose into <strong>Simple Simple Effects</strong>: Test the effect of Factor A across the four combinations of Factors B and C (e.g., Political Orientation compared within Non-Voters with Kids, Voters with Kids, etc.).
             </p>
           </div>
         </div>
@@ -148,17 +146,33 @@
             <i data-lucide="search-code" class="w-3.5 h-3.5"></i> Tool 1: Inspection Desk
           </div>
           <h2 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">Spot the Red Flags</h2>
-          <p class="text-sm text-slate-400 mt-1">Here is a classic student draft with 5 critical APA & statistical flaws. Click the highlighted areas or toggle auto-reveal to analyze why instructors deduct points.</p>
+          <p class="text-sm text-slate-400 mt-1">Select a reported draft scenario below. Notice how correctly reported sentences and valid statistics sit right beside common over-reporting red flags.</p>
         </div>
         <div class="flex items-center space-x-2">
           <button id="toggle-all-critique-btn" onclick="toggleAllCritiques()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all flex items-center space-x-1.5">
             <i data-lucide="eye" class="w-4 h-4"></i>
-            <span id="toggle-all-text">Reveal All 5 Red Flags</span>
+            <span id="toggle-all-text">Reveal All Red Flags</span>
           </button>
           <button onclick="resetCritiques()" class="px-3 py-2 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-800 transition-all" title="Reset highlights">
             <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
           </button>
         </div>
+      </div>
+
+      <!-- Case Tabs -->
+      <div class="flex flex-wrap gap-2 pt-2">
+        <button onclick="switchDraftCase(1)" id="tab-case-1" class="px-3.5 py-2 rounded-xl text-xs font-semibold transition-all bg-brand-950 border border-brand-500/50 text-brand-300">
+          Case 1: Standard Lab Draft (Format & Slicing)
+        </button>
+        <button onclick="switchDraftCase(2)" id="tab-case-2" class="px-3.5 py-2 rounded-xl text-xs font-semibold transition-all bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700">
+          Case 2: The "Kitchen-Sink" (3-Way Over-Reporting)
+        </button>
+        <button onclick="switchDraftCase(3)" id="tab-case-3" class="px-3.5 py-2 rounded-xl text-xs font-semibold transition-all bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700">
+          Case 3: Redundant Bidirectional Slicing
+        </button>
+        <button onclick="switchDraftCase(4)" id="tab-case-4" class="px-3.5 py-2 rounded-xl text-xs font-semibold transition-all bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700">
+          Case 4: Non-Significant Fishing
+        </button>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -167,40 +181,19 @@
           <div class="flex items-center justify-between pb-4 border-b border-slate-800 text-xs text-slate-400">
             <div class="flex items-center space-x-2">
               <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
-              <span class="font-mono">Draft_Sample_Report.docx</span>
+              <span class="font-mono" id="current-draft-file">Draft_Sample_Report_Case1.docx</span>
             </div>
-            <span class="text-rose-400 font-medium">5 Serious Mistakes Detected</span>
+            <span class="text-rose-400 font-medium" id="case-flag-count">5 Specific Mistakes Detected</span>
           </div>
 
-          <!-- Paragraph with interactive spans -->
-          <div class="text-slate-200 font-serif leading-relaxed text-base sm:text-lg space-y-4 select-none">
-            <p>
-              Measurements of our OUTCOMEVARIABLE were taken at three levels of FACTOR A (one, two, and three), two levels of FACTOR B (one and two), and two levels of FACTOR C (one and two) resulting in a 3x2x2 experimental design. The ANOVA omnibus returned a significant main effect across FACTOR A (F(2, 48) = 61.980, p &lt; .001, 
-              <span class="error-node cursor-pointer bg-rose-950/60 border-b-2 border-rose-500 text-rose-200 px-1 rounded transition-all hover:bg-rose-900/80 font-mono text-sm" onclick="selectError(1)" id="err-1">
-                Ƞ2partial = .721
-              </span>) and a significant interaction between FACTOR A and C (F(2, 48) = 5.96, 
-              <span class="error-node cursor-pointer bg-rose-950/60 border-b-2 border-rose-500 text-rose-200 px-1 rounded transition-all hover:bg-rose-900/80 font-mono text-sm" onclick="selectError(2)" id="err-2">
-                p &lt; .005
-              </span>, Ƞ2partial = .199).
-            </p>
-            <p>
-              <span class="error-node cursor-pointer bg-rose-950/60 border-b-2 border-rose-500 text-rose-200 px-1 rounded transition-all hover:bg-rose-900/80" onclick="selectError(3)" id="err-3">
-                Follow up Tukey HSD comparisons showed that all levels of FACTOR A were significantly different from one another (p &lt; .001). Level one (M = 2.78) was lower than level two (M = 3.23) which was lower than level three (M = 3.5).
-              </span>
-            </p>
-            <p>
-              <span class="error-node cursor-pointer bg-rose-950/60 border-b-2 border-rose-500 text-rose-200 px-1 rounded transition-all hover:bg-rose-900/80" onclick="selectError(4)" id="err-4">
-                Because there were only two levels of FACTOR C the interaction was analyzed at each level of FACTOR A across FACTOR C.
-              </span> 
-              <span class="error-node cursor-pointer bg-rose-950/60 border-b-2 border-rose-500 text-rose-200 px-1 rounded transition-all hover:bg-rose-900/80" onclick="selectError(5)" id="err-5">
-                At level one of FACTOR A, level one of FACTOR C (M = 2.94) was significantly higher than level two (M = 2.61, p = .001).
-              </span>
-            </p>
+          <!-- Paragraph Container with dynamic markup -->
+          <div id="draft-paragraph-body" class="text-slate-200 font-serif leading-relaxed text-base sm:text-lg space-y-4 select-none">
+            <!-- Dynamically populated -->
           </div>
 
           <div class="pt-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-500">
             <span>Tip: Click any red-underlined segment to load its critique card.</span>
-            <span class="font-mono font-medium text-slate-400" id="detected-counter">0 of 5 Inspected</span>
+            <span class="font-mono font-medium text-slate-400" id="detected-counter">0 Inspected</span>
           </div>
         </div>
 
@@ -252,7 +245,7 @@
           <i data-lucide="git-merge" class="w-3.5 h-3.5"></i> Tool 2: Statistical Navigator
         </div>
         <h2 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">The Decision Tree: "What Do I Run Next?"</h2>
-        <p class="text-sm text-slate-400 mt-1">Select your omnibus outcome to get the exact `emmeans` R code snippet and APA 7 reporting sentence.</p>
+        <p class="text-sm text-slate-400 mt-1">Select your omnibus outcome to get the exact `emmeans` R code snippet and APA 7 reporting sentence with full t-tests, standard deviations, and means.</p>
       </div>
 
       <!-- Selector Pills -->
@@ -311,7 +304,7 @@
             </div>
             <pre class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs sm:text-sm font-mono text-brand-300 overflow-x-auto leading-relaxed" id="code-snippet">
 # Fit the linear model
-model <- lm(Score ~ FactorA * FactorC, data = my_data)
+model &lt;- lm(Score ~ FactorA * FactorC, data = my_data)
 
 # Decompose interaction: Test Factor C at each level of Factor A
 emmeans(model, pairwise ~ FactorC | FactorA, adjust = "none")$contrasts</pre>
@@ -324,7 +317,7 @@ emmeans(model, pairwise ~ FactorC | FactorA, adjust = "none")$contrasts</pre>
               <span class="text-emerald-400 text-[11px] font-semibold">Strict APA Standard</span>
             </div>
             <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs sm:text-sm text-slate-300 leading-relaxed font-serif" id="apa-snippet">
-              Because the main effect of Factor A was qualified by the Factor A × Factor C interaction, simple effects of Factor C were evaluated at each level of Factor A. At Level 1 of Factor A, participants in Level 1 of Factor C (<span class="italic">M</span> = 2.94, <span class="italic">SD</span> = 0.35) scored significantly higher than those in Level 2 (<span class="italic">M</span> = 2.61, <span class="italic">SD</span> = 0.31), <span class="italic">t</span>(48) = 3.35, <span class="italic">p</span> = .001. Conversely, the effect of Factor C was non-significant at Level 2 (<span class="italic">p</span> = .672) and Level 3 (<span class="italic">p</span> = .525).
+              Because the main effect of Factor A was qualified by the Factor A × Factor C interaction, simple effects of Factor C were evaluated at each level of Factor A. At Level 1 of Factor A, participants in Level 1 of Factor C (<span class="italic">M</span> = 2.94, <span class="italic">SD</span> = 0.35) scored significantly higher than those in Level 2 (<span class="italic">M</span> = 2.61, <span class="italic">SD</span> = 0.31), <span class="italic">t</span>(48) = 3.35, <span class="italic">p</span> = .001. Conversely, the simple effect of Factor C was non-significant at Level 2, <span class="italic">t</span>(48) = 0.43, <span class="italic">p</span> = .672, and at Level 3, <span class="italic">t</span>(48) = 0.64, <span class="italic">p</span> = .525.
             </div>
           </div>
         </div>
@@ -335,40 +328,56 @@ emmeans(model, pairwise ~ FactorC | FactorA, adjust = "none")$contrasts</pre>
             <i data-lucide="graduation-cap" class="w-4 h-4 text-brand-400"></i> Instructor's Lab Guidance:
           </div>
           <p id="branch-notes">
-            Notice that we report the test for every level of Factor A (Level 1, Level 2, and Level 3). Stopping after finding one significant level is a fatal grading error! All slices must be reported.
+            Notice that we report the test for every level of Factor A (Level 1, Level 2, and Level 3). Each pairwise contrast includes its t-statistic, degrees of freedom, exact p-value, and both condition means with standard deviations.
           </p>
         </div>
       </div>
     </section>
 
-    <!-- Interactive Tool 3: Sentence Builder / Mad-Libs -->
+    <!-- Interactive Tool 3: Sentence Builder -->
     <section id="apa-builder" class="space-y-6">
       <div>
         <div class="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1 flex items-center gap-1.5">
           <i data-lucide="puzzle" class="w-3.5 h-3.5"></i> Tool 3: The APA Sentence Builder
         </div>
-        <h2 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">Interactive Lab Drill</h2>
-        <p class="text-sm text-slate-400 mt-1">Assemble the 4 structural components of a 2-way interaction simple-effects write-up in correct chronological order.</p>
+        <h2 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">Interactive Lab Drill: Full 3 × 2 × 2 Factorial Report</h2>
+        <p class="text-sm text-slate-400 mt-1">Assemble the 6 structural sentences of a complete 3 × 2 × 2 ANOVA report in proper APA 7 chronological flow, including all non-significant omnibus terms, the significant interaction qualification, and pairwise t-tests across all slices.</p>
       </div>
 
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-xl">
         
         <!-- Scenario Description -->
-        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs text-slate-300 space-y-1.5">
+        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs text-slate-300 space-y-2">
           <div class="flex items-center justify-between">
-            <span class="font-bold text-white uppercase text-[11px] tracking-wider">Lab Exercise Prompt</span>
-            <span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 text-[10px] font-mono border border-amber-500/20">F(2, 48) = 5.96, p = .005</span>
+            <span class="font-bold text-white uppercase text-[11px] tracking-wider">Comprehensive Lab Exercise Prompt</span>
+            <span class="px-2 py-0.5 rounded bg-brand-500/10 text-brand-300 text-[10px] font-mono border border-brand-500/20">Full 3 × 2 × 2 Model (N = 60, Error df = 48)</span>
           </div>
-          <p>
-            You performed a 3 × 2 × 2 ANOVA on student test scores. Factor A (3 levels) interacted significantly with Factor C (2 levels), <span class="font-mono text-brand-300">F(2, 48) = 5.96, p = .005, &eta;<sub>p</sub><sup>2</sup> = .20</span>. Assemble the scientific report below by clicking the blocks in the correct chronological flow.
+          <p class="leading-relaxed">
+            You conducted a 3 × 2 × 2 between-subjects factorial ANOVA examining test performance. The model evaluated <strong>Factor A</strong> (3 levels), <strong>Factor B</strong> (2 levels), and <strong>Factor C</strong> (2 levels). Omnibus results yielded:
           </p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-2 font-mono text-[11px] text-slate-400 pt-1">
+            <div class="p-2 rounded bg-slate-900 border border-slate-800">
+              <span class="text-emerald-400 font-bold">Main Effect A:</span> <em>F</em>(2, 48) = 61.98, <em>p</em> &lt; .001, η<sub>p</sub><sup>2</sup> = .72<br/>
+              <span class="text-slate-500">Main Effect B:</span> <em>F</em>(1, 48) = 0.85, <em>p</em> = .361, η<sub>p</sub><sup>2</sup> = .02<br/>
+              <span class="text-slate-500">Main Effect C:</span> <em>F</em>(1, 48) = 1.14, <em>p</em> = .291, η<sub>p</sub><sup>2</sup> = .02
+            </div>
+            <div class="p-2 rounded bg-slate-900 border border-slate-800">
+              <span class="text-amber-400 font-bold">Interaction A × C:</span> <em>F</em>(2, 48) = 5.96, <em>p</em> = .005, η<sub>p</sub><sup>2</sup> = .20<br/>
+              <span class="text-slate-500">Interaction A × B:</span> <em>F</em>(2, 48) = 0.41, <em>p</em> = .666, η<sub>p</sub><sup>2</sup> = .02<br/>
+              <span class="text-slate-500">Interaction B × C:</span> <em>F</em>(1, 48) = 0.18, <em>p</em> = .673, η<sub>p</sub><sup>2</sup> &lt; .01
+            </div>
+            <div class="p-2 rounded bg-slate-900 border border-slate-800">
+              <span class="text-slate-500 font-bold">Interaction A × B × C:</span> <em>F</em>(2, 48) = 0.29, <em>p</em> = .749, η<sub>p</sub><sup>2</sup> = .01<br/>
+              <span class="text-indigo-400">Strategy:</span> Decompose A × C; report pairwise t-tests and non-significant terms.
+            </div>
+          </div>
         </div>
 
         <!-- Available Blocks Deck -->
         <div class="space-y-2">
           <label class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center justify-between">
             <span>Available Sentence Blocks (Click to Add to Your Report):</span>
-            <span id="remaining-count" class="text-brand-400 font-mono">4 blocks remaining</span>
+            <span id="remaining-count" class="text-brand-400 font-mono">6 blocks remaining</span>
           </label>
           <div id="deck-container" class="grid grid-cols-1 md:grid-cols-2 gap-3">
             <!-- Dynamically populated via JS -->
@@ -387,9 +396,9 @@ emmeans(model, pairwise ~ FactorC | FactorA, adjust = "none")$contrasts</pre>
               </button>
             </div>
           </div>
-          <div id="tray-container" class="min-h-[140px] bg-slate-950 p-4 rounded-xl border-2 border-dashed border-slate-800 space-y-2.5 transition-all flex flex-col justify-center">
+          <div id="tray-container" class="min-h-[160px] bg-slate-950 p-4 rounded-xl border-2 border-dashed border-slate-800 space-y-2.5 transition-all flex flex-col justify-center">
             <div id="tray-placeholder" class="text-center text-xs text-slate-500 py-6">
-              Click the blocks above to build your paragraph step-by-step.
+              Click the blocks above to build your 6-sentence paragraph step-by-step.
             </div>
           </div>
         </div>
@@ -412,7 +421,7 @@ emmeans(model, pairwise ~ FactorC | FactorA, adjust = "none")$contrasts</pre>
           <i data-lucide="bookmark" class="w-3.5 h-3.5"></i> Reference Corner
         </div>
         <h2 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">APA 7th Edition Rules Cheat Sheet</h2>
-        <p class="text-sm text-slate-400 mt-1">Keep these formatting rules handy when proofreading your lab submissions.</p>
+        <p class="text-sm text-slate-400 mt-1">Keep these formatting and reporting standards handy when proofreading your lab submissions.</p>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -420,9 +429,9 @@ emmeans(model, pairwise ~ FactorC | FactorA, adjust = "none")$contrasts</pre>
           <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold">
             01
           </div>
-          <h4 class="text-base font-bold text-white">No Leading Zeros</h4>
+          <h4 class="text-base font-bold text-white">Full Test Statistics on Contrasts</h4>
           <p class="text-xs text-slate-400 leading-relaxed">
-            Do not put a zero before decimals for numbers that cannot exceed 1.0. This applies directly to <span class="italic">p</span> values (<span class="font-mono text-emerald-300">p = .042</span>, not <span class="line-through text-slate-500">p = 0.042</span>) and partial eta squared (<span class="font-mono text-emerald-300">&eta;<sub>p</sub><sup>2</sup> = .18</span>).
+            Never report only means and p-values for pairwise tests. State the test statistic with degrees of freedom: <span class="font-mono text-emerald-300">t(48) = 3.35, p = .001</span>. This anchors the comparison in the model error term.
           </p>
         </div>
 
@@ -430,9 +439,9 @@ emmeans(model, pairwise ~ FactorC | FactorA, adjust = "none")$contrasts</pre>
           <div class="w-8 h-8 rounded-lg bg-brand-500/10 text-brand-400 flex items-center justify-center font-bold">
             02
           </div>
-          <h4 class="text-base font-bold text-white">Exact Probabilities</h4>
+          <h4 class="text-base font-bold text-white">No Leading Zeros & Exact P</h4>
           <p class="text-xs text-slate-400 leading-relaxed">
-            Report exact <span class="italic">p</span> values to 2 or 3 decimal places (e.g., <span class="font-mono text-brand-300">p = .004</span>, <span class="font-mono text-brand-300">p = .088</span>). Never report arbitrary ranges like <span class="line-through text-slate-500">p &lt; .05</span> or <span class="line-through text-slate-500">p &lt; .005</span>. The only exception is values smaller than .001, which are reported as <span class="font-mono text-brand-300">p &lt; .001</span>.
+            Omit the leading zero for quantities capped at 1.0 (<span class="font-mono text-brand-300">p = .042</span> and <span class="font-mono text-brand-300">&eta;<sub>p</sub><sup>2</sup> = .18</span>). Provide exact values to 2 or 3 decimals rather than ranges like <span class="line-through text-slate-500">p &lt; .05</span>, reserving <span class="font-mono text-brand-300">p &lt; .001</span> for values below .001.
           </p>
         </div>
 
@@ -440,9 +449,9 @@ emmeans(model, pairwise ~ FactorC | FactorA, adjust = "none")$contrasts</pre>
           <div class="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center font-bold">
             03
           </div>
-          <h4 class="text-base font-bold text-white">Always Report SDs</h4>
+          <h4 class="text-base font-bold text-white">Always Pair M with SD</h4>
           <p class="text-xs text-slate-400 leading-relaxed">
-            Every reported cell or marginal mean must be accompanied by its standard deviation or standard error in parentheses: <span class="font-mono text-indigo-300">(M = 3.25, SD = 0.42)</span>. Standalone means are incomplete statistical summaries in APA format.
+            Every cell mean must be paired with its dispersion: <span class="font-mono text-indigo-300">(M = 3.25, SD = 0.42)</span>. Reporting standalone means provides an incomplete descriptive summary in APA style.
           </p>
         </div>
       </div>
@@ -450,8 +459,8 @@ emmeans(model, pairwise ~ FactorC | FactorA, adjust = "none")$contrasts</pre>
   </main>
 
   <footer class="border-t border-slate-800 bg-slate-950 py-8 text-center text-xs text-slate-500 space-y-2">
-    <p>Designed for Psychological & Behavioral Statistics Labs &bull; Fully compliant with APA Publication Manual (7th Edition)</p>
-    <p class="text-slate-600">Built for seamless classroom demonstration and interactive student training.</p>
+    <p>Designed for Psychological and Behavioral Statistics Labs &bull; Compliant with APA Publication Manual 7th Edition</p>
+    <p class="text-slate-600">Configured for classroom demonstration and laboratory exercise training.</p>
   </footer>
 
   <!-- Interactive JavaScript Engine -->
@@ -460,54 +469,206 @@ emmeans(model, pairwise ~ FactorC | FactorA, adjust = "none")$contrasts</pre>
     lucide.createIcons();
 
     // ==========================================
-    // Tool 1: Spot the Red Flags Data & Logic
+    // Tool 1: Inspection Desk Data (Multiple Cases)
     // ==========================================
-    const errorData = {
+    const redFlagCases = {
       1: {
-        title: "Corrupted Cyrillic & Bad Notation for Eta Squared",
-        tag: "Formatting / Encoding Error",
-        badText: "Ƞ2partial = .721",
-        explanation: "The student used the Cyrillic letter 'Ƞ' instead of italicized Greek eta squared (η²), and placed the word 'partial' in standard text instead of subscript. APA 7 explicitly requires: italic Greek eta with subscript 'p' and superscript '2': η_p².",
-        fix: "η_p² = .72  (or ηp² in plain text; round to two decimals: .72)"
+        filename: "Draft_Sample_Report_Case1.docx",
+        flagCountText: "5 Specific Mistakes Detected",
+        htmlContent: `
+          <p>
+            Measurements of test performance were gathered using a 3 × 2 × 2 between-subjects factorial design evaluating Factor A (one, two, and three), Factor B (one and two), and Factor C (one and two). Prior to hypothesis testing, data were screened for normality and homogeneity of variance across groups. The omnibus factorial ANOVA returned a significant main effect across Factor A, <em>F</em>(2, 48) = 61.98, <em>p</em> &lt; .001, 
+            <span class="error-node cursor-pointer bg-rose-950/60 border-b-2 border-rose-500 text-rose-200 px-1 rounded transition-all hover:bg-rose-900/80 font-mono text-sm" onclick="selectError(1)" id="err-1">
+              Ƞ2partial = .721
+            </span>, as well as a significant interaction between Factor A and Factor C, <em>F</em>(2, 48) = 5.96, 
+            <span class="error-node cursor-pointer bg-rose-950/60 border-b-2 border-rose-500 text-rose-200 px-1 rounded transition-all hover:bg-rose-900/80 font-mono text-sm" onclick="selectError(2)" id="err-2">
+              p &lt; .005
+            </span>, η<sub>p</sub><sup>2</sup> = .20.
+          </p>
+          <p>
+            <span class="error-node cursor-pointer bg-rose-950/60 border-b-2 border-rose-500 text-rose-200 px-1 rounded transition-all hover:bg-rose-900/80" onclick="selectError(3)" id="err-3">
+              Follow up Tukey HSD comparisons showed that all levels of Factor A were significantly different from one another (p &lt; .001). Level one (M = 2.78) was lower than level two (M = 3.23) which was lower than level three (M = 3.5).
+            </span>
+          </p>
+          <p>
+            <span class="error-node cursor-pointer bg-rose-950/60 border-b-2 border-rose-500 text-rose-200 px-1 rounded transition-all hover:bg-rose-900/80" onclick="selectError(4)" id="err-4">
+              Because there were only two levels of Factor C the interaction was analyzed at each level of Factor A across Factor C.
+            </span> 
+            <span class="error-node cursor-pointer bg-rose-950/60 border-b-2 border-rose-500 text-rose-200 px-1 rounded transition-all hover:bg-rose-900/80" onclick="selectError(5)" id="err-5">
+              At level one of Factor A, level one of Factor C (M = 2.94) was significantly higher than level two (M = 2.61, p = .001).
+            </span>
+          </p>
+        `,
+        errors: {
+          1: {
+            title: "Corrupted Cyrillic & Bad Notation for Eta Squared",
+            tag: "Formatting / Encoding Error",
+            badText: "Ƞ2partial = .721",
+            explanation: "The reporter used the Cyrillic letter 'Ƞ' instead of italicized Greek eta squared (η²), and placed the word 'partial' in standard text without subscripts. APA 7 requires: italic Greek eta with subscript 'p' and superscript '2': η_p² = .72.",
+            fix: "η_p² = .72"
+          },
+          2: {
+            title: "Non-Standard Inexact P-Value",
+            tag: "APA 7 Style Rule",
+            badText: "p < .005",
+            explanation: "APA 7 discourages arbitrary threshold reporting (such as p < .05, p < .01, or p < .005) when the exact probability is known. Report exact p down to two or three decimal places, reserving '< .001' only for genuinely tiny values.",
+            fix: "p = .005"
+          },
+          3: {
+            title: "Interpreting Main Effects Under a Significant Interaction",
+            tag: "Critical Statistical Violation",
+            badText: "Follow up Tukey HSD comparisons showed that all levels of Factor A were significantly different from one another (p < .001). Level one (M = 2.78)...",
+            explanation: "Factor A is qualified by a significant Factor A × Factor C interaction. Running global Tukey tests across marginal means ignores the moderator and generates deceptive generalizations.",
+            fix: "Omit marginal post-hoc tests. State: 'Because the main effect of Factor A was qualified by the Factor A × Factor C interaction, simple effects were examined...'"
+          },
+          4: {
+            title: "Flawed Methodological Justification",
+            tag: "Methodological Reasoning Error",
+            badText: "Because there were only two levels of Factor C the interaction was analyzed at each level of Factor A across Factor C.",
+            explanation: "The number of levels in Factor C does not mandate the slicing orientation. Slicing Factor C across Factor A is valid and parsimonious, but you should not invent imaginary statistical mandates.",
+            fix: "'To unpack the interaction, simple effects of Factor C were evaluated at each level of Factor A...'"
+          },
+          5: {
+            title: "Incomplete Slicing & Missing Test Statistics / SDs",
+            tag: "Incomplete Reporting & Missing T-Tests",
+            badText: "At level one of Factor A, level one of Factor C (M = 2.94) was significantly higher than level two (M = 2.61, p = .001).",
+            explanation: "Factor A has three levels, but the reporter abandoned the report after Level 1! Furthermore, the pairwise t-statistic, degrees of freedom, and standard deviations were omitted.",
+            fix: "At Level 1 of Factor A, Level 1 of Factor C (M = 2.94, SD = 0.35) scored significantly higher than Level 2 (M = 2.61, SD = 0.31), t(48) = 3.35, p = .001. No differences were found at Level 2, t(48) = 0.43, p = .672, or Level 3, t(48) = 0.64, p = .525."
+          }
+        }
       },
       2: {
-        title: "Non-Standard Inexact P-Value",
-        tag: "APA 7 Style Rule",
-        badText: "p < .005",
-        explanation: "APA 7 forbids arbitrary threshold reporting (such as p < .05, p < .01, or p < .005) when an exact value is known. You must state the exact p-value down to two or three decimal places. The only inequality allowed is 'p < .001'.",
-        fix: "p = .005"
+        filename: "Draft_OverReporting_KitchenSink.docx",
+        flagCountText: "2 Over-Reporting Flaws Surrounded by Clean Text",
+        htmlContent: `
+          <p>
+            A 3 × 2 × 2 factorial ANOVA was conducted to examine attitude scores across political affiliation (conservative, moderate, liberal), parental status (children, no children), and voting behavior (voter, non-voter). Data were confirmed to meet assumptions of normality and equal group variances.
+          </p>
+          <p>
+            <span class="error-node cursor-pointer bg-rose-950/60 border-b-2 border-rose-500 text-rose-200 px-1 rounded transition-all hover:bg-rose-900/80" onclick="selectError(1)" id="err-1">
+              The analysis showed a significant main effect of Politics, <em>F</em>(2, 48) = 8.14, <em>p</em> = .001, η<sub>p</sub><sup>2</sup> = .25, a significant main effect of Parental Status, <em>F</em>(1, 48) = 5.22, <em>p</em> = .027, η<sub>p</sub><sup>2</sup> = .10, and a significant Politics × Kids two-way interaction, <em>F</em>(2, 48) = 4.11, <em>p</em> = .023, η<sub>p</sub><sup>2</sup> = .15.
+            </span>
+            Crucially, the omnibus test revealed a significant three-way Politics × Kids × Voting interaction, <em>F</em>(2, 48) = 19.56, <em>p</em> &lt; .001, η<sub>p</sub><sup>2</sup> = .45.
+          </p>
+          <p>
+            <span class="error-node cursor-pointer bg-rose-950/60 border-b-2 border-rose-500 text-rose-200 px-1 rounded transition-all hover:bg-rose-900/80" onclick="selectError(2)" id="err-2">
+              Pairwise Tukey tests on the main effect of Politics indicated that across all conditions, liberals (<em>M</em> = 30.50, <em>SD</em> = 7.10) expressed significantly higher support than conservatives (<em>M</em> = 28.00, <em>SD</em> = 6.20), <em>t</em>(48) = 2.54, <em>p</em> = .014.
+            </span>
+          </p>
+          <p>
+            When examining the highest-order effect, simple simple pairwise comparisons revealed that among non-voting participants with children, conservatives scored significantly lower (<em>M</em> = 20.00, <em>SD</em> = 6.52) than liberals (<em>M</em> = 33.00, <em>SD</em> = 7.00), <em>t</em>(48) = 3.65, <em>p</em> = .001. Conversely, among voting participants with children, conservatives expressed the highest attitude scores (<em>M</em> = 36.00, <em>SD</em> = 4.00), scoring significantly higher than liberals (<em>M</em> = 28.00, <em>SD</em> = 7.52), <em>t</em>(48) = 2.15, <em>p</em> = .038.
+          </p>
+        `,
+        errors: {
+          1: {
+            title: "Subsumed Term Cataloging (Kitchen-Sink Over-Reporting)",
+            tag: "Subsumed Term Over-Reporting",
+            badText: "The analysis showed a significant main effect of Politics, F(2, 48) = 8.14... Parental Status, F(1, 48) = 5.22... and a significant Politics × Kids two-way interaction...",
+            explanation: "Notice the surrounding text! The three-way interaction is reported properly right afterward, but the reporter wasted an entire paragraph exhaustively itemizing lower-order main effects and two-way interactions. Because the three-way interaction qualifies all of them, declaring them as standalone general effects is misleading.",
+            fix: "Condense and clarify: 'Although lower-order main effects and two-way interactions were observed, all were qualified by the significant three-way Politics × Kids × Voting interaction, F(2, 48) = 19.56, p < .001, η_p² = .45.'"
+          },
+          2: {
+            title: "Marginal Post-Hocs in the Presence of a 3-Way Interaction",
+            tag: "Fatal Statistical Interpretation Error",
+            badText: "Pairwise Tukey tests on the main effect of Politics indicated that across all conditions, liberals (M = 30.50, SD = 7.10) expressed significantly higher support than conservatives (M = 28.00, SD = 6.20), t(48) = 2.54, p = .014.",
+            explanation: "Even though the reporter reported correct t-test formatting and standard deviations, conducting post-hocs on marginal means when a three-way interaction exists is fundamentally flawed! As the next paragraph shows, voting parents showed the exact opposite pattern (conservatives were higher than liberals). The marginal claim is factually untrue for half the sample.",
+            fix: "Delete marginal post-hocs entirely. Jump straight from the omnibus qualification to the simple simple pairwise effects."
+          }
+        }
       },
       3: {
-        title: "Interpreting Main Effects in the Presence of an Interaction",
-        tag: "Critical Statistical Violation",
-        badText: "Follow up Tukey HSD comparisons showed that all levels of FACTOR A were significantly different from one another (p < .001). Level one (M = 2.78)...",
-        explanation: "Factor A is involved in a significant Factor A × Factor C interaction! Running global Tukey tests across the marginal means of Factor A ignores the moderator and provides false, unqualified conclusions. You must decompose the interaction via simple effects instead.",
-        fix: "Omit global Tukey main effect tests. Instead state: 'Because the main effect of Factor A was qualified by the Factor A × Factor C interaction, simple effects were examined...'"
+        filename: "Draft_Redundant_Slicing.docx",
+        flagCountText: "1 Redundant Slicing Over-Reporting Error Detected",
+        htmlContent: `
+          <p>
+            A 3 × 2 factorial ANOVA evaluated examination scores as a function of Study Technique (Factor A: Massed, Spaced, Retrieval) and Environment (Factor B: Quiet, Distracting). The omnibus test revealed a significant Factor A × Factor B interaction, <em>F</em>(2, 48) = 7.82, <em>p</em> = .001, η<sub>p</sub><sup>2</sup> = .25. Because the interaction was statistically significant, marginal main effects were not interpreted.
+          </p>
+          <p>
+            To unpack the interaction, simple main effects of Environment were evaluated at each level of Study Technique. At Level 1 of Study Technique (Massed), participants in the Quiet environment scored significantly higher (<em>M</em> = 78.40, <em>SD</em> = 5.20) than those in the Distracting environment (<em>M</em> = 64.10, <em>SD</em> = 6.10), <em>t</em>(48) = 3.82, <em>p</em> &lt; .001. Conversely, the simple effect of Environment was non-significant at Level 2 (Spaced), <em>t</em>(48) = 0.52, <em>p</em> = .605, and at Level 3 (Retrieval), <em>t</em>(48) = 0.74, <em>p</em> = .463.
+          </p>
+          <p>
+            <span class="error-node cursor-pointer bg-rose-950/60 border-b-2 border-rose-500 text-rose-200 px-1 rounded transition-all hover:bg-rose-900/80" onclick="selectError(1)" id="err-1">
+              For additional completeness, we also evaluated the simple main effects of Study Technique at each level of Environment. In the Quiet condition, Study Technique was significant, <em>F</em>(2, 48) = 8.11, <em>p</em> = .001, with Spaced (<em>M</em> = 85.20, <em>SD</em> = 4.10) scoring higher than Massed (<em>M</em> = 78.40, <em>SD</em> = 5.20), <em>t</em>(48) = 2.45, <em>p</em> = .018. In the Distracting condition, Study Technique was also significant, <em>F</em>(2, 48) = 14.50, <em>p</em> &lt; .001.
+            </span>
+          </p>
+        `,
+        errors: {
+          1: {
+            title: "Bidirectional Slicing Overkill",
+            tag: "Analytical Redundancy",
+            badText: "For additional completeness, we also evaluated the simple main effects of Study Technique at each level of Environment. In the Quiet condition...",
+            explanation: "The reporter already wrote a complete, flawless decomposition in the previous paragraph by slicing Environment across Study Technique. Re-slicing Study Technique across Environment tests the exact same interaction space a second time from another angle, creating redundant text and inflating familywise error rates.",
+            fix: "Delete this entire second decomposition paragraph. Choose one slicing direction based on your hypotheses and report that single breakdown cleanly."
+          }
+        }
       },
       4: {
-        title: "Bizarre / False Statistical Justification",
-        tag: "Methodological Reasoning Error",
-        badText: "Because there were only two levels of FACTOR C the interaction was analyzed at each level of FACTOR A across FACTOR C.",
-        explanation: "The number of levels in Factor C does not dictate the direction of simple effects slicing! Slicing Factor C across Factor A is valid and parsimonious because 2-level contrasts require no post-hoc adjustment, but students shouldn't claim it as a mandatory statistical rule.",
-        fix: "'To unpack the interaction, simple effects of Factor C were evaluated at each level of Factor A...'"
-      },
-      5: {
-        title: "Incomplete Slicing / Abandoned Analysis",
-        tag: "Incomplete Reporting",
-        badText: "At level one of FACTOR A, level one of FACTOR C (M = 2.94) was significantly higher than level two (M = 2.61, p = .001).",
-        explanation: "Factor A has 3 levels! The student inspected Level 1, saw a significant difference, and completely forgot to report Level 2 and Level 3! An interaction report is only complete when all slices of the moderator are reported (including test statistics, SDs, and non-significant results).",
-        fix: "Report all three slices: At Level 1, Factor C was significant (M = 2.94, SD = 0.35 vs M = 2.61, SD = 0.31, p = .001). At Level 2, no difference was found (p = .672). At Level 3, no difference was found (p = .525)."
+        filename: "Draft_NonSignificant_Fishing.docx",
+        flagCountText: "1 Subgroup Fishing Violation Detected",
+        htmlContent: `
+          <p>
+            A 2 × 2 ANOVA evaluated task completion time across Instruction Modality (Factor A: Written vs. Video) and Experience Level (Factor B: Novice vs. Experienced). Baseline screening confirmed that variance across cells was homogeneous.
+          </p>
+          <p>
+            The omnibus ANOVA revealed a significant main effect of Experience Level, <em>F</em>(1, 56) = 18.44, <em>p</em> &lt; .001, η<sub>p</sub><sup>2</sup> = .25, with experienced users completing tasks faster (<em>M</em> = 14.20 min, <em>SD</em> = 2.10) than novices (<em>M</em> = 21.50 min, <em>SD</em> = 3.40). The main effect of Instruction Modality was not significant, <em>F</em>(1, 56) = 1.12, <em>p</em> = .295, η<sub>p</sub><sup>2</sup> = .02. The Instruction Modality × Experience Level interaction was also not statistically significant, <em>F</em>(1, 56) = 0.82, <em>p</em> = .369, η<sub>p</sub><sup>2</sup> = .01.
+          </p>
+          <p>
+            <span class="error-node cursor-pointer bg-rose-950/60 border-b-2 border-rose-500 text-rose-200 px-1 rounded transition-all hover:bg-rose-900/80" onclick="selectError(1)" id="err-1">
+              However, to ensure no subtle localized differences were overlooked, simple effects tests were conducted anyway. Among novice users, participants receiving video instructions completed the task faster (<em>M</em> = 19.80 min, <em>SD</em> = 2.80) than those receiving written instructions (<em>M</em> = 23.20 min, <em>SD</em> = 3.20), <em>t</em>(56) = 2.02, <em>p</em> = .048, demonstrating that video is advantageous specifically for novices.
+            </span>
+          </p>
+        `,
+        errors: {
+          1: {
+            title: "Subgroup Fishing After a Non-Significant Interaction",
+            tag: "Methodological Fallacy",
+            badText: "However, to ensure no subtle localized differences were overlooked, simple effects tests were conducted anyway. Among novice users... t(56) = 2.02, p = .048...",
+            explanation: "Notice that the omnibus section above was reported properly. But after finding a non-significant interaction (p = .369), the reporter went fishing inside subgroups anyway! Claiming an effect exists for novices but not experienced users asserts an interaction. When the omnibus interaction is non-significant, that conditional difference is likely statistical noise and violates Type I error control.",
+            fix: "Delete the subgroup analysis. State: 'Because the interaction was not statistically significant, F(1, 56) = 0.82, p = .369, simple effects were not evaluated, and only the main effect of Experience Level was interpreted.'"
+          }
+        }
       }
     };
 
+    let activeCaseId = 1;
     let inspectedErrors = new Set();
     let allRevealed = false;
 
+    function switchDraftCase(caseId) {
+      activeCaseId = caseId;
+      inspectedErrors.clear();
+      allRevealed = false;
+
+      // Update Tab Styles
+      [1, 2, 3, 4].forEach(id => {
+        const tab = document.getElementById(`tab-case-${id}`);
+        if (id === caseId) {
+          tab.className = "px-3.5 py-2 rounded-xl text-xs font-semibold transition-all bg-brand-950 border border-brand-500/50 text-brand-300";
+        } else {
+          tab.className = "px-3.5 py-2 rounded-xl text-xs font-semibold transition-all bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700";
+        }
+      });
+
+      const currentCase = redFlagCases[caseId];
+      document.getElementById('current-draft-file').innerText = currentCase.filename;
+      document.getElementById('case-flag-count').innerText = currentCase.flagCountText;
+      document.getElementById('draft-paragraph-body').innerHTML = currentCase.htmlContent;
+      document.getElementById('toggle-all-text').innerText = "Reveal All Red Flags";
+
+      // Reset feedback panel
+      document.getElementById('critique-empty').classList.remove('hidden');
+      document.getElementById('critique-card').classList.add('hidden');
+      updateInspectedCounter();
+      lucide.createIcons();
+    }
+
     function selectError(id) {
+      const currentCase = redFlagCases[activeCaseId];
+      if (!currentCase || !currentCase.errors[id]) return;
+
       inspectedErrors.add(id);
       updateInspectedCounter();
 
-      // UI updates
       document.querySelectorAll('.error-node').forEach(el => {
         el.classList.remove('ring-2', 'ring-rose-400', 'bg-rose-900/90');
       });
@@ -518,9 +679,9 @@ emmeans(model, pairwise ~ FactorC | FactorA, adjust = "none")$contrasts</pre>
 
       const card = document.getElementById('critique-card');
       const empty = document.getElementById('critique-empty');
-      const err = errorData[id];
+      const err = currentCase.errors[id];
 
-      document.getElementById('critique-id').innerText = `Error #${id}`;
+      document.getElementById('critique-id').innerText = `Flag #${id}`;
       document.getElementById('critique-tag').innerText = err.tag;
       document.getElementById('critique-title').innerText = err.title;
       document.getElementById('critique-bad-text').innerText = err.badText;
@@ -534,22 +695,24 @@ emmeans(model, pairwise ~ FactorC | FactorA, adjust = "none")$contrasts</pre>
     function toggleAllCritiques() {
       allRevealed = !allRevealed;
       const btnText = document.getElementById('toggle-all-text');
-      
-      document.querySelectorAll('.error-node').forEach((el, index) => {
-        const id = index + 1;
-        inspectedErrors.add(id);
+      const currentErrors = redFlagCases[activeCaseId].errors;
+      const validErrorIds = Object.keys(currentErrors).map(Number);
+
+      document.querySelectorAll('.error-node').forEach(el => {
+        const id = Number(el.id.replace('err-', ''));
         if (allRevealed) {
+          inspectedErrors.add(id);
           el.classList.add('bg-rose-900/70', 'text-white', 'underline');
         } else {
           el.classList.remove('bg-rose-900/70', 'text-white', 'underline', 'ring-2', 'ring-rose-400');
         }
       });
 
-      if (allRevealed) {
+      if (allRevealed && validErrorIds.length > 0) {
         btnText.innerText = "Hide Error Highlights";
-        selectError(1);
+        selectError(validErrorIds[0]);
       } else {
-        btnText.innerText = "Reveal All 5 Red Flags";
+        btnText.innerText = "Reveal All Red Flags";
         resetCritiques();
       }
       updateInspectedCounter();
@@ -563,14 +726,15 @@ emmeans(model, pairwise ~ FactorC | FactorA, adjust = "none")$contrasts</pre>
       document.getElementById('critique-empty').classList.remove('hidden');
       document.getElementById('critique-card').classList.add('hidden');
       allRevealed = false;
-      document.getElementById('toggle-all-text').innerText = "Reveal All 5 Red Flags";
+      document.getElementById('toggle-all-text').innerText = "Reveal All Red Flags";
       updateInspectedCounter();
     }
 
     function updateInspectedCounter() {
       const counter = document.getElementById('detected-counter');
-      counter.innerText = `${inspectedErrors.size} of 5 Inspected`;
-      if (inspectedErrors.size === 5) {
+      const total = Object.keys(redFlagCases[activeCaseId].errors).length;
+      counter.innerText = `${inspectedErrors.size} of ${total} Inspected`;
+      if (inspectedErrors.size === total) {
         counter.classList.add('text-emerald-400');
       } else {
         counter.classList.remove('text-emerald-400');
@@ -591,8 +755,8 @@ model <- lm(Score ~ FactorA + FactorB, data = my_data)
 
 # Test marginal main effects post-hoc if Factor has > 2 levels
 emmeans(model, pairwise ~ FactorA, adjust = "tukey")$contrasts`,
-        apa: "The omnibus ANOVA revealed a significant main effect of Factor A, F(2, 54) = 14.22, p < .001, η_p² = .35. The Factor A × Factor B interaction was not statistically significant, F(2, 54) = 0.84, p = .437, η_p² = .03. Post-hoc Tukey HSD tests on the marginal means indicated that Level 1 (M = 3.42, SD = 0.38) scored significantly higher than Level 3 (M = 2.11, SD = 0.40, p < .001).",
-        notes: "Here, and ONLY here, is it appropriate to conduct Tukey tests across the marginal means of Factor A, because there is no interaction qualifying those means."
+        apa: "The omnibus ANOVA revealed a significant main effect of Factor A, F(2, 54) = 14.22, p < .001, η_p² = .35. The Factor A × Factor B interaction was not statistically significant, F(2, 54) = 0.84, p = .437, η_p² = .03. Post-hoc Tukey HSD tests on the marginal means indicated that Level 1 (M = 3.42, SD = 0.38) scored significantly higher than Level 3 (M = 2.11, SD = 0.40), t(54) = 5.12, p < .001, and Level 2 (M = 2.80, SD = 0.35), t(54) = 2.76, p = .021.",
+        notes: "Here, and only here, is it appropriate to conduct Tukey tests across the marginal means of Factor A, because there is no interaction qualifying those means."
       },
       'B': {
         badge: "Scenario B: 2-Way Interaction Significant (p < .05)",
@@ -603,8 +767,8 @@ model <- lm(Score ~ FactorA * FactorC, data = my_data)
 
 # Decompose interaction: Test Factor C at each level of Factor A
 emmeans(model, pairwise ~ FactorC | FactorA, adjust = "none")$contrasts`,
-        apa: "Because the main effect of Factor A was qualified by the Factor A × Factor C interaction, F(2, 48) = 5.96, p = .005, η_p² = .20, simple effects of Factor C were evaluated at each level of Factor A. At Level 1 of Factor A, participants in Level 1 of Factor C (M = 2.94, SD = 0.35) scored significantly higher than those in Level 2 (M = 2.61, SD = 0.31), t(48) = 3.35, p = .001. Conversely, the effect of Factor C was non-significant at Level 2 (p = .672) and Level 3 (p = .525).",
-        notes: "Notice that we report the test for every level of Factor A (Level 1, Level 2, and Level 3). Stopping after finding one significant level is a fatal grading error! All slices must be reported."
+        apa: "Because the main effect of Factor A was qualified by the Factor A × Factor C interaction, F(2, 48) = 5.96, p = .005, η_p² = .20, simple effects of Factor C were evaluated at each level of Factor A. At Level 1 of Factor A, participants in Level 1 of Factor C (M = 2.94, SD = 0.35) scored significantly higher than those in Level 2 (M = 2.61, SD = 0.31), t(48) = 3.35, p = .001. Conversely, the simple effect of Factor C was non-significant at Level 2, t(48) = 0.43, p = .672, and at Level 3, t(48) = 0.64, p = .525.",
+        notes: "Notice that we report the pairwise t-test for every slice of Factor A (Level 1, Level 2, and Level 3). Stopping after finding one significant level is a fatal grading error! All slices must be reported."
       },
       'C': {
         badge: "Scenario C: 3-Way Interaction Significant (p < .05)",
@@ -615,13 +779,12 @@ model <- lm(Score ~ Politics * Kids * Vote, data = ReportingExampleData)
 
 # Test simple simple effects of Politics at each Kids x Vote combination
 emmeans(model, pairwise ~ Politics | Kids * Vote, adjust = "none")$contrasts`,
-        apa: "The omnibus ANOVA revealed a significant three-way Kids × Vote × Politics interaction, F(2, 48) = 19.56, p < .001, η_p² = .45, qualifying all lower-order effects. Simple simple pairwise effects of political orientation were tested across all combinations of parental and voting status. Among non-voting participants with children, conservatives scored significantly lower (M = 20.00, SD = 6.52) than liberals (M = 33.00, SD = 7.00, p = .001) and moderates (M = 35.00, SD = 4.53, p < .001). Conversely, among voting participants with children, conservatives expressed the highest attitude scores (M = 36.00, SD = 4.00), scoring significantly higher than liberals (M = 28.00, SD = 7.52, p = .038) and moderates (M = 18.00, SD = 5.70, p < .001).",
-        notes: "In a 3-way interaction, the 2-way interaction pattern completely changes across levels of the 3rd variable (e.g., conservatives switch from lowest to highest support). Always highlight this reversal to students."
+        apa: "The omnibus ANOVA revealed a significant three-way Kids × Vote × Politics interaction, F(2, 48) = 19.56, p < .001, η_p² = .45, qualifying all lower-order effects. Simple simple pairwise effects of political orientation were tested across all combinations of parental and voting status. Among non-voting participants with children, conservatives scored significantly lower (M = 20.00, SD = 6.52) than liberals (M = 33.00, SD = 7.00), t(48) = 3.65, p = .001, and moderates (M = 35.00, SD = 4.53), t(48) = 4.12, p < .001. Conversely, among voting participants with children, conservatives expressed the highest attitude scores (M = 36.00, SD = 4.00), scoring significantly higher than liberals (M = 28.00, SD = 7.52), t(48) = 2.15, p = .038, and moderates (M = 18.00, SD = 5.70), t(48) = 4.88, p < .001.",
+        notes: "In a 3-way interaction, the 2-way pattern completely changes across levels of the third factor. Always report pairwise t-tests with degrees of freedom for each condition."
       }
     };
 
     function setDecisionBranch(branchKey) {
-      // Highlight pills
       ['A', 'B', 'C'].forEach(key => {
         const btn = document.getElementById(`btn-branch-${key}`);
         const indicator = btn.querySelector('.branch-indicator');
@@ -645,7 +808,6 @@ emmeans(model, pairwise ~ Politics | Kids * Vote, adjust = "none")$contrasts`,
 
     function copyRCode() {
       const code = document.getElementById('code-snippet').innerText;
-      // Using execCommand for iframe compatibility
       const tempTextArea = document.createElement("textarea");
       tempTextArea.value = code;
       document.body.appendChild(tempTextArea);
@@ -660,43 +822,56 @@ emmeans(model, pairwise ~ Politics | Kids * Vote, adjust = "none")$contrasts`,
 
 
     // ==========================================
-    // Tool 3: APA Sentence Builder (Mad-Libs)
+    // Tool 3: APA Sentence Builder (Expanded 6-Block In-Depth System)
     // ==========================================
     const builderBlocks = [
       {
         id: 1,
         step: 1,
-        title: "Omnibus Results & Effect Sizes",
-        badge: "Omnibus Statistical Tests",
-        text: "The 3 × 2 × 2 ANOVA yielded a significant main effect of Factor A, F(2, 48) = 61.98, p < .001, η_p² = .72, which was qualified by a significant Factor A × Factor C interaction, F(2, 48) = 5.96, p = .005, η_p² = .20."
+        title: "Omnibus Significant Main Effect & Interaction",
+        badge: "Significant Omnibus Tests",
+        text: "A 3 × 2 × 2 between-subjects factorial ANOVA revealed a significant main effect of Factor A, F(2, 48) = 61.98, p < .001, η_p² = .72, and a significant Factor A × Factor C two-way interaction, F(2, 48) = 5.96, p = .005, η_p² = .20."
       },
       {
         id: 2,
         step: 2,
-        title: "Decomposition Strategy & Slicing Rationale",
-        badge: "Analytical Strategy",
-        text: "Because the interaction was significant, the marginal main effect of Factor A was not interpreted directly; instead, simple effects of Factor C were evaluated at each level of Factor A."
+        title: "Omnibus Non-Significant Terms",
+        badge: "Non-Significant Omnibus Terms",
+        text: "The main effects of Factor B, F(1, 48) = 0.85, p = .361, η_p² = .02, and Factor C, F(1, 48) = 1.14, p = .291, η_p² = .02, were not statistically significant, nor were the Factor A × Factor B interaction, F(2, 48) = 0.41, p = .666, η_p² = .02, the Factor B × Factor C interaction, F(1, 48) = 0.18, p = .673, η_p² < .01, or the three-way Factor A × Factor B × Factor C interaction, F(2, 48) = 0.29, p = .749, η_p² = .01."
       },
       {
         id: 3,
         step: 3,
-        title: "Primary Simple Comparison (Level 1 Slice)",
-        badge: "Simple Pairwise Effects",
-        text: "At Level 1 of Factor A, participants at Level 1 of Factor C scored significantly higher (M = 2.94, SD = 0.35) than those at Level 2 (M = 2.61, SD = 0.31), t(48) = 3.35, p = .001."
+        title: "Analytical Qualification & Slicing Strategy",
+        badge: "Decomposition Strategy",
+        text: "Because the significant Factor A × Factor C interaction qualified the main effect of Factor A, marginal main effects were not interpreted directly; instead, simple main effects of Factor C were evaluated at each level of Factor A using model-adjusted error degrees of freedom."
       },
       {
         id: 4,
         step: 4,
-        title: "Remaining Moderator Slices (Levels 2 & 3)",
-        badge: "Complete Slice Follow-up",
-        text: "Conversely, the difference between Factor C levels was non-significant at Level 2 of Factor A (p = .672) as well as at Level 3 of Factor A (p = .525)."
+        title: "Significant Moderator Slice (Level 1)",
+        badge: "Significant Slice Comparison",
+        text: "At Level 1 of Factor A, the simple main effect of Factor C was statistically significant: participants in Level 1 of Factor C (M = 2.94, SD = 0.35) scored significantly higher than participants in Level 2 (M = 2.61, SD = 0.31), t(48) = 3.35, p = .001."
+      },
+      {
+        id: 5,
+        step: 5,
+        title: "Non-Significant Moderator Slices (Levels 2 & 3)",
+        badge: "Non-Significant Slices",
+        text: "In contrast, the simple main effect of Factor C was not statistically significant at Level 2 of Factor A, with participants in Level 1 (M = 3.25, SD = 0.36) and Level 2 (M = 3.20, SD = 0.40) scoring comparably, t(48) = 0.43, p = .672, nor was it significant at Level 3 of Factor A, where Level 1 (M = 3.55, SD = 0.33) and Level 2 (M = 3.48, SD = 0.39) did not differ reliably, t(48) = 0.64, p = .525."
+      },
+      {
+        id: 6,
+        step: 6,
+        title: "Substantive Theoretical Interpretation",
+        badge: "Synthesis",
+        text: "Taken together, these results demonstrate that the benefit of Factor C is condition-specific, enhancing performance exclusively when Factor A is at Level 1, while exerting negligible influence across higher levels of Factor A."
       }
     ];
 
     let currentTray = [];
 
     function initBuilder() {
-      // Shuffle deck on load
       const shuffled = [...builderBlocks].sort(() => Math.random() - 0.5);
       renderDeck(shuffled);
       renderTray();
@@ -749,12 +924,11 @@ emmeans(model, pairwise ~ Politics | Kids * Vote, adjust = "none")$contrasts`,
 
     function renderTray() {
       const tray = document.getElementById('tray-container');
-      const placeholder = document.getElementById('tray-placeholder');
 
       if (currentTray.length === 0) {
         tray.innerHTML = `
           <div id="tray-placeholder" class="text-center text-xs text-slate-500 py-6">
-            Click the blocks above to build your paragraph step-by-step in proper logical order.
+            Click the blocks above to build your 6-sentence paragraph step-by-step.
           </div>
         `;
         return;
@@ -791,7 +965,6 @@ emmeans(model, pairwise ~ Politics | Kids * Vote, adjust = "none")$contrasts`,
 
       box.classList.remove('hidden');
 
-      // Check chronological order of currentTray
       let isSequential = true;
       for (let i = 0; i < currentTray.length; i++) {
         if (currentTray[i].step !== i + 1) {
@@ -800,23 +973,20 @@ emmeans(model, pairwise ~ Politics | Kids * Vote, adjust = "none")$contrasts`,
         }
       }
 
-      if (isSequential && currentTray.length === 4) {
-        // Complete & correct
+      if (isSequential && currentTray.length === 6) {
         box.className = "p-4 rounded-xl border border-emerald-500/40 bg-emerald-950/40 text-emerald-200 flex items-start space-x-3 success-glow";
-        heading.innerText = "Masterclass Perfect! APA 7 Compliant";
-        msg.innerText = "Excellent work. You correctly stated the omnibus qualification first, declared the slicing rationale, and reported both significant AND non-significant levels across all moderator slices.";
+        heading.innerText = "Masterclass Perfect! Flawless APA 7 Report";
+        msg.innerText = "Exceptional work. You reported all omnibus significant and non-significant terms, articulated the interaction qualification rationale, and reported the pairwise t-tests, standard deviations, and means for both significant and non-significant slices before concluding with a substantive synthesis.";
         icon.innerHTML = `<i data-lucide="award" class="w-5 h-5 text-emerald-400"></i>`;
       } else if (isSequential) {
-        // Correct so far, but incomplete
         box.className = "p-4 rounded-xl border border-brand-500/30 bg-brand-950/40 text-brand-200 flex items-start space-x-3";
-        heading.innerText = `Logical Progress (${currentTray.length} of 4 steps placed)`;
+        heading.innerText = `Logical Progress (${currentTray.length} of 6 steps placed)`;
         msg.innerText = "So far your paragraph structure follows statistical guidelines. Add the remaining sections to complete the write-up.";
         icon.innerHTML = `<i data-lucide="arrow-right-circle" class="w-5 h-5 text-brand-400"></i>`;
       } else {
-        // Logical order error
         box.className = "p-4 rounded-xl border border-rose-500/40 bg-rose-950/40 text-rose-200 flex items-start space-x-3 badge-glow";
         heading.innerText = "Order Sequence Issue Detected";
-        msg.innerText = "APA reports must transition from omnibus context -> analytical decomposition rule -> detailed slice breakdowns. Reset or rearrange the blocks so the argument builds coherently.";
+        msg.innerText = "APA reports must transition from omnibus context (significant and non-significant) -> analytical decomposition rule -> detailed slice breakdowns (significant and non-significant) -> substantive synthesis. Reset or rearrange the blocks so the argument builds coherently.";
         icon.innerHTML = `<i data-lucide="alert-triangle" class="w-5 h-5 text-rose-400"></i>`;
       }
       lucide.createIcons();
@@ -829,10 +999,11 @@ emmeans(model, pairwise ~ Politics | Kids * Vote, adjust = "none")$contrasts`,
       }
     }
 
-    // Initialize builder on load
+    // Initialize tools on page load
     window.onload = function() {
+      switchDraftCase(1);
       initBuilder();
-      setDecisionBranch('B'); // Default to 2-way scenario
+      setDecisionBranch('B');
     };
   </script>
 </body>
