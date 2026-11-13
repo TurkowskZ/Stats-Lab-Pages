@@ -1,0 +1,2549 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Experimental Design Repeated Measures ANOVA Lab</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0d1117;
+      color: #e6edf3;
+    }
+    code, pre, .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .obsidian-card {
+      background-color: #161b22;
+      border: 1px solid #30363d;
+    }
+    .obsidian-subcard {
+      background-color: #1c2128;
+      border: 1px solid #30363d;
+    }
+    .obsidian-inset {
+      background-color: #0d1117;
+      border: 1px solid #30363d;
+    }
+    .cell-interactive {
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .cell-interactive:hover {
+      background-color: rgba(88, 166, 255, 0.16) !important;
+      outline: 1px solid #58a6ff;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #0d1117;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #30363d;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #58a6ff;
+    }
+    input[type="range"] {
+      accent-color: #58a6ff;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-[#58a6ff] selection:text-[#0d1117]">
+
+  <!-- Top Persistent Header & Navigation -->
+  <header class="bg-[#161b22]/95 backdrop-blur border-b border-[#30363d] sticky top-0 z-50 shadow-2xl">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+      <div class="flex items-center space-x-3.5">
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-[#58a6ff] to-[#bc8cff] flex items-center justify-center shadow-lg shadow-[#58a6ff]/20 font-extrabold text-xl text-[#0d1117]">
+          &Psi;
+        </div>
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-xs uppercase tracking-wider font-bold px-2.5 py-0.5 rounded bg-[#58a6ff]/15 text-[#58a6ff] border border-[#58a6ff]/40">Explaining What is Repeated Measures and Such.</span>
+          </div>
+          <h1 class="text-lg sm:text-xl font-extrabold tracking-tight text-white">Experimental Design: Repeated Measures ANOVA</h1>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2.5 self-end md:self-auto">
+        <button onclick="toggleNotationKey()" id="btnToggleNotation" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1c2128] text-[#58a6ff] border border-[#58a6ff]/50 hover:bg-[#58a6ff]/10 transition flex items-center space-x-2">
+          <span>Mathematical Notation Key</span>
+          <span id="notationChevron" class="font-mono text-xs">&darr;</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Collapsible Persistent Mathematical Notation Key Banner -->
+    <div id="notationKeyBanner" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4 pt-1 block border-t border-[#30363d]/70 bg-[#0d1117]/90">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-xs font-bold uppercase tracking-wider text-[#58a6ff]">Persistent Mathematical Symbol &amp; Formula Reference Key</span>
+        <span class="text-[11px] text-[#8b949e]">Click the button above at any time to collapse or expand this reference</span>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 text-xs">
+        <div class="obsidian-subcard p-2.5 rounded-lg">
+          <div class="font-mono font-bold text-[#58a6ff]">n = 8</div>
+          <div class="text-[#c9d1d9] mt-0.5">Total number of participants measured across every condition.</div>
+        </div>
+        <div class="obsidian-subcard p-2.5 rounded-lg">
+          <div class="font-mono font-bold text-[#3fb950]">a (or b)</div>
+          <div class="text-[#c9d1d9] mt-0.5">Number of levels of a within subjects factor (Time a = 4; Hemisphere b = 2).</div>
+        </div>
+        <div class="obsidian-subcard p-2.5 rounded-lg">
+          <div class="font-mono font-bold text-[#bc8cff]">X</div>
+          <div class="text-[#c9d1d9] mt-0.5">Individual raw observation score for a given participant and condition.</div>
+        </div>
+        <div class="obsidian-subcard p-2.5 rounded-lg">
+          <div class="font-mono font-bold text-[#d29922]">GM</div>
+          <div class="text-[#c9d1d9] mt-0.5">Grand mean of all observations across all conditions and participants.</div>
+        </div>
+        <div class="obsidian-subcard p-2.5 rounded-lg">
+          <div class="font-mono font-bold text-[#58a6ff]">M_Treatment (M_Time, M_Hemi)</div>
+          <div class="text-[#c9d1d9] mt-0.5">Marginal mean of a specific experimental treatment condition.</div>
+        </div>
+        <div class="obsidian-subcard p-2.5 rounded-lg">
+          <div class="font-mono font-bold text-[#3fb950]">M_Participant</div>
+          <div class="text-[#c9d1d9] mt-0.5">Marginal mean for an individual participant across all conditions.</div>
+        </div>
+        <div class="obsidian-subcard p-2.5 rounded-lg">
+          <div class="font-mono font-bold text-[#f85149]">SS</div>
+          <div class="text-[#c9d1d9] mt-0.5">Sum of Squared deviations from the mean, quantifying total variability.</div>
+        </div>
+        <div class="obsidian-subcard p-2.5 rounded-lg">
+          <div class="font-mono font-bold text-[#bc8cff]">df</div>
+          <div class="text-[#c9d1d9] mt-0.5">Degrees of freedom (number of independent values free to vary).</div>
+        </div>
+        <div class="obsidian-subcard p-2.5 rounded-lg">
+          <div class="font-mono font-bold text-[#d29922]">MS = SS / df</div>
+          <div class="text-[#c9d1d9] mt-0.5">Mean Square (variance estimate calculated as SS divided by df).</div>
+        </div>
+        <div class="obsidian-subcard p-2.5 rounded-lg">
+          <div class="font-mono font-bold text-[#3fb950]">epsilon (&epsilon;)</div>
+          <div class="text-[#c9d1d9] mt-0.5">Sphericity departure index ranging from 1 / (a &minus; 1) to 1.00.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6 Tab Navigation Bar -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-[#161b22] border-t border-[#30363d]">
+      <nav style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0.4rem; width: 100%;" class="py-2.5 text-xs font-medium" aria-label="Lab Tabs">
+        
+        <button onclick="switchTab('tab1')" id="tabBtn-tab1" style="position: static; min-width: 0;" class="tab-btn px-2 py-2 rounded-lg transition-all duration-150 text-center flex flex-col justify-center items-center bg-[#58a6ff] text-[#0d1117] font-bold shadow leading-snug">
+          <span class="block font-semibold">1. Foundation</span>
+          <span class="block text-[11px] opacity-90 truncate max-w-full">Variance Partitioning</span>
+        </button>
+
+        <button onclick="switchTab('tab2')" id="tabBtn-tab2" style="position: static; min-width: 0;" class="tab-btn px-2 py-2 rounded-lg transition-all duration-150 text-center flex flex-col justify-center items-center text-[#c9d1d9] hover:text-white hover:bg-[#1c2128] leading-snug">
+          <span class="block font-semibold">2. Sphericity</span>
+          <span class="block text-[11px] text-[#8b949e] truncate max-w-full">Epsilon Engine</span>
+        </button>
+
+        <button onclick="switchTab('tabData')" id="tabBtn-tabData" style="position: static; min-width: 0;" class="tab-btn px-2 py-2 rounded-lg transition-all duration-150 text-center flex flex-col justify-center items-center text-[#c9d1d9] hover:text-white hover:bg-[#1c2128] leading-snug">
+          <span class="block font-semibold">3. Data Format</span>
+          <span class="block text-[11px] text-[#8b949e] truncate max-w-full">Wide vs Long</span>
+        </button>
+
+        <button onclick="switchTab('tab3')" id="tabBtn-tab3" style="position: static; min-width: 0;" class="tab-btn px-2 py-2 rounded-lg transition-all duration-150 text-center flex flex-col justify-center items-center text-[#c9d1d9] hover:text-white hover:bg-[#1c2128] leading-snug">
+          <span class="block font-semibold">4. One Way RM</span>
+          <span class="block text-[11px] text-[#8b949e] truncate max-w-full">Hand Calculation</span>
+        </button>
+
+        <button onclick="switchTab('tab4')" id="tabBtn-tab4" style="position: static; min-width: 0;" class="tab-btn px-2 py-2 rounded-lg transition-all duration-150 text-center flex flex-col justify-center items-center text-[#c9d1d9] hover:text-white hover:bg-[#1c2128] leading-snug">
+          <span class="block font-semibold">5. Two Way RM</span>
+          <span class="block text-[11px] text-[#8b949e] truncate max-w-full">Factorial &amp; Simple Effects</span>
+        </button>
+
+        <button onclick="switchTab('tab5')" id="tabBtn-tab5" style="position: static; min-width: 0;" class="tab-btn px-2 py-2 rounded-lg transition-all duration-150 text-center flex flex-col justify-center items-center text-[#c9d1d9] hover:text-white hover:bg-[#1c2128] leading-snug">
+          <span class="block font-semibold">6. Worksheet</span>
+          <span class="block text-[11px] text-[#8b949e] truncate max-w-full">Mastery Check</span>
+        </button>
+
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-8">
+
+    <!-- =================================================================== -->
+    <!-- TAB 1: CONCEPTUAL FOUNDATION & VARIANCE PARTITIONING                -->
+    <!-- =================================================================== -->
+    <section id="panel-tab1" class="tab-panel space-y-8 block">
+
+      <!-- Deep Pedagogical Overview -->
+      <div class="obsidian-card rounded-2xl p-6 sm:p-8 shadow-xl">
+        <div class="max-w-4xl mb-6">
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-[#58a6ff]/15 text-[#58a6ff] border border-[#58a6ff]/40 mb-2">
+            Tab 1 &bull; Experimental Design Architecture
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Repeated Measures (Within Subjects) Experimental Design</h2>
+          <p class="text-[#c9d1d9] text-sm sm:text-base mt-2.5 leading-relaxed">
+            In a <strong class="text-white">Between Groups ANOVA</strong>, each participant is tested in only one experimental condition. Because different individuals populate each group, any preexisting person to person differences in baseline ability or physiology are trapped inside the error term. In a <strong class="text-[#58a6ff]">Repeated Measures (Within Subjects) ANOVA</strong>, every single participant completes all levels of the independent variable, fundamentally transforming how we partition variance.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Advantages Card -->
+          <div class="obsidian-subcard rounded-2xl p-6 border-l-4 border-l-[#3fb950]">
+            <div class="flex items-center space-x-3 mb-4">
+              <span class="px-2.5 py-1 bg-[#3fb950]/20 text-[#3fb950] border border-[#3fb950]/40 rounded-lg font-bold text-xs uppercase">Advantages</span>
+              <h3 class="text-lg font-bold text-white">Why Researchers Choose Repeated Measures</h3>
+            </div>
+            <div class="space-y-4 text-sm text-[#c9d1d9] leading-relaxed">
+              <div class="obsidian-inset p-4 rounded-xl">
+                <strong class="text-[#3fb950] block font-bold mb-1">1. Economy of Design (Fewer Participants Required)</strong>
+                Because each person provides data across all conditions, <span class="font-mono text-white">n</span> participants generate <span class="font-mono text-white">n &times; a</span> data points. In our Cerebral Blood Flow study with <span class="font-mono text-white">a = 4</span> time points, just <span class="font-mono text-white">n = 8</span> participants yield <span class="font-mono text-white">32</span> total measurements. A Between Groups design would require 32 separate individuals to achieve the same 8 observations per condition.
+              </div>
+              <div class="obsidian-inset p-4 rounded-xl">
+                <strong class="text-[#3fb950] block font-bold mb-1">2. Mathematical Control for Individual Differences</strong>
+                Every participant acts as their own baseline control. Consistent individual traits (such as resting vascular tone, baseline alertness, or general skill) are quantified as <span class="font-mono text-[#3fb950]">SS_Participant</span> and subtracted directly out of the residual error variance, substantially increasing statistical power to detect true treatment effects.
+              </div>
+              <div class="obsidian-inset p-4 rounded-xl">
+                <strong class="text-[#3fb950] block font-bold mb-1">3. Ability to Examine Learning &amp; Temporal Change</strong>
+                When the scientific question centers on change over time, such as motor learning across blocks, memory decay, or physiological fatigue across 10, 20, 30, and 40 minutes, repeated measures directly models within person trajectories.
+              </div>
+            </div>
+          </div>
+
+          <!-- Vulnerabilities Card -->
+          <div class="obsidian-subcard rounded-2xl p-6 border-l-4 border-l-[#d29922]">
+            <div class="flex items-center space-x-3 mb-4">
+              <span class="px-2.5 py-1 bg-[#d29922]/20 text-[#d29922] border border-[#d29922]/40 rounded-lg font-bold text-xs uppercase">Disadvantages</span>
+              <h3 class="text-lg font-bold text-white">Design Vulnerabilities &amp; Methodological Controls</h3>
+            </div>
+            <div class="space-y-4 text-sm text-[#c9d1d9] leading-relaxed">
+              <div class="obsidian-inset p-4 rounded-xl">
+                <strong class="text-[#d29922] block font-bold mb-1">1. Practice, Fatigue, and Order Effects</strong>
+                Repeated testing can cause participants to improve simply due to familiarity with the apparatus (practice effect) or deteriorate due to exhaustion and boredom (fatigue effect).
+                <div class="mt-2.5 p-3 rounded-lg bg-[#d29922]/10 border border-[#d29922]/30 text-xs text-[#e6edf3]">
+                  <strong class="text-[#d29922]">Methodological Remedy:</strong> Researchers control practice and order effects through <strong>randomization</strong> and <strong>counterbalancing</strong> (such as complete counterbalancing or Latin Square designs) so that every experimental condition appears equally often at each ordinal position.
+                </div>
+              </div>
+              <div class="obsidian-inset p-4 rounded-xl">
+                <strong class="text-[#f85149] block font-bold mb-1">2. Differential Carryover Effects</strong>
+                Differential carryover occurs when participating in one specific condition order has a different effect than participating in another order (an <strong>order by task interaction</strong>). For example, if Condition A teaches a cognitive heuristic that permanently changes how participants perform Condition B, whereas experiencing Condition B first does not alter Condition A, counterbalancing alone cannot eliminate the bias.
+                <div class="mt-2.5 p-3 rounded-lg bg-[#f85149]/10 border border-[#f85149]/30 text-xs text-[#e6edf3]">
+                  <strong class="text-[#f85149]">Methodological Remedy:</strong> Use extended washout periods between sessions or revert to a Between Groups design if one condition permanently contaminates subsequent conditions.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Terminology Trap Callout Banner -->
+      <div class="obsidian-card rounded-2xl p-6 sm:p-8 border-2 border-[#bc8cff]/50 shadow-xl">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-[#bc8cff]">Crucial Clarification</span>
+            <h3 class="text-xl font-extrabold text-white mt-1">Resolving the Terminology Trap: Why &ldquo;SS Between&rdquo; Means &ldquo;SS Participant&rdquo;</h3>
+          </div>
+          <span class="px-3 py-1 rounded-full bg-[#bc8cff]/20 text-[#bc8cff] border border-[#bc8cff]/40 text-xs font-bold">Same Variances, Different Source</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-[#c9d1d9] leading-relaxed">
+          <div class="obsidian-subcard p-5 rounded-xl">
+            <h4 class="font-bold text-[#58a6ff] mb-2">Where Do Explained &amp; Unexplained Variances Come From?</h4>
+            <p>
+              The exact same conceptual types of variances (variance explained by the experimental manipulation versus unexplained error variance) are computed in both Between Groups and Within Subjects designs. The critical difference is <strong>where those variances come from</strong>:
+            </p>
+            <ul class="mt-3 space-y-2 text-xs">
+              <li class="p-2.5 rounded bg-[#0d1117] border border-[#30363d]">
+                <strong class="text-[#d29922]">In Between Groups Designs:</strong> Explained variance (<span class="font-mono">SS_Treatment</span>) and unexplained variance (<span class="font-mono">SS_Error</span>) come from separate branches of <span class="font-mono">SS_Total</span>. Unexplained variance includes all individual participant differences!
+              </li>
+              <li class="p-2.5 rounded bg-[#0d1117] border border-[#30363d]">
+                <strong class="text-[#3fb950]">In Within Subjects Designs:</strong> The experimental manipulation happens inside the same participants. Therefore, both explained variance (<span class="font-mono">SS_Treatment</span>) and unexplained variance (<span class="font-mono">SS_Error</span>) come from the <span class="font-mono">SS_Within</span> branch, after partitioning out variance due to individual participant differences!
+              </li>
+            </ul>
+          </div>
+          <div class="obsidian-subcard p-5 rounded-xl">
+            <h4 class="font-bold text-[#bc8cff] mb-2">How to Read &ldquo;SS_Between&rdquo; Without Confusion</h4>
+            <p>
+              In lecture diagrams of Within Subjects ANOVA, the left branch is labeled <span class="font-mono text-white">SS_Between</span>. This phrasing can be confusing because in a Between Groups ANOVA, &ldquo;SS Between&rdquo; meant the treatment effect.
+            </p>
+            <div class="mt-3 p-4 rounded-xl bg-[#bc8cff]/10 border border-[#bc8cff]/30 text-xs text-white leading-relaxed">
+              <strong>Mental Shortcut from Lecture Notes:</strong> Whenever you see <span class="font-mono font-bold text-[#bc8cff]">SS_Between</span> in a repeated measures diagram, mentally translate it to <span class="font-mono font-bold text-[#3fb950]">SS_Participant</span> (or <span class="font-mono font-bold text-[#3fb950]">SS_P</span> in factorial notation). It is simply the variability between different participants (individual differences across the 8 participants&rsquo; average scores) that we measure and remove from the error term!
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Variance Partitioning Comparator & Live Individual Differences Slider -->
+      <div class="obsidian-card rounded-2xl p-6 sm:p-8 shadow-xl">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6 pb-4 border-b border-[#30363d]">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-[#58a6ff]">Interactive Architecture Comparator</span>
+            <h3 class="text-2xl font-extrabold text-white mt-1">Partitioning Variance: Between Groups vs Within Subjects</h3>
+            <p class="text-xs sm:text-sm text-[#8b949e] mt-1">
+              Compare how total variance (<span class="font-mono text-white">SS_Total = 8401.875</span>) is partitioned, and adjust the Participant Effect slider below to see why repeated measures boosts the F ratio.
+            </p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button onclick="setPartitionView('sidebyside')" id="btnPartSide" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-[#58a6ff] text-[#0d1117] shadow">
+              Side by Side Comparison
+            </button>
+            <button onclick="setPartitionView('between')" id="btnPartBetween" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-[#1c2128] text-[#c9d1d9] border border-[#30363d] hover:text-white">
+              Focus: Between Groups
+            </button>
+            <button onclick="setPartitionView('within')" id="btnPartWithin" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-[#1c2128] text-[#c9d1d9] border border-[#30363d] hover:text-white">
+              Focus: Within Subjects
+            </button>
+          </div>
+        </div>
+
+        <!-- Dynamic Partitioning Tree Diagrams -->
+        <div id="partitionTreeContainer" class="mb-8">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Interactive Slider: Simulating Individual Baseline Differences -->
+        <div class="obsidian-subcard rounded-2xl p-6 border border-[#58a6ff]/40">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-[#3fb950]">Interactive Variance Removal Simulator</span>
+              <h4 class="text-lg font-bold text-white mt-0.5">Simulate Removing Participant Differences (<span class="font-mono">SS_Participant</span>)</h4>
+              <p class="text-xs text-[#c9d1d9] mt-1">
+                Holding <span class="font-mono">SS_Treatment = 7774.125 (df = 3)</span> and total unpartitioned leftover variance <span class="font-mono">SS_Within = 627.750 (df = 28)</span> constant, slide to change how much of that leftover variance is stable participant to participant differences (<span class="font-mono">SS_Participant</span>):
+              </p>
+            </div>
+            <button onclick="resetSubjSlider()" class="px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-[#161b22] text-[#58a6ff] border border-[#58a6ff]/40 hover:bg-[#58a6ff]/10 whitespace-nowrap">
+              Reset to Exact (354.375)
+            </button>
+          </div>
+
+          <div class="mb-5">
+            <div class="flex justify-between text-xs font-mono mb-2">
+              <span class="text-[#8b949e]">SS_Participant = 0.00 (0% Participant Effect)</span>
+              <span class="text-[#3fb950] font-bold" id="sliderSubjLabel">Current SS_Participant = 354.375 (56.45% of Unexplained Pool)</span>
+              <span class="text-[#8b949e]">SS_Participant = 550.00 (87.6% Participant Effect)</span>
+            </div>
+            <input type="range" id="subjDiffSlider" min="0" max="550" step="0.125" value="354.375" oninput="updateSubjDiffSimulator()" class="w-full h-2 bg-[#0d1117] rounded-lg cursor-pointer">
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs font-mono">
+            <div class="obsidian-inset p-4 rounded-xl border border-[#d29922]/40">
+              <div class="font-sans font-bold text-[#d29922] uppercase mb-2">If Analyzed as Between Groups (SS_Participant Trapped in Error)</div>
+              <div class="space-y-1.5 text-[#c9d1d9]">
+                <div>MS_Treatment = 7774.125 / 3 = <strong class="text-white">2591.3750</strong></div>
+                <div>SS_Error (Participant + Interaction) = <strong class="text-[#f85149]">627.7500</strong> (df = 28)</div>
+                <div>MS_Error = 627.7500 / 28 = <strong class="text-[#f85149]">22.4196</strong></div>
+                <div class="pt-1 text-sm text-[#d29922] font-bold">Between Groups F(3, 28) = 115.5851</div>
+              </div>
+            </div>
+
+            <div class="obsidian-inset p-4 rounded-xl border border-[#3fb950]/50">
+              <div class="font-sans font-bold text-[#3fb950] uppercase mb-2">Analyzed as Repeated Measures (SS_Participant Removed)</div>
+              <div class="space-y-1.5 text-[#c9d1d9]">
+                <div>SS_Participant Removed = <strong id="simSsSubj" class="text-[#3fb950]">354.3750</strong> (df = 7)</div>
+                <div>Residual SS_Error = 627.750 &minus; <span id="simSsSubj2">354.375</span> = <strong id="simSsErr" class="text-[#58a6ff]">273.3750</strong> (df = 21)</div>
+                <div>Residual MS_Error = <span id="simSsErr2">273.3750</span> / 21 = <strong id="simMsErr" class="text-[#58a6ff]">13.0179</strong></div>
+                <div class="pt-1 text-sm text-[#3fb950] font-bold">Repeated Measures F(3, 21) = <span id="simFRatio">199.0631</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- TAB 2: SPHERICITY & THE EPSILON CORRECTION ENGINE                   -->
+    <!-- =================================================================== -->
+    <section id="panel-tab2" class="tab-panel space-y-8 hidden">
+
+      <!-- Deep Conceptual Explanation of Assumptions & Sphericity -->
+      <div class="obsidian-card rounded-2xl p-6 sm:p-8 shadow-xl">
+        <div class="max-w-4xl mb-6">
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-[#58a6ff]/15 text-[#58a6ff] border border-[#58a6ff]/40 mb-2">
+            Tab 2 &bull; Parametric Assumptions in Repeated Measures
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Statistical Assumptions &amp; The Additional Assumption of Sphericity</h2>
+          <p class="text-[#c9d1d9] text-sm sm:text-base mt-2.5 leading-relaxed">
+            In a One Way or Factorial Within Subjects ANOVA, the standard statistical assumptions remain the same as those noted in previous analyses: <strong>independent errors</strong>, <strong>normally distributed errors</strong>, and <strong>homoscedastic errors</strong>. However, the univariate approach for analyzing within subjects designs requires an <strong class="text-[#58a6ff]">additional assumption: Sphericity</strong>.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+          <div class="obsidian-subcard p-5 rounded-xl border-t-2 border-t-[#58a6ff]">
+            <span class="text-xs font-bold uppercase tracking-wider text-[#58a6ff]">Conceptual Meaning</span>
+            <h3 class="text-base font-bold text-white mt-1">Equal Pairwise Relationships</h3>
+            <p class="text-xs text-[#c9d1d9] mt-2 leading-relaxed">
+              Conceptually, sphericity assumes that the level of dependence or relationship between every pair of experimental conditions (such as Condition A with B, A with C, and B with C) is homogeneous across the levels of the within subjects factor.
+            </p>
+          </div>
+          <div class="obsidian-subcard p-5 rounded-xl border-t-2 border-t-[#3fb950]">
+            <span class="text-xs font-bold uppercase tracking-wider text-[#3fb950]">Mathematical Definition</span>
+            <h3 class="text-base font-bold text-white mt-1">Homogeneity of Variance of Differences</h3>
+            <p class="text-xs text-[#c9d1d9] mt-2 leading-relaxed">
+              Homogeneity of variance of the difference scores across the levels of the within subjects factor. If you subtract each participant&rsquo;s scores for every pair of conditions and compute the variance of each difference column, sphericity holds when:
+              <span class="block mt-2.5 font-mono font-bold text-[#3fb950] bg-[#0d1117] p-2 rounded border border-[#30363d] text-center">Variance(A &minus; B) &approx; Variance(A &minus; C) &approx; Variance(B &minus; C)</span>
+            </p>
+          </div>
+          <div class="obsidian-subcard p-5 rounded-xl border-t-2 border-t-[#d29922]">
+            <span class="text-xs font-bold uppercase tracking-wider text-[#d29922]">Crucial 2 Level Exemption</span>
+            <h3 class="text-base font-bold text-white mt-1">Why 2 Levels Never Need Mauchly&rsquo;s Test</h3>
+            <p class="text-xs text-[#c9d1d9] mt-2 leading-relaxed">
+              When a within subjects factor has only <strong>2 levels</strong> (<span class="font-mono text-white">a = 2</span>, such as Hemisphere: Left vs Right), you can compute only <strong>one column of difference scores</strong> (Left minus Right). Because there is only one variance of differences and no second variance to compare it against, the sphericity assumption is no longer a concern!
+            </p>
+          </div>
+        </div>
+
+        <!-- Interactive Table 14.1 Pairwise Difference Variance Explorer -->
+        <div class="obsidian-subcard rounded-2xl p-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 mb-5 border-b border-[#30363d]">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-[#bc8cff]">Textbook Table 14.1 Interactive Walkthrough</span>
+              <h3 class="text-lg font-bold text-white mt-0.5">Calculating the Variance of Differences Between Conditions</h3>
+              <p class="text-xs text-[#8b949e] mt-1">
+                Examine how each pairwise difference score is calculated for every participant, and how the sample variance <span class="font-mono text-[#c9d1d9]">s&sup2; = &Sigma;(d &minus; M_diff)&sup2; / (n &minus; 1)</span> is derived for each column. You can also edit any raw score to see the difference variances update live.
+              </p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <button onclick="loadSphericityPreset('textbook')" id="btnSphPresetText" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#58a6ff] text-[#0d1117]">
+                Load Table 14.1 Data (15.7, 10.3, 10.7)
+              </button>
+              <button onclick="loadSphericityPreset('equal')" id="btnSphPresetEqual" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#161b22] text-[#c9d1d9] border border-[#30363d] hover:text-white">
+                Simulate Perfect Sphericity
+              </button>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs sm:text-sm text-left font-mono border-collapse obsidian-inset rounded-xl overflow-hidden">
+              <thead>
+                <tr class="bg-[#161b22] text-[#8b949e] border-b border-[#30363d] text-xs uppercase">
+                  <th class="p-3">Participant</th>
+                  <th class="p-3 text-[#58a6ff]">Condition A</th>
+                  <th class="p-3 text-[#58a6ff]">Condition B</th>
+                  <th class="p-3 text-[#58a6ff]">Condition C</th>
+                  <th class="p-3 text-[#bc8cff]">Diff (A &minus; B)</th>
+                  <th class="p-3 text-[#3fb950]">Diff (A &minus; C)</th>
+                  <th class="p-3 text-[#d29922]">Diff (B &minus; C)</th>
+                </tr>
+              </thead>
+              <tbody id="sphericityTableBody" class="divide-y divide-[#30363d]">
+                <!-- Populated by JS -->
+              </tbody>
+              <tfoot id="sphericityTableFoot" class="bg-[#161b22] font-bold border-t-2 border-[#30363d]">
+                <!-- Populated by JS -->
+              </tfoot>
+            </table>
+          </div>
+
+          <!-- Explicit Step-by-Step Sample Variance Formula Breakdown -->
+          <div id="sphericityStepDerivation" class="mt-4 p-4 rounded-xl obsidian-inset text-xs font-mono text-[#c9d1d9] space-y-2">
+            <!-- Populated by JS -->
+          </div>
+
+          <!-- Local Circularity vs Overall Sphericity Explanation -->
+          <div class="mt-4 p-4 rounded-xl bg-[#bc8cff]/10 border border-[#bc8cff]/30 text-xs sm:text-sm text-[#e6edf3] leading-relaxed">
+            <strong class="text-[#bc8cff]">Local Circularity vs Overall Sphericity in Table 14.1:</strong> Notice that <span class="font-mono">Variance(A &minus; C) = 10.3</span> and <span class="font-mono">Variance(B &minus; C) = 10.7</span> are super close to being equal (a property called <em>local circularity</em>), whereas <span class="font-mono">Variance(A &minus; B) = 15.7</span> is somewhat larger. How do we know whether 15.7, 10.3, and 10.7 are &ldquo;equal enough&rdquo; to satisfy sphericity or severe enough to warrant action? We perform <strong>Mauchly&rsquo;s Test of Sphericity</strong> (which we do not want to be significant)!
+          </div>
+        </div>
+      </div>
+
+      <!-- Complete Lab 10 Epsilon & P Value Exercise Walkthrough (Modes A, B, Lower Bound, and C) -->
+      <div class="obsidian-card rounded-2xl p-6 sm:p-8 shadow-xl">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 mb-6 border-b border-[#30363d]">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-[#3fb950]">Epsilon &amp; P Value Exercise Key</span>
+            <h2 class="text-2xl font-extrabold text-white mt-1">Mauchly&rsquo;s Test, Univariate df Adjustments &amp; Worked Epsilon Examples</h2>
+            <p class="text-xs sm:text-sm text-[#c9d1d9] mt-1 max-w-3xl leading-relaxed">
+              When Mauchly&rsquo;s test is statistically significant (<span class="font-mono text-[#f85149]">p &lt; .05</span>), sphericity is violated and the unadjusted F test suffers from Type I error inflation. We can use multivariate analyses, multilevel modeling, or adjust both <span class="font-mono">df_num</span> and <span class="font-mono">df_error</span> by a fraction (<span class="font-mono">&epsilon;</span>, ranging from <span class="font-mono">1 / (a &minus; 1)</span> to <span class="font-mono">1</span>).
+            </p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button onclick="setEpsilonMode('modeA')" id="btnEpsModeA" class="px-3 py-2 rounded-xl text-xs font-bold bg-[#58a6ff] text-[#0d1117] shadow">
+              Greenhouse Geisser
+            </button>
+            <button onclick="setEpsilonMode('modeB')" id="btnEpsModeB" class="px-3 py-2 rounded-xl text-xs font-bold bg-[#1c2128] text-[#c9d1d9] border border-[#30363d] hover:text-white">
+              Huynh Feldt
+            </button>
+            <button onclick="setEpsilonMode('modeLB')" id="btnEpsModeLB" class="px-3 py-2 rounded-xl text-xs font-bold bg-[#1c2128] text-[#c9d1d9] border border-[#30363d] hover:text-white">
+              Lower Bound
+            </button>
+            <button onclick="setEpsilonMode('modeC')" id="btnEpsModeC" class="px-3 py-2 rounded-xl text-xs font-bold bg-[#1c2128] text-[#c9d1d9] border border-[#30363d] hover:text-white">
+              Decision Sandbox
+            </button>
+          </div>
+        </div>
+
+        <!-- Three Univariate df Adjustments & Decision Rule Reference Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 text-xs">
+          <div class="obsidian-subcard p-4 rounded-xl border-l-4 border-l-[#bc8cff]">
+            <div class="font-bold text-white text-sm mb-1">1. Huynh Feldt (Most Powerful)</div>
+            <p class="text-[#c9d1d9] leading-relaxed">
+              Uses the largest epsilon estimate, providing the most statistical power among the df-adjusted tests. Recommended when <span class="font-mono">p &lt; .05</span> and <span class="font-mono">&epsilon;_GG &gt; 0.75</span> (mild violation).
+            </p>
+          </div>
+          <div class="obsidian-subcard p-4 rounded-xl border-l-4 border-l-[#58a6ff]">
+            <div class="font-bold text-white text-sm mb-1">2. Greenhouse Geisser (Intermediate / Conservative)</div>
+            <p class="text-[#c9d1d9] leading-relaxed">
+              Uses a lower epsilon than Huynh Feldt, making it more conservative. Recommended when <span class="font-mono">p &lt; .05</span> and <span class="font-mono">&epsilon;_GG &lt; 0.75</span> (severe violation).
+            </p>
+          </div>
+          <div class="obsidian-subcard p-4 rounded-xl border-l-4 border-l-[#f85149]">
+            <div class="font-bold text-white text-sm mb-1">3. Lower Bound (Most Conservative)</div>
+            <p class="text-[#c9d1d9] leading-relaxed">
+              Assumes the worst possible sphericity violation by setting <span class="font-mono">&epsilon;_LB = 1 / (a &minus; 1)</span> (for <span class="font-mono">a = 4</span>, <span class="font-mono">&epsilon;_LB = 1/3 = 0.3333</span>), reducing <span class="font-mono">df_num</span> to 1.
+            </p>
+          </div>
+        </div>
+
+        <!-- Dynamic Mode Content Container -->
+        <div id="epsilonModeContainer">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- NEW TAB 3: DATA FORMATTING (WIDE VS LONG FORMAT)                    -->
+    <!-- =================================================================== -->
+    <section id="panel-tabData" class="tab-panel space-y-8 hidden">
+
+      <div class="obsidian-card rounded-2xl p-6 sm:p-8 shadow-xl">
+        <div class="max-w-4xl mb-6">
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-[#bc8cff]/15 text-[#bc8cff] border border-[#bc8cff]/40 mb-2">
+            Tab 3 &bull; Data Structure &amp; Preparation
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Repeated Measures Data Formatting: Wide Format vs. Long Format</h2>
+          <p class="text-[#c9d1d9] text-sm sm:text-base mt-2.5 leading-relaxed">
+            Before running a Repeated Measures ANOVA in statistical software (such as R, SPSS, or Excel), you must structure your dataset appropriately. Unlike Between Groups designs where every row is an independent person, a repeated measures dataset contains multiple observations per participant and can be arranged in either <strong class="text-[#58a6ff]">Wide Format</strong> or <strong class="text-[#3fb950]">Long Format</strong>.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Wide Format Card -->
+          <div class="obsidian-subcard rounded-2xl p-6 border-t-4 border-t-[#58a6ff] space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="text-lg font-bold text-white">1. Wide Format (One Row Per Participant)</h3>
+              <span class="px-2.5 py-1 rounded bg-[#58a6ff]/15 text-[#58a6ff] font-mono text-xs font-bold">8 Rows &times; 5 Columns</span>
+            </div>
+            <p class="text-xs sm:text-sm text-[#c9d1d9] leading-relaxed">
+              In <strong>Wide Format</strong>, each participant occupies a single row, and each level of the within subjects factor has its own separate column. This is the classic layout used for hand calculations, Excel spreadsheets, and traditional SPSS Repeated Measures menus.
+            </p>
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs font-mono border-collapse obsidian-inset rounded-xl overflow-hidden">
+                <thead class="bg-[#161b22] text-[#8b949e] border-b border-[#30363d]">
+                  <tr>
+                    <th class="p-2.5 text-left">Participant</th>
+                    <th class="p-2.5 text-left text-[#58a6ff]">Time_10m</th>
+                    <th class="p-2.5 text-left text-[#58a6ff]">Time_20m</th>
+                    <th class="p-2.5 text-left text-[#58a6ff]">Time_30m</th>
+                    <th class="p-2.5 text-left text-[#58a6ff]">Time_40m</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-[#30363d] text-[#e6edf3]">
+                  <tr><td class="p-2 font-bold">1</td><td class="p-2">110</td><td class="p-2">95</td><td class="p-2">85</td><td class="p-2">75</td></tr>
+                  <tr><td class="p-2 font-bold">2</td><td class="p-2">116</td><td class="p-2">93</td><td class="p-2">87</td><td class="p-2">73</td></tr>
+                  <tr><td class="p-2 font-bold">3</td><td class="p-2">112</td><td class="p-2">89</td><td class="p-2">76</td><td class="p-2">70</td></tr>
+                  <tr><td class="p-2 text-[#8b949e]" colspan="5">&hellip; (continues through Participant 8)</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Long Format Card -->
+          <div class="obsidian-subcard rounded-2xl p-6 border-t-4 border-t-[#3fb950] space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="text-lg font-bold text-white">2. Long Format (One Row Per Observation)</h3>
+              <span class="px-2.5 py-1 rounded bg-[#3fb950]/15 text-[#3fb950] font-mono text-xs font-bold">32 Rows &times; 3 Columns</span>
+            </div>
+            <p class="text-xs sm:text-sm text-[#c9d1d9] leading-relaxed">
+              In <strong>Long Format</strong>, each measurement occasion is stacked vertically on its own row. A participant ID column repeats across rows, an index column identifies the within subjects condition (<span class="font-mono">Time</span>), and a single column holds all DV scores (<span class="font-mono">Velocity</span>). This format is required by modern R packages (such as <span class="font-mono">ezANOVA</span>, <span class="font-mono">afex</span>, and multilevel models).
+            </p>
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs font-mono border-collapse obsidian-inset rounded-xl overflow-hidden">
+                <thead class="bg-[#161b22] text-[#8b949e] border-b border-[#30363d]">
+                  <tr>
+                    <th class="p-2.5 text-left">Participant</th>
+                    <th class="p-2.5 text-left text-[#3fb950]">Time</th>
+                    <th class="p-2.5 text-left text-[#bc8cff]">DV (Velocity)</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-[#30363d] text-[#e6edf3]">
+                  <tr><td class="p-2 font-bold">1</td><td class="p-2">1 (10 mins)</td><td class="p-2">110</td></tr>
+                  <tr><td class="p-2 font-bold">1</td><td class="p-2">2 (20 mins)</td><td class="p-2">95</td></tr>
+                  <tr><td class="p-2 font-bold">1</td><td class="p-2">3 (30 mins)</td><td class="p-2">85</td></tr>
+                  <tr><td class="p-2 font-bold">1</td><td class="p-2">4 (40 mins)</td><td class="p-2">75</td></tr>
+                  <tr><td class="p-2 font-bold">2</td><td class="p-2">1 (10 mins)</td><td class="p-2">116</td></tr>
+                  <tr><td class="p-2 text-[#8b949e]" colspan="3">&hellip; (32 total rows across n = 8 participants &times; a = 4 times)</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- TAB 4 (FORMER TAB 3): ONE WAY RM ANOVA HAND CALCULATION WALKTHROUGH -->
+    <!-- =================================================================== -->
+    <section id="panel-tab3" class="tab-panel space-y-8 hidden">
+
+      <div class="obsidian-card rounded-2xl p-6 sm:p-8 shadow-xl">
+        <div class="max-w-4xl mb-6">
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-[#3fb950]/15 text-[#3fb950] border border-[#3fb950]/40 mb-2">
+            Tab 4 &bull; Complete Hand Calculation Walkthrough (Cerebral Blood Flow)
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">One Way Repeated Measures ANOVA: Cerebral Blood Flow Velocity</h2>
+          <p class="text-[#c9d1d9] text-sm sm:text-base mt-2 leading-relaxed">
+            <strong>Experimental Scenario:</strong> Cerebral blood flow velocity (<span class="font-mono">cm/s</span>) is recorded across <span class="font-mono text-white">a = 4</span> time points (<span class="font-mono">10 mins, 20 mins, 30 mins, 40 mins</span>) during a sustained vigilance task in <span class="font-mono text-white">n = 8</span> participants, yielding <span class="font-mono text-white">n &times; a = 32</span> total observations and a Grand Mean of <span class="font-mono font-bold text-[#58a6ff]">GM = 89.0625 cm/s</span>.
+          </p>
+        </div>
+
+        <!-- Matrix View Toggle Buttons -->
+        <div class="flex flex-wrap gap-2 mb-5">
+          <button onclick="setOneWayMatrix('raw')" id="btnOwMatRaw" class="px-4 py-2 rounded-xl text-xs font-bold bg-[#58a6ff] text-[#0d1117] shadow">
+            1. Raw Scores &amp; Marginal Means (M_Participant and M_Treatment)
+          </button>
+          <button onclick="setOneWayMatrix('totaldev')" id="btnOwMatTotal" class="px-4 py-2 rounded-xl text-xs font-bold bg-[#1c2128] text-[#c9d1d9] border border-[#30363d] hover:text-white">
+            2. Total Squared Deviations: (X &minus; GM)&sup2; = 8401.875
+          </button>
+          <button onclick="setOneWayMatrix('timesubjdev')" id="btnOwMatTimeSubj" class="px-4 py-2 rounded-xl text-xs font-bold bg-[#1c2128] text-[#c9d1d9] border border-[#30363d] hover:text-white">
+            3. Treatment &amp; Participant Squared Deviations (SS_Time &amp; SS_Participant)
+          </button>
+        </div>
+
+        <!-- Dynamic Matrix Container -->
+        <div id="oneWayMatrixBox" class="obsidian-subcard rounded-2xl p-5 overflow-x-auto mb-8">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- 5 Explicit Step-by-Step Hand Calculation Cards with Full Summation Terms -->
+        <div class="space-y-4 mb-8">
+          <h3 class="text-xl font-extrabold text-white">Step by Step Hand Calculation Derivations (Explicit Summation Notation)</h3>
+
+          <!-- Step 1: SS Total -->
+          <div class="obsidian-subcard rounded-xl p-5 border-l-4 border-l-[#58a6ff]">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <span class="text-xs font-bold uppercase text-[#58a6ff]">Step 1 &bull; Total Sum of Squares (SS_Total)</span>
+              <span class="font-mono text-xs text-[#8b949e]">df_Total = (n &times; a) &minus; 1 = (8 &times; 4) &minus; 1 = 31</span>
+            </div>
+            <p class="text-xs sm:text-sm text-[#c9d1d9] mb-3">
+              Subtract the Grand Mean (<span class="font-mono">GM = 89.0625</span>) from each of the 32 raw scores, square each deviation, and sum across all 32 cells:
+            </p>
+            <div class="obsidian-inset p-3.5 rounded-lg font-mono text-xs text-[#e6edf3] space-y-1.5 overflow-x-auto">
+              <div>SS_Total = &Sigma; (X &minus; GM)&sup2;</div>
+              <div>SS_Total = (110 &minus; 89.0625)&sup2; + (93 &minus; 89.0625)&sup2; + &hellip; + (73 &minus; 89.0625)&sup2; + (68 &minus; 89.0625)&sup2;</div>
+              <div>SS_Total = 438.3789 + 15.5039 + &hellip; + 258.0039 + 443.6289 = <strong class="text-[#58a6ff] text-sm">8401.875</strong></div>
+            </div>
+          </div>
+
+          <!-- Step 2: SS Time -->
+          <div class="obsidian-subcard rounded-xl p-5 border-l-4 border-l-[#3fb950]">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <span class="text-xs font-bold uppercase text-[#3fb950]">Step 2 &bull; Treatment Sum of Squares (SS_Time)</span>
+              <span class="font-mono text-xs text-[#8b949e]">df_Time = a &minus; 1 = 4 &minus; 1 = 3</span>
+            </div>
+            <p class="text-xs sm:text-sm text-[#c9d1d9] mb-3">
+              Subtract the Grand Mean (<span class="font-mono">GM = 89.0625</span>) from each of the 4 Time treatment means (<span class="font-mono">M_Time</span>), square each deviation, sum them, and multiply by <span class="font-mono text-white">n = 8</span> participants per condition:
+            </p>
+            <div class="obsidian-inset p-3.5 rounded-lg font-mono text-xs text-[#e6edf3] space-y-1.5 overflow-x-auto">
+              <div>SS_Time = &Sigma; n_i (M_Time &minus; GM)&sup2;</div>
+              <div>SS_Time = 8 &times; [ (113.375 &minus; 89.0625)&sup2; + (90.875 &minus; 89.0625)&sup2; + (80.250 &minus; 89.0625)&sup2; + (71.750 &minus; 89.0625)&sup2; ]</div>
+              <div>SS_Time = 8 &times; [ 591.0977 + 3.2852 + 77.6602 + 299.7227 ] = 8 &times; 971.765625 = <strong class="text-[#3fb950] text-sm">7774.125</strong></div>
+            </div>
+          </div>
+
+          <!-- Step 3: SS Participant -->
+          <div class="obsidian-subcard rounded-xl p-5 border-l-4 border-l-[#bc8cff]">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <span class="text-xs font-bold uppercase text-[#bc8cff]">Step 3 &bull; Participant Sum of Squares (SS_Participant)</span>
+              <span class="font-mono text-xs text-[#8b949e]">df_Participant = n &minus; 1 = 8 &minus; 1 = 7</span>
+            </div>
+            <p class="text-xs sm:text-sm text-[#c9d1d9] mb-3">
+              Subtract the Grand Mean (<span class="font-mono">GM = 89.0625</span>) from each of the 8 participant marginal means (<span class="font-mono">M_Participant</span>), square each deviation, sum across all 8 participants, and multiply by <span class="font-mono text-white">a = 4</span> treatments per participant:
+            </p>
+            <div class="obsidian-inset p-3.5 rounded-lg font-mono text-xs text-[#e6edf3] space-y-1.5 overflow-x-auto">
+              <div>SS_Participant = &Sigma; a_i (M_Participant &minus; GM)&sup2;</div>
+              <div>SS_Participant = 4 &times; [ (91.25 &minus; 89.0625)&sup2; + (92.25 &minus; 89.0625)&sup2; + (86.75 &minus; 89.0625)&sup2; + (87.75 &minus; 89.0625)&sup2; + (95.00 &minus; 89.0625)&sup2; + (85.50 &minus; 89.0625)&sup2; + (84.75 &minus; 89.0625)&sup2; + (89.25 &minus; 89.0625)&sup2; ]</div>
+              <div>SS_Participant = 4 &times; [ 4.7852 + 10.1602 + 5.3477 + 1.7227 + 35.2539 + 12.6914 + 18.5977 + 0.0352 ] = 4 &times; 88.59375 = <strong class="text-[#bc8cff] text-sm">354.375</strong></div>
+            </div>
+          </div>
+
+          <!-- Step 4: SS Error (Participant x Treatment) -->
+          <div class="obsidian-subcard rounded-xl p-5 border-l-4 border-l-[#f85149]">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <span class="text-xs font-bold uppercase text-[#f85149]">Step 4 &bull; Error Sum of Squares (SS_Error = Participant &times; Time Interaction)</span>
+              <span class="font-mono text-xs text-[#8b949e]">df_Error = (a &minus; 1) &times; (n &minus; 1) = 3 &times; 7 = 21</span>
+            </div>
+            <p class="text-xs sm:text-sm text-[#c9d1d9] mb-3">
+              Subtract both <span class="font-mono">SS_Time</span> and <span class="font-mono">SS_Participant</span> from <span class="font-mono">SS_Total</span> to isolate the unexplained interaction between Participant and Time:
+            </p>
+            <div class="obsidian-inset p-3.5 rounded-lg font-mono text-xs text-[#e6edf3] space-y-1.5 overflow-x-auto">
+              <div>SS_Error = SS_Total &minus; (SS_Time + SS_Participant)</div>
+              <div>SS_Error = 8401.875 &minus; (7774.125 + 354.375) = <strong class="text-[#f85149] text-sm">273.375</strong></div>
+            </div>
+          </div>
+
+          <!-- Step 5: Mean Squares, F Ratio, and Partial Eta Squared -->
+          <div class="obsidian-subcard rounded-xl p-5 border-l-4 border-l-[#d29922]">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <span class="text-xs font-bold uppercase text-[#d29922]">Step 5 &bull; Mean Squares, Omnibus F Ratio, F Critical &amp; Partial &eta;&sup2;</span>
+              <span class="font-mono text-xs text-[#3fb950]">Decision: Reject Null Hypothesis (p &lt; .0001)</span>
+            </div>
+            <div class="obsidian-inset p-3.5 rounded-lg font-mono text-xs text-[#e6edf3] space-y-1.5 overflow-x-auto">
+              <div>MS_Time = SS_Time / df_Time = 7774.125 / 3 = <strong class="text-white">2591.3750</strong></div>
+              <div>MS_Error = SS_Error / df_Error = 273.375 / 21 = <strong class="text-white">13.017857</strong></div>
+              <div>F(3, 21) = MS_Time / MS_Error = 2591.3750 / 13.017857 = <strong class="text-[#3fb950] text-sm">199.0631</strong> (F_critical at &alpha; = .05 is 3.0725)</div>
+              <div>&eta;_p&sup2; = SS_Time / (SS_Time + SS_Error) = 7774.125 / (7774.125 + 273.375) = 7774.125 / 8047.500 = <strong class="text-[#d29922] text-sm">0.9660 (96.60%)</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Complete Clickable One-Way ANOVA Summary Table -->
+        <div>
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+            <h3 class="text-lg font-bold text-white">Complete One Way Repeated Measures ANOVA Summary Table (Click Any Cell for Formula Details)</h3>
+            <span class="text-xs font-mono text-[#58a6ff]">Key Verified</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs sm:text-sm text-left font-mono border-collapse obsidian-inset rounded-xl overflow-hidden">
+              <thead class="bg-[#161b22] text-[#8b949e] border-b border-[#30363d]">
+                <tr>
+                  <th class="p-3">Source</th>
+                  <th class="p-3">SS</th>
+                  <th class="p-3">df</th>
+                  <th class="p-3">MS</th>
+                  <th class="p-3">F ratio</th>
+                  <th class="p-3">F critical</th>
+                  <th class="p-3">p value</th>
+                  <th class="p-3">&eta;_p&sup2;</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-[#30363d]">
+                <tr class="bg-[#58a6ff]/10 font-bold text-white">
+                  <td class="p-3 font-sans text-[#58a6ff]">Time (Treatment)</td>
+                  <td onclick="inspectOneWayCell('ss_time')" class="p-3 cell-interactive underline decoration-dotted">7774.125</td>
+                  <td onclick="inspectOneWayCell('df_time')" class="p-3 cell-interactive underline decoration-dotted">3</td>
+                  <td onclick="inspectOneWayCell('ms_time')" class="p-3 cell-interactive underline decoration-dotted">2591.375</td>
+                  <td onclick="inspectOneWayCell('f_time')" class="p-3 cell-interactive text-[#3fb950] underline decoration-dotted">199.0631</td>
+                  <td onclick="inspectOneWayCell('fcrit_time')" class="p-3 cell-interactive underline decoration-dotted">3.0725</td>
+                  <td onclick="inspectOneWayCell('p_time')" class="p-3 cell-interactive text-[#3fb950] underline decoration-dotted">1.41e&minus;15</td>
+                  <td onclick="inspectOneWayCell('eta_time')" class="p-3 cell-interactive text-[#d29922] underline decoration-dotted">0.9660</td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-sans text-[#bc8cff] font-semibold">Participant</td>
+                  <td onclick="inspectOneWayCell('ss_subj')" class="p-3 cell-interactive underline decoration-dotted">354.375</td>
+                  <td onclick="inspectOneWayCell('df_subj')" class="p-3 cell-interactive underline decoration-dotted">7</td>
+                  <td onclick="inspectOneWayCell('ms_subj')" class="p-3 cell-interactive underline decoration-dotted">50.625</td>
+                  <td onclick="inspectOneWayCell('f_subj')" class="p-3 cell-interactive text-[#8b949e] underline decoration-dotted">3.8889</td>
+                  <td class="p-3 text-[#8b949e]">N/A</td>
+                  <td class="p-3 text-[#8b949e]">N/A</td>
+                  <td class="p-3 text-[#8b949e]">N/A</td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-sans text-[#f85149] font-semibold">Error (Participant &times; Time)</td>
+                  <td onclick="inspectOneWayCell('ss_err')" class="p-3 cell-interactive underline decoration-dotted">273.375</td>
+                  <td onclick="inspectOneWayCell('df_err')" class="p-3 cell-interactive underline decoration-dotted">21</td>
+                  <td onclick="inspectOneWayCell('ms_err')" class="p-3 cell-interactive underline decoration-dotted">13.0179</td>
+                  <td class="p-3 text-[#8b949e]">N/A</td>
+                  <td class="p-3 text-[#8b949e]">N/A</td>
+                  <td class="p-3 text-[#8b949e]">N/A</td>
+                  <td class="p-3 text-[#8b949e]">N/A</td>
+                </tr>
+                <tr class="bg-[#161b22] font-bold border-t-2 border-[#30363d]">
+                  <td class="p-3 font-sans text-white">Total</td>
+                  <td onclick="inspectOneWayCell('ss_tot')" class="p-3 cell-interactive underline decoration-dotted">8401.875</td>
+                  <td onclick="inspectOneWayCell('df_tot')" class="p-3 cell-interactive underline decoration-dotted">31</td>
+                  <td class="p-3 text-[#8b949e] font-sans text-xs" colspan="5">GM = 89.0625 cm/s (n = 8 participants &times; a = 4 time points = 32 observations)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div id="oneWayInspectorBox" class="mt-3 p-4 rounded-xl obsidian-subcard font-mono text-xs text-[#c9d1d9]">
+            Click any underlined value in the ANOVA table above to inspect its exact formula and derivation.
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- TAB 5 (FORMER TAB 4): TWO WAY FACTORIAL RM ANOVA & SIMPLE EFFECTS   -->
+    <!-- =================================================================== -->
+    <section id="panel-tab4" class="tab-panel space-y-8 hidden">
+
+      <!-- Factorial Architecture & Intermediate Cell Tables Explorer -->
+      <div class="obsidian-card rounded-2xl p-6 sm:p-8 shadow-xl">
+        <div class="max-w-4xl mb-6">
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-[#bc8cff]/15 text-[#bc8cff] border border-[#bc8cff]/40 mb-2">
+            Tab 5 &bull; Two Way Repeated Measures ANOVA Key (Hemisphere by Time)
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Factorial 2 (Hemisphere) &times; 4 (Time) Repeated Measures ANOVA</h2>
+          <p class="text-[#c9d1d9] text-sm sm:text-base mt-2 leading-relaxed">
+            In this factorial within subjects design, all <span class="font-mono text-white">n = 8</span> participants are measured across both cerebral hemispheres (<span class="font-mono text-white">b = 2: Left vs Right</span>) and across all four time intervals (<span class="font-mono text-white">a = 4: 10, 20, 30, 40 mins</span>), producing <span class="font-mono text-white">n &times; a &times; b = 8 &times; 4 &times; 2 = 64</span> total observations with an overall Grand Mean of <span class="font-mono font-bold text-[#58a6ff]">GM = 84.5000 cm/s</span>. Crucially, each within subjects effect (<span class="font-mono">Time</span>, <span class="font-mono">Hemisphere</span>, and <span class="font-mono">Time &times; Hemisphere</span>) is tested against its <strong>own dedicated interaction with Participant</strong> as its denominator error term!
+          </p>
+        </div>
+
+        <!-- 4 Sub-Table Explorer Buttons -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 mb-6">
+          <button onclick="setTwoWaySubTable('main')" id="btnTwSub_main" class="p-3 rounded-xl text-xs font-bold text-left bg-[#58a6ff] text-[#0d1117] shadow">
+            <div>1. Full 8&times;8 Dataset &amp; Main SS</div>
+            <div class="font-mono text-[11px] opacity-80 mt-0.5">SS_Total, SS_Part, SS_Time, SS_Hemi</div>
+          </button>
+          <button onclick="setTwoWaySubTable('timesubj')" id="btnTwSub_timesubj" class="p-3 rounded-xl text-xs font-bold text-left bg-[#1c2128] text-[#c9d1d9] border border-[#30363d] hover:text-white">
+            <div>2. Intermediate Table 1: Time &times; Part</div>
+            <div class="font-mono text-[11px] text-[#58a6ff] mt-0.5">Deriving Error 1 (SS = 298.375)</div>
+          </button>
+          <button onclick="setTwoWaySubTable('hemisubj')" id="btnTwSub_hemisubj" class="p-3 rounded-xl text-xs font-bold text-left bg-[#1c2128] text-[#c9d1d9] border border-[#30363d] hover:text-white">
+            <div>3. Intermediate Table 2: Hemi &times; Part</div>
+            <div class="font-mono text-[11px] text-[#bc8cff] mt-0.5">Deriving Error 2 (SS = 67.500)</div>
+          </button>
+          <button onclick="setTwoWaySubTable('timehemi')" id="btnTwSub_timehemi" class="p-3 rounded-xl text-xs font-bold text-left bg-[#1c2128] text-[#c9d1d9] border border-[#30363d] hover:text-white">
+            <div>4. Intermediate Table 3: Time &times; Hemi</div>
+            <div class="font-mono text-[11px] text-[#d29922] mt-0.5">Interaction (612.875) &amp; Error 3 (381.375)</div>
+          </button>
+        </div>
+
+        <!-- Dynamic Intermediate Sub-Table Container -->
+        <div id="twoWaySubTableContainer" class="obsidian-subcard rounded-2xl p-5 overflow-x-auto mb-8">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Complete 2-Way Repeated Measures ANOVA Summary Table -->
+        <div>
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+            <h3 class="text-lg font-bold text-white">Complete Factorial Repeated Measures ANOVA Summary Table (Click Any Row to Inspect Error Pairing)</h3>
+            <span class="text-xs font-mono text-[#3fb950]">3 Dedicated Error Terms Highlighted by Color</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left font-mono border-collapse obsidian-inset rounded-xl overflow-hidden">
+              <thead class="bg-[#161b22] text-[#8b949e] border-b border-[#30363d]">
+                <tr>
+                  <th class="p-3">Source</th>
+                  <th class="p-3">SS</th>
+                  <th class="p-3">df</th>
+                  <th class="p-3">MS</th>
+                  <th class="p-3">F ratio</th>
+                  <th class="p-3">F critical</th>
+                  <th class="p-3">p value</th>
+                  <th class="p-3">Sphericity &amp; Error Pairing Notes</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-[#30363d]">
+                <tr onclick="inspectTwoWayRow('time')" class="bg-[#58a6ff]/15 font-bold text-white cell-interactive">
+                  <td class="p-3 font-sans text-[#58a6ff]">Time (Main Effect)</td>
+                  <td class="p-3">22124.375</td>
+                  <td class="p-3">3</td>
+                  <td class="p-3">7374.7917</td>
+                  <td class="p-3 text-[#3fb950]">519.0469</td>
+                  <td class="p-3">3.0725</td>
+                  <td class="p-3 text-[#3fb950]">8.26e&minus;20</td>
+                  <td class="p-3 font-sans text-[11px] text-[#d29922]">Mauchly p = .0127 (Violated; GG &epsilon; = .535, p_GG = 1.66e&minus;11)</td>
+                </tr>
+                <tr onclick="inspectTwoWayRow('timesubj')" class="bg-[#58a6ff]/5 text-[#c9d1d9] cell-interactive">
+                  <td class="p-3 font-sans pl-6 text-[#58a6ff]">&bull; Time &times; Participant (Error 1)</td>
+                  <td class="p-3">298.375</td>
+                  <td class="p-3">21</td>
+                  <td class="p-3">14.2083</td>
+                  <td class="p-3 text-[#8b949e]">N/A</td>
+                  <td class="p-3 text-[#8b949e]">N/A</td>
+                  <td class="p-3 text-[#8b949e]">N/A</td>
+                  <td class="p-3 font-sans text-[11px]">Denominator Error Term for Main Effect of Time</td>
+                </tr>
+                <tr onclick="inspectTwoWayRow('hemi')" class="bg-[#bc8cff]/15 font-bold text-white cell-interactive">
+                  <td class="p-3 font-sans text-[#bc8cff]">Hemisphere (Main Effect)</td>
+                  <td class="p-3">1332.250</td>
+                  <td class="p-3">1</td>
+                  <td class="p-3">1332.2500</td>
+                  <td class="p-3 text-[#3fb950]">138.1593</td>
+                  <td class="p-3">5.5914</td>
+                  <td class="p-3 text-[#3fb950]">7.40e&minus;6</td>
+                  <td class="p-3 font-sans text-[11px] text-[#3fb950]">Only 2 levels (Sphericity no longer a concern!)</td>
+                </tr>
+                <tr onclick="inspectTwoWayRow('hemisubj')" class="bg-[#bc8cff]/5 text-[#c9d1d9] cell-interactive">
+                  <td class="p-3 font-sans pl-6 text-[#bc8cff]">&bull; Hemisphere &times; Participant (Error 2)</td>
+                  <td class="p-3">67.500</td>
+                  <td class="p-3">7</td>
+                  <td class="p-3">9.6429</td>
+                  <td class="p-3 text-[#8b949e]">N/A</td>
+                  <td class="p-3 text-[#8b949e]">N/A</td>
+                  <td class="p-3 text-[#8b949e]">N/A</td>
+                  <td class="p-3 font-sans text-[11px]">Denominator Error Term for Main Effect of Hemisphere</td>
+                </tr>
+                <tr onclick="inspectTwoWayRow('timehemi')" class="bg-[#d29922]/15 font-bold text-white cell-interactive">
+                  <td class="p-3 font-sans text-[#d29922]">Time &times; Hemisphere (Interaction)</td>
+                  <td class="p-3">612.875</td>
+                  <td class="p-3">3</td>
+                  <td class="p-3">204.2917</td>
+                  <td class="p-3 text-[#3fb950]">11.2491</td>
+                  <td class="p-3">3.0725</td>
+                  <td class="p-3 text-[#3fb950]">0.000131</td>
+                  <td class="p-3 font-sans text-[11px] text-[#d29922]">Mauchly p = .0084 (Violated; GG &epsilon; = .510, p_GG = .00348)</td>
+                </tr>
+                <tr onclick="inspectTwoWayRow('err3way')" class="bg-[#d29922]/5 text-[#c9d1d9] cell-interactive">
+                  <td class="p-3 font-sans pl-6 text-[#d29922]">&bull; Time &times; Hemi &times; Participant (Error 3)</td>
+                  <td class="p-3">381.375</td>
+                  <td class="p-3">21</td>
+                  <td class="p-3">18.1607</td>
+                  <td class="p-3 text-[#8b949e]">N/A</td>
+                  <td class="p-3 text-[#8b949e]">N/A</td>
+                  <td class="p-3 text-[#8b949e]">N/A</td>
+                  <td class="p-3 font-sans text-[11px]">Denominator Error Term for Time &times; Hemisphere Interaction</td>
+                </tr>
+                <tr onclick="inspectTwoWayRow('subj')" class="text-[#c9d1d9] cell-interactive">
+                  <td class="p-3 font-sans font-semibold text-[#3fb950]">Participant</td>
+                  <td class="p-3">569.250</td>
+                  <td class="p-3">7</td>
+                  <td class="p-3">81.3214</td>
+                  <td class="p-3 text-[#8b949e]">N/A</td>
+                  <td class="p-3 text-[#8b949e]">N/A</td>
+                  <td class="p-3 text-[#8b949e]">N/A</td>
+                  <td class="p-3 font-sans text-[11px]">Baseline participant differences partitioned out</td>
+                </tr>
+                <tr class="bg-[#161b22] font-bold border-t-2 border-[#30363d]">
+                  <td class="p-3 font-sans text-white">Total</td>
+                  <td class="p-3">25386.000</td>
+                  <td class="p-3">63</td>
+                  <td class="p-3 text-[#8b949e] font-sans text-xs" colspan="5">GM = 84.5000 cm/s (64 observations across n = 8 participants &times; b = 2 hemispheres &times; a = 4 time points)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div id="twoWayInspectorBox" class="mt-3 p-4 rounded-xl obsidian-subcard font-mono text-xs text-[#c9d1d9]">
+            Click any row in the Factorial RM ANOVA table above to inspect its exact Sum of Squares formula and error term pairing.
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive SVG Profile Plot & Follow-Up Simple Effects Explorer -->
+      <div class="obsidian-card rounded-2xl p-6 sm:p-8 shadow-xl">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center mb-8 pb-8 border-b border-[#30363d]">
+          <div class="lg:col-span-7 obsidian-subcard rounded-2xl p-5">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-bold text-white">Interaction Profile Plot: Left vs Right Hemisphere Across Time</h3>
+              <span class="text-xs font-mono text-[#3fb950]">Asterisks (*) Mark Significant Simple Effects at &alpha; = .0125</span>
+            </div>
+            <div class="w-full h-72 obsidian-inset rounded-xl p-2 flex items-center justify-center">
+              <svg id="tab4InteractionSvg" class="w-full h-full" viewBox="0 0 560 270"></svg>
+            </div>
+            <div class="flex flex-wrap items-center justify-center gap-6 mt-3 text-xs font-bold">
+              <div class="flex items-center space-x-2">
+                <span class="w-3.5 h-3.5 rounded-full bg-[#58a6ff] inline-block"></span>
+                <span class="text-[#e6edf3]">Left Hemisphere (Marginal Mean = 89.06 cm/s)</span>
+              </div>
+              <div class="flex items-center space-x-2">
+                <span class="w-3.5 h-3.5 rounded-full bg-[#f85149] inline-block"></span>
+                <span class="text-[#e6edf3]">Right Hemisphere (Marginal Mean = 79.94 cm/s)</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="lg:col-span-5 space-y-4">
+            <span class="text-xs font-bold uppercase tracking-wider text-[#d29922]">Why Decompose the Interaction?</span>
+            <h3 class="text-xl font-extrabold text-white">Interpreting the Significant Time &times; Hemisphere Interaction</h3>
+            <p class="text-xs sm:text-sm text-[#c9d1d9] leading-relaxed">
+              Because the <strong class="text-white">Time &times; Hemisphere interaction is significant</strong> (<span class="font-mono">F(3, 21) = 11.249, p = .000131</span>), interpreting the overall marginal main effects alone is incomplete and potentially misleading. For instance, the main effect of Hemisphere says Left (<span class="font-mono">89.06</span>) is higher than Right (<span class="font-mono">79.94</span>), but looking at the graph reveals that at <strong>10 minutes</strong>, the two hemispheres are virtually identical (<span class="font-mono">113.38 vs 113.63 cm/s</span>)!
+            </p>
+            <div class="obsidian-subcard p-4 rounded-xl text-xs text-[#c9d1d9] space-y-1.5">
+              <div class="font-bold text-white">Two Valid Simple Effects Decomposition Pathways:</div>
+              <div><strong class="text-[#58a6ff]">Pathway 1 (Compare Hemispheres at Each Time):</strong> 4 paired samples t tests at 10m, 20m, 30m, and 40m with Bonferroni <span class="font-mono text-[#3fb950]">&alpha; = .05 / 4 = .0125</span>.</div>
+              <div><strong class="text-[#bc8cff]">Pathway 2 (Effect of Time Within Each Hemisphere):</strong> 2 separate One Way RM ANOVAs (Left across Time; Right across Time) with Bonferroni <span class="font-mono text-[#3fb950]">&alpha; = .05 / 2 = .025</span>.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Follow-Up Tabs Switcher -->
+        <div class="flex flex-wrap gap-2 mb-6">
+          <button onclick="setFollowUpView('path1')" id="btnFuPath1" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-[#58a6ff] text-[#0d1117] shadow">
+            Interaction Pathway 1: Hemisphere at Each Time (&alpha; = .0125)
+          </button>
+          <button onclick="setFollowUpView('path2')" id="btnFuPath2" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-[#1c2128] text-[#c9d1d9] border border-[#30363d] hover:text-white">
+            Interaction Pathway 2: Time Within Each Hemisphere (&alpha; = .025)
+          </button>
+          <button onclick="setFollowUpView('main')" id="btnFuMain" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-[#1c2128] text-[#c9d1d9] border border-[#30363d] hover:text-white">
+            Follow Up Main Effects &amp; Trend Analysis
+          </button>
+        </div>
+
+        <div id="followUpViewContainer">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- TAB 6 (FORMER TAB 5): INTERACTIVE LAB WORKSHEET & MASTERY CHECK     -->
+    <!-- =================================================================== -->
+    <section id="panel-tab5" class="tab-panel space-y-8 hidden">
+
+      <!-- Part 1: Interactive Calculation Verification Table -->
+      <div class="obsidian-card rounded-2xl p-6 sm:p-8 shadow-xl">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 mb-6 border-b border-[#30363d]">
+          <div>
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-[#58a6ff]/15 text-[#58a6ff] border border-[#58a6ff]/40 mb-2">
+              Tab 6 &bull; Part 1: Student Calculation Verifier
+            </span>
+            <h2 class="text-2xl font-extrabold text-white tracking-tight">Interactive Lab Calculation Verification Worksheet</h2>
+            <p class="text-xs sm:text-sm text-[#c9d1d9] mt-1">
+              Practice computing the key missing entries across the One Way RM ANOVA, Epsilon Adjustment, and Factorial Simple Effects exercises. Click <strong>Verify Worksheet Entries</strong> to receive instant diagnostic feedback without revealing answers upfront.
+            </p>
+          </div>
+          <div class="flex items-center space-x-2">
+            <button onclick="verifyStudentWorksheet()" class="px-4 py-2.5 rounded-xl text-xs font-bold bg-[#3fb950] text-[#0d1117] hover:bg-[#3fb950]/90 shadow">
+              Verify Worksheet Entries
+            </button>
+            <button onclick="fillStudentWorksheetKey()" class="px-3.5 py-2.5 rounded-xl text-xs font-bold bg-[#1c2128] text-[#8b949e] border border-[#30363d] hover:text-white">
+              Reveal Exact Key
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <!-- Item 1 -->
+          <div class="obsidian-subcard p-4 rounded-xl space-y-2">
+            <div class="font-bold text-white">1. One Way RM ANOVA: Degrees of Freedom for Error (<span class="font-mono text-[#58a6ff]">df_Error</span>)</div>
+            <p class="text-[#8b949e]">Given <span class="font-mono">n = 8</span> participants and <span class="font-mono">a = 4</span> time points, compute <span class="font-mono">(a &minus; 1) &times; (n &minus; 1)</span>:</p>
+            <div class="flex items-center space-x-3">
+              <input type="number" id="ws_df_err" placeholder="Enter df_Error" class="w-40 px-3 py-1.5 rounded bg-[#0d1117] border border-[#30363d] text-white font-mono">
+              <span id="ws_fb_df_err" class="font-mono text-xs"></span>
+            </div>
+          </div>
+
+          <!-- Item 2 -->
+          <div class="obsidian-subcard p-4 rounded-xl space-y-2">
+            <div class="font-bold text-white">2. One Way RM ANOVA: Error Sum of Squares (<span class="font-mono text-[#58a6ff]">SS_Error</span>)</div>
+            <p class="text-[#8b949e]">Given <span class="font-mono">SS_Total = 8401.875</span>, <span class="font-mono">SS_Time = 7774.125</span>, and <span class="font-mono">SS_Participant = 354.375</span>:</p>
+            <div class="flex items-center space-x-3">
+              <input type="number" id="ws_ss_err" step="0.001" placeholder="Enter SS_Error" class="w-40 px-3 py-1.5 rounded bg-[#0d1117] border border-[#30363d] text-white font-mono">
+              <span id="ws_fb_ss_err" class="font-mono text-xs"></span>
+            </div>
+          </div>
+
+          <!-- Item 3 -->
+          <div class="obsidian-subcard p-4 rounded-xl space-y-2">
+            <div class="font-bold text-white">3. One Way RM ANOVA: Mean Square for Time (<span class="font-mono text-[#58a6ff]">MS_Time</span>)</div>
+            <p class="text-[#8b949e]">Given <span class="font-mono">SS_Time = 7774.125</span> and <span class="font-mono">df_Time = 3</span>, compute <span class="font-mono">SS_Time / df_Time</span>:</p>
+            <div class="flex items-center space-x-3">
+              <input type="number" id="ws_ms_time" step="0.001" placeholder="Enter MS_Time" class="w-40 px-3 py-1.5 rounded bg-[#0d1117] border border-[#30363d] text-white font-mono">
+              <span id="ws_fb_ms_time" class="font-mono text-xs"></span>
+            </div>
+          </div>
+
+          <!-- Item 4 -->
+          <div class="obsidian-subcard p-4 rounded-xl space-y-2">
+            <div class="font-bold text-white">4. Greenhouse Geisser Adjusted Numerator df (<span class="font-mono text-[#58a6ff]">df_num_adj</span>)</div>
+            <p class="text-[#8b949e]">Given original <span class="font-mono">df_num = 3</span> and <span class="font-mono">&epsilon;_GG = 0.4956</span>, compute <span class="font-mono">3 &times; 0.4956</span>:</p>
+            <div class="flex items-center space-x-3">
+              <input type="number" id="ws_gg_df1" step="0.0001" placeholder="Enter df_num_adj" class="w-40 px-3 py-1.5 rounded bg-[#0d1117] border border-[#30363d] text-white font-mono">
+              <span id="ws_fb_gg_df1" class="font-mono text-xs"></span>
+            </div>
+          </div>
+
+          <!-- Item 5 -->
+          <div class="obsidian-subcard p-4 rounded-xl space-y-2">
+            <div class="font-bold text-white">5. Greenhouse Geisser Adjusted Denominator df (<span class="font-mono text-[#58a6ff]">df_error_adj</span>)</div>
+            <p class="text-[#8b949e]">Given original <span class="font-mono">df_error = 21</span> and <span class="font-mono">&epsilon;_GG = 0.4956</span>, compute <span class="font-mono">21 &times; 0.4956</span>:</p>
+            <div class="flex items-center space-x-3">
+              <input type="number" id="ws_gg_df2" step="0.0001" placeholder="Enter df_error_adj" class="w-40 px-3 py-1.5 rounded bg-[#0d1117] border border-[#30363d] text-white font-mono">
+              <span id="ws_fb_gg_df2" class="font-mono text-xs"></span>
+            </div>
+          </div>
+
+          <!-- Item 6 -->
+          <div class="obsidian-subcard p-4 rounded-xl space-y-2">
+            <div class="font-bold text-white">6. Factorial RM ANOVA: Main Effect of Hemisphere F Ratio (<span class="font-mono text-[#58a6ff]">F_Hemisphere</span>)</div>
+            <p class="text-[#8b949e]">Given <span class="font-mono">MS_Hemisphere = 1332.25</span> and <span class="font-mono">MS_Hemi&times;Participant = 9.6429</span>:</p>
+            <div class="flex items-center space-x-3">
+              <input type="number" id="ws_f_hemi" step="0.01" placeholder="Enter F_Hemisphere" class="w-40 px-3 py-1.5 rounded bg-[#0d1117] border border-[#30363d] text-white font-mono">
+              <span id="ws_fb_f_hemi" class="font-mono text-xs"></span>
+            </div>
+          </div>
+
+          <!-- Item 7 -->
+          <div class="obsidian-subcard p-4 rounded-xl space-y-2">
+            <div class="font-bold text-white">7. Factorial RM ANOVA: Interaction F Ratio (<span class="font-mono text-[#58a6ff]">F_Time&times;Hemi</span>)</div>
+            <p class="text-[#8b949e]">Given <span class="font-mono">MS_Time&times;Hemi = 204.2917</span> and <span class="font-mono">MS_Time&times;Hemi&times;Participant = 18.1607</span>:</p>
+            <div class="flex items-center space-x-3">
+              <input type="number" id="ws_f_int" step="0.01" placeholder="Enter F_Interaction" class="w-40 px-3 py-1.5 rounded bg-[#0d1117] border border-[#30363d] text-white font-mono">
+              <span id="ws_fb_f_int" class="font-mono text-xs"></span>
+            </div>
+          </div>
+
+          <!-- Item 8 -->
+          <div class="obsidian-subcard p-4 rounded-xl space-y-2">
+            <div class="font-bold text-white">8. Simple Effects Pathway 1: Bonferroni Alpha (<span class="font-mono text-[#58a6ff]">&alpha;_Bonferroni</span>)</div>
+            <p class="text-[#8b949e]">When comparing Left vs Right Hemisphere at each of the 4 levels of Time (<span class="font-mono">.05 / 4</span>):</p>
+            <div class="flex items-center space-x-3">
+              <input type="number" id="ws_bonf_4" step="0.0001" placeholder="Enter alpha" class="w-40 px-3 py-1.5 rounded bg-[#0d1117] border border-[#30363d] text-white font-mono">
+              <span id="ws_fb_bonf_4" class="font-mono text-xs"></span>
+            </div>
+          </div>
+        </div>
+        <div id="wsOverallBanner" class="mt-4 hidden p-3.5 rounded-xl font-bold text-xs"></div>
+      </div>
+
+      <!-- Part 2: 6-Question Conceptual & Diagnostic Mastery Quiz -->
+      <div class="obsidian-card rounded-2xl p-6 sm:p-8 shadow-xl">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-[#30363d]">
+          <div>
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-[#3fb950]/15 text-[#3fb950] border border-[#3fb950]/40 mb-2">
+              Tab 6 &bull; Part 2: Diagnostic Mastery Quiz
+            </span>
+            <h2 class="text-2xl font-extrabold text-white tracking-tight">Conceptual &amp; Statistical Decision Mastery Check</h2>
+          </div>
+          <div class="obsidian-subcard px-4 py-2.5 rounded-xl font-mono text-sm font-bold text-white">
+            Quiz Score: <span id="quizScoreText" class="text-[#3fb950]">0</span> / 6
+          </div>
+        </div>
+
+        <div id="quizQuestionsContainer" class="space-y-6">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-[#161b22] border-t border-[#30363d] text-[#8b949e] py-6 text-xs text-center mt-12">
+    <div class="max-w-7xl mx-auto px-4">
+      <p class="font-bold text-[#e6edf3]">Experimental Design &bull; Repeated Measures ANOVA Interactive Lab</p>
+      <p class="mt-1">All calculations, intermediate tables, and epsilon corrections</p>
+    </div>
+  </footer>
+
+  <!-- ===================================================================== -->
+  <!-- JAVASCRIPT ENGINE                                                     -->
+  <!-- ===================================================================== -->
+  <script>
+    // =========================================================================
+    // 1. EXACT DATASETS
+    // =========================================================================
+
+    const table14_1_Preset = [
+      { id: 1, a: 10, b: 12, c: 8 },
+      { id: 2, a: 15, b: 15, c: 12 },
+      { id: 3, a: 25, b: 30, c: 20 },
+      { id: 4, a: 35, b: 30, c: 28 },
+      { id: 5, a: 30, b: 27, c: 20 }
+    ];
+
+    const equalSphericityPreset = [
+      { id: 1, a: 12, b: 10, c: 8 },
+      { id: 2, a: 16, b: 15, c: 12 },
+      { id: 3, a: 24, b: 21, c: 20 },
+      { id: 4, a: 32, b: 30, c: 28 },
+      { id: 5, a: 26, b: 24, c: 22 }
+    ];
+
+    // Left Hemisphere Blood Flow Velocity (One Way RM ANOVA Key & Left Half of Factorial Key)
+    const leftHemiData = [
+      { subj: 1, m10: 110, m20: 95, m30: 85, m40: 75 },
+      { subj: 2, m10: 116, m20: 93, m30: 87, m40: 73 },
+      { subj: 3, m10: 112, m20: 89, m30: 76, m40: 70 },
+      { subj: 4, m10: 109, m20: 92, m30: 80, m40: 70 },
+      { subj: 5, m10: 126, m20: 94, m30: 81, m40: 79 },
+      { subj: 6, m10: 112, m20: 85, m30: 76, m40: 69 },
+      { subj: 7, m10: 108, m20: 88, m30: 73, m40: 70 },
+      { subj: 8, m10: 114, m20: 91, m30: 84, m40: 68 }
+    ];
+
+    // Right Hemisphere Blood Flow Velocity (Right Half of Factorial Key)
+    const rightHemiData = [
+      { subj: 1, m10: 114, m20: 90, m30: 65, m40: 63 },
+      { subj: 2, m10: 119, m20: 88, m30: 68, m40: 57 },
+      { subj: 3, m10: 108, m20: 81, m30: 61, m40: 55 },
+      { subj: 4, m10: 120, m20: 84, m30: 66, m40: 55 },
+      { subj: 5, m10: 122, m20: 85, m30: 71, m40: 63 },
+      { subj: 6, m10: 105, m20: 78, m30: 62, m40: 56 },
+      { subj: 7, m10: 113, m20: 80, m30: 62, m40: 56 },
+      { subj: 8, m10: 108, m20: 82, m30: 66, m40: 55 }
+    ];
+
+    // =========================================================================
+    // 2. CONTINUOUS F DISTRIBUTION NUMERICAL ENGINE (INCOMPLETE BETA)
+    // =========================================================================
+
+    function logGamma(z) {
+      const c = [
+        0.99999999999980993,
+        676.5203681218851,
+        -1259.1392167224028,
+        771.32342877765313,
+        -176.61502916214059,
+        12.507343278686905,
+        -0.13857109526572012,
+        9.9843695780195716e-6,
+        1.5056327351493116e-7
+      ];
+      if (z < 0.5) {
+        return Math.log(Math.PI / Math.sin(Math.PI * z)) - logGamma(1.0 - z);
+      }
+      z -= 1.0;
+      let x = c[0];
+      for (let i = 1; i < 9; i++) {
+        x += c[i] / (z + i);
+      }
+      const t = z + 7.5;
+      return 0.5 * Math.log(2.0 * Math.PI) + (z + 0.5) * Math.log(t) - t + Math.log(x);
+    }
+
+    function betacf(a, b, x) {
+      const maxIter = 250;
+      const eps = 3.0e-14;
+      const fpmin = 1.0e-30;
+      const qab = a + b;
+      const qap = a + 1.0;
+      const qam = a - 1.0;
+      let c = 1.0;
+      let d = 1.0 - qab * x / qap;
+      if (Math.abs(d) < fpmin) d = fpmin;
+      d = 1.0 / d;
+      let h = d;
+      for (let m = 1; m <= maxIter; m++) {
+        const m2 = 2 * m;
+        let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+        d = 1.0 + aa * d;
+        if (Math.abs(d) < fpmin) d = fpmin;
+        c = 1.0 + aa / c;
+        if (Math.abs(c) < fpmin) c = fpmin;
+        d = 1.0 / d;
+        h *= d * c;
+        aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+        d = 1.0 + aa * d;
+        if (Math.abs(d) < fpmin) d = fpmin;
+        c = 1.0 + aa / c;
+        if (Math.abs(c) < fpmin) c = fpmin;
+        d = 1.0 / d;
+        const del = d * c;
+        h *= del;
+        if (Math.abs(del - 1.0) < eps) break;
+      }
+      return h;
+    }
+
+    function regularizedIncompleteBeta(x, a, b) {
+      if (x <= 0.0) return 0.0;
+      if (x >= 1.0) return 1.0;
+      const bt = Math.exp(logGamma(a + b) - logGamma(a) - logGamma(b) + a * Math.log(x) + b * Math.log(1.0 - x));
+      if (x < (a + 1.0) / (a + b + 2.0)) {
+        return bt * betacf(a, b, x) / a;
+      } else {
+        return 1.0 - bt * betacf(b, a, 1.0 - x) / b;
+      }
+    }
+
+    function fDistRightTail(fVal, df1, df2) {
+      if (fVal <= 0) return 1.0;
+      const x = df2 / (df2 + df1 * fVal);
+      return regularizedIncompleteBeta(x, 0.5 * df2, 0.5 * df1);
+    }
+
+    function fCriticalValue(alpha, df1, df2) {
+      let low = 0.001;
+      let high = 5000.0;
+      for (let iter = 0; iter < 90; iter++) {
+        const mid = 0.5 * (low + high);
+        const p = fDistRightTail(mid, df1, df2);
+        if (p > alpha) low = mid;
+        else high = mid;
+      }
+      return 0.5 * (low + high);
+    }
+
+    function formatPVal(p) {
+      if (p < 0.0001) {
+        return p.toExponential(4).replace('-', '\u2212');
+      }
+      return p.toFixed(6);
+    }
+
+    // =========================================================================
+    // 3. HEADER NOTATION KEY & TAB NAVIGATION
+    // =========================================================================
+
+    function toggleNotationKey() {
+      const banner = document.getElementById('notationKeyBanner');
+      const chev = document.getElementById('notationChevron');
+      if (banner.classList.contains('hidden')) {
+        banner.classList.remove('hidden');
+        banner.classList.add('block');
+        chev.innerHTML = '&uarr;';
+      } else {
+        banner.classList.remove('block');
+        banner.classList.add('hidden');
+        chev.innerHTML = '&darr;';
+      }
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-panel').forEach(p => {
+        p.classList.add('hidden');
+        p.classList.remove('block');
+      });
+      const target = document.getElementById('panel-' + tabId);
+      if (target) {
+        target.classList.remove('hidden');
+        target.classList.add('block');
+      }
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        b.className = "tab-btn px-2 py-2 rounded-lg transition-all duration-150 text-center flex flex-col justify-center items-center text-[#c9d1d9] hover:text-white hover:bg-[#1c2128] leading-snug";
+        const sub = b.querySelector('span:nth-child(2)');
+        if (sub) sub.className = "block text-[11px] text-[#8b949e] truncate max-w-full";
+      });
+      const activeBtn = document.getElementById('tabBtn-' + tabId);
+      if (activeBtn) {
+        activeBtn.className = "tab-btn px-2 py-2 rounded-lg transition-all duration-150 text-center flex flex-col justify-center items-center bg-[#58a6ff] text-[#0d1117] font-bold shadow leading-snug";
+        const sub = activeBtn.querySelector('span:nth-child(2)');
+        if (sub) sub.className = "block text-[11px] opacity-90 truncate max-w-full";
+      }
+      if (tabId === 'tab4') {
+        renderTab4InteractionPlot();
+      }
+    }
+
+    // =========================================================================
+    // 4. TAB 1: VARIANCE PARTITIONING COMPARATOR & SIMULATOR
+    // =========================================================================
+
+    function setPartitionView(view) {
+      const btns = { sidebyside: 'btnPartSide', between: 'btnPartBetween', within: 'btnPartWithin' };
+      Object.keys(btns).forEach(k => {
+        const b = document.getElementById(btns[k]);
+        if (k === view) {
+          b.className = "px-3.5 py-2 rounded-xl text-xs font-bold bg-[#58a6ff] text-[#0d1117] shadow";
+        } else {
+          b.className = "px-3.5 py-2 rounded-xl text-xs font-bold bg-[#1c2128] text-[#c9d1d9] border border-[#30363d] hover:text-white";
+        }
+      });
+
+      const container = document.getElementById('partitionTreeContainer');
+
+      const betweenHtml = `
+        <div class="obsidian-subcard rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-[#30363d] pb-3">
+            <span class="text-xs font-bold uppercase tracking-wider text-[#d29922]">Review: Between Groups Partitioning</span>
+            <span class="font-mono text-xs text-[#8b949e]">Participant Effect Trapped in Error</span>
+          </div>
+          <div class="text-center">
+            <div class="inline-block obsidian-inset px-5 py-3 rounded-xl border border-[#58a6ff]/50">
+              <div class="font-mono font-bold text-white text-sm">SS_Total = 8401.875 (df = 31)</div>
+              <div class="text-[11px] text-[#8b949e]">Total variance in the data</div>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+            <div class="obsidian-inset p-4 rounded-xl border border-[#58a6ff]/40">
+              <div class="text-xs font-bold text-[#58a6ff] mb-1">SS_Between / SS_Treatment</div>
+              <div class="font-mono font-bold text-white text-sm">7774.125 (df = 3)</div>
+              <p class="text-[11px] text-[#c9d1d9] mt-1.5 leading-relaxed">
+                Explained variance: Variance explained by the experimental manipulation across the 4 time conditions.
+              </p>
+            </div>
+            <div class="obsidian-inset p-4 rounded-xl border border-[#f85149]/40">
+              <div class="text-xs font-bold text-[#f85149] mb-1">SS_Within / SS_Error</div>
+              <div class="font-mono font-bold text-white text-sm">627.750 (df = 28)</div>
+              <p class="text-[11px] text-[#c9d1d9] mt-1.5 leading-relaxed">
+                Unexplained variance: Consists of <strong>both the Participant effect (354.375) and the Participant &times; Treatment interaction (273.375)</strong>.
+              </p>
+            </div>
+          </div>
+        </div>
+      `;
+
+      const withinHtml = `
+        <div class="obsidian-subcard rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-[#30363d] pb-3">
+            <span class="text-xs font-bold uppercase tracking-wider text-[#3fb950]">New: Within Subjects Partitioning</span>
+            <span class="font-mono text-xs text-[#3fb950]">SS_Participant Accounted For &amp; Removed</span>
+          </div>
+          <div class="text-center">
+            <div class="inline-block obsidian-inset px-5 py-3 rounded-xl border border-[#58a6ff]/50">
+              <div class="font-mono font-bold text-white text-sm">SS_Total = 8401.875 (df = 31)</div>
+              <div class="text-[11px] text-[#8b949e]">Total variance in the data</div>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 pt-2">
+            <div class="sm:col-span-5 obsidian-inset p-4 rounded-xl border border-[#3fb950]/50 flex flex-col justify-between">
+              <div>
+                <div class="text-xs font-bold text-[#3fb950] mb-1">SS_Between (SS_Participant)</div>
+                <div class="font-mono font-bold text-white text-sm">354.375 (df = 7)</div>
+                <p class="text-[11px] text-[#c9d1d9] mt-1.5 leading-relaxed">
+                  Between participant variation: Variance due to individual differences across the 8 participants. Now we account for and remove this variance!
+                </p>
+              </div>
+              <div class="mt-3 text-[11px] font-mono text-[#3fb950] bg-[#3fb950]/10 p-2 rounded">
+                Removed from denominator error!
+              </div>
+            </div>
+            <div class="sm:col-span-7 obsidian-inset p-4 rounded-xl border border-[#58a6ff]/50 space-y-3">
+              <div>
+                <div class="text-xs font-bold text-[#58a6ff]">SS_Within = 8047.500 (df = 24)</div>
+                <div class="text-[11px] text-[#8b949e]">Variance due to experimental manipulation + unexplained error</div>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div class="p-3 rounded-lg bg-[#161b22] border border-[#58a6ff]/40">
+                  <div class="text-[11px] font-bold text-[#58a6ff]">SS_Treatment</div>
+                  <div class="font-mono font-bold text-white text-xs mt-0.5">7774.125 (df = 3)</div>
+                  <div class="text-[10px] text-[#c9d1d9] mt-1">Variance due to manipulation (MS = 2591.375)</div>
+                </div>
+                <div class="p-3 rounded-lg bg-[#161b22] border border-[#f85149]/40">
+                  <div class="text-[11px] font-bold text-[#f85149]">SS_Error (Participant &times; Time)</div>
+                  <div class="font-mono font-bold text-white text-xs mt-0.5">273.375 (df = 21)</div>
+                  <div class="text-[10px] text-[#c9d1d9] mt-1">Participant &times; Treatment interaction (MS = 13.018)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      if (view === 'sidebyside') {
+        container.innerHTML = `<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">${betweenHtml}${withinHtml}</div>`;
+      } else if (view === 'between') {
+        container.innerHTML = betweenHtml;
+      } else {
+        container.innerHTML = withinHtml;
+      }
+    }
+
+    function updateSubjDiffSimulator() {
+      const ssSubj = parseFloat(document.getElementById('subjDiffSlider').value) || 0;
+      const totalUnexplained = 627.75;
+      const ssErr = Math.max(1, totalUnexplained - ssSubj);
+      const msErr = ssErr / 21;
+      const msTreat = 2591.375;
+      const fRatio = msTreat / msErr;
+      const pct = ((ssSubj / totalUnexplained) * 100).toFixed(2);
+
+      document.getElementById('sliderSubjLabel').innerText = `Current SS_Participant = ${ssSubj.toFixed(3)} (${pct}% of Unexplained Pool)`;
+      document.getElementById('simSsSubj').innerText = ssSubj.toFixed(4);
+      document.getElementById('simSsSubj2').innerText = ssSubj.toFixed(3);
+      document.getElementById('simSsErr').innerText = ssErr.toFixed(4);
+      document.getElementById('simSsErr2').innerText = ssErr.toFixed(4);
+      document.getElementById('simMsErr').innerText = msErr.toFixed(4);
+      document.getElementById('simFRatio').innerText = fRatio.toFixed(4);
+    }
+
+    function resetSubjSlider() {
+      document.getElementById('subjDiffSlider').value = 354.375;
+      updateSubjDiffSimulator();
+    }
+
+    // =========================================================================
+    // 5. TAB 2: SPHERICITY TABLE 14.1 & EPSILON WORKED EXAMPLES
+    // =========================================================================
+
+    let currentSphRows = JSON.parse(JSON.stringify(table14_1_Preset));
+
+    function loadSphericityPreset(type) {
+      const bText = document.getElementById('btnSphPresetText');
+      const bEq = document.getElementById('btnSphPresetEqual');
+      if (type === 'textbook') {
+        currentSphRows = JSON.parse(JSON.stringify(table14_1_Preset));
+        bText.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#58a6ff] text-[#0d1117]";
+        bEq.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#161b22] text-[#c9d1d9] border border-[#30363d] hover:text-white";
+      } else {
+        currentSphRows = JSON.parse(JSON.stringify(equalSphericityPreset));
+        bEq.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#58a6ff] text-[#0d1117]";
+        bText.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#161b22] text-[#c9d1d9] border border-[#30363d] hover:text-white";
+      }
+      renderSphericityTable();
+    }
+
+    function updateSphCell(idx, field, val) {
+      const num = parseFloat(val);
+      if (!isNaN(num)) {
+        currentSphRows[idx][field] = num;
+        renderSphericityTable();
+      }
+    }
+
+    function calcColStats(arr) {
+      const n = arr.length;
+      const mean = arr.reduce((a, b) => a + b, 0) / n;
+      const ss = arr.reduce((acc, v) => acc + Math.pow(v - mean, 2), 0);
+      return { mean, ss, variance: ss / (n - 1) };
+    }
+
+    function renderSphericityTable() {
+      const tbody = document.getElementById('sphericityTableBody');
+      const tfoot = document.getElementById('sphericityTableFoot');
+      const deriv = document.getElementById('sphericityStepDerivation');
+
+      const colAB = [];
+      const colAC = [];
+      const colBC = [];
+      let rowsHtml = '';
+
+      currentSphRows.forEach((r, idx) => {
+        const ab = r.a - r.b;
+        const ac = r.a - r.c;
+        const bc = r.b - r.c;
+        colAB.push(ab);
+        colAC.push(ac);
+        colBC.push(bc);
+
+        const fmt = (v) => v < 0 ? `\u2212${Math.abs(v)}` : `${v}`;
+
+        rowsHtml += `
+          <tr class="hover:bg-[#1c2128]">
+            <td class="p-3 font-sans font-bold text-white">Participant ${r.id}</td>
+            <td class="p-3"><input type="number" value="${r.a}" oninput="updateSphCell(${idx}, 'a', this.value)" class="w-20 px-2 py-1 rounded bg-[#161b22] border border-[#30363d] text-white font-bold"></td>
+            <td class="p-3"><input type="number" value="${r.b}" oninput="updateSphCell(${idx}, 'b', this.value)" class="w-20 px-2 py-1 rounded bg-[#161b22] border border-[#30363d] text-white font-bold"></td>
+            <td class="p-3"><input type="number" value="${r.c}" oninput="updateSphCell(${idx}, 'c', this.value)" class="w-20 px-2 py-1 rounded bg-[#161b22] border border-[#30363d] text-white font-bold"></td>
+            <td class="p-3 text-[#bc8cff] font-bold">${r.a} &minus; ${r.b} = ${fmt(ab)}</td>
+            <td class="p-3 text-[#3fb950] font-bold">${r.a} &minus; ${r.c} = ${fmt(ac)}</td>
+            <td class="p-3 text-[#d29922] font-bold">${r.b} &minus; ${r.c} = ${fmt(bc)}</td>
+          </tr>
+        `;
+      });
+      tbody.innerHTML = rowsHtml;
+
+      const sAB = calcColStats(colAB);
+      const sAC = calcColStats(colAC);
+      const sBC = calcColStats(colBC);
+
+      tfoot.innerHTML = `
+        <tr class="text-xs text-[#8b949e]">
+          <td class="p-3 font-sans" colspan="4">Mean of Difference Column (M_diff)</td>
+          <td class="p-3 text-[#bc8cff]">${sAB.mean.toFixed(2)}</td>
+          <td class="p-3 text-[#3fb950]">${sAC.mean.toFixed(2)}</td>
+          <td class="p-3 text-[#d29922]">${sBC.mean.toFixed(2)}</td>
+        </tr>
+        <tr class="text-sm text-white bg-[#1c2128]">
+          <td class="p-3 font-sans" colspan="4">Variance of Differences: s&sup2; = &Sigma;(d &minus; M_diff)&sup2; / (n &minus; 1)</td>
+          <td class="p-3 text-[#bc8cff] font-extrabold">${sAB.variance.toFixed(1)}</td>
+          <td class="p-3 text-[#3fb950] font-extrabold">${sAC.variance.toFixed(1)}</td>
+          <td class="p-3 text-[#d29922] font-extrabold">${sBC.variance.toFixed(1)}</td>
+        </tr>
+      `;
+
+      deriv.innerHTML = `
+        <div class="font-sans font-bold text-white mb-1">Explicit Step by Step Variance of Differences Calculation:</div>
+        <div>&bull; <strong class="text-[#bc8cff]">Variance(A &minus; B):</strong> M_diff = ${sAB.mean.toFixed(2)}, &Sigma;(d &minus; M_diff)&sup2; = ${sAB.ss.toFixed(2)} &rarr; s&sup2; = ${sAB.ss.toFixed(2)} / 4 = <strong class="text-white">${sAB.variance.toFixed(1)}</strong></div>
+        <div>&bull; <strong class="text-[#3fb950]">Variance(A &minus; C):</strong> M_diff = ${sAC.mean.toFixed(2)}, &Sigma;(d &minus; M_diff)&sup2; = ${sAC.ss.toFixed(2)} &rarr; s&sup2; = ${sAC.ss.toFixed(2)} / 4 = <strong class="text-white">${sAC.variance.toFixed(1)}</strong></div>
+        <div>&bull; <strong class="text-[#d29922]">Variance(B &minus; C):</strong> M_diff = ${sBC.mean.toFixed(2)}, &Sigma;(d &minus; M_diff)&sup2; = ${sBC.ss.toFixed(2)} &rarr; s&sup2; = ${sBC.ss.toFixed(2)} / 4 = <strong class="text-white">${sBC.variance.toFixed(1)}</strong></div>
+      `;
+    }
+
+    function setEpsilonMode(mode) {
+      const btns = { modeA: 'btnEpsModeA', modeB: 'btnEpsModeB', modeLB: 'btnEpsModeLB', modeC: 'btnEpsModeC' };
+      Object.keys(btns).forEach(k => {
+        const b = document.getElementById(btns[k]);
+        if (k === mode) {
+          b.className = "px-3 py-2 rounded-xl text-xs font-bold bg-[#58a6ff] text-[#0d1117] shadow";
+        } else {
+          b.className = "px-3 py-2 rounded-xl text-xs font-bold bg-[#1c2128] text-[#c9d1d9] border border-[#30363d] hover:text-white";
+        }
+      });
+
+      const container = document.getElementById('epsilonModeContainer');
+
+      if (mode === 'modeA') {
+        container.innerHTML = `
+          <div class="obsidian-subcard rounded-2xl p-6 border-2 border-[#58a6ff]/60 space-y-5">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#30363d] pb-4">
+              <div>
+                <span class="text-xs font-bold uppercase text-[#58a6ff]">Greenhouse Geisser Worked Example (&epsilon;_GG = 0.4956)</span>
+                <h3 class="text-xl font-extrabold text-white mt-0.5">Conservative df Adjustment (&epsilon;_GG = 0.4956)</h3>
+              </div>
+              <span class="px-3 py-1 rounded-full bg-[#3fb950]/20 text-[#3fb950] border border-[#3fb950]/40 text-xs font-bold">Mandated Correction Because &epsilon;_GG &lt; 0.75</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-mono">
+              <div class="obsidian-inset p-4 rounded-xl space-y-2">
+                <div class="font-sans font-bold text-[#58a6ff] uppercase">Step 1: Adjust Degrees of Freedom</div>
+                <p class="font-sans text-[#c9d1d9]">Multiply original <span class="font-mono">df_num = 3</span> and <span class="font-mono">df_error = 21</span> by <span class="font-mono">&epsilon;_GG = 0.4956</span>:</p>
+                <div class="pt-1 text-white">df_num_adj = 3 &times; 0.4956 = <strong class="text-[#3fb950]">1.4868</strong></div>
+                <div class="text-white">df_error_adj = 21 &times; 0.4956 = <strong class="text-[#3fb950]">10.4076</strong></div>
+              </div>
+
+              <div class="obsidian-inset p-4 rounded-xl space-y-2">
+                <div class="font-sans font-bold text-[#d29922] uppercase">Step 2: Algebraic Proof That F Is Unchanged</div>
+                <p class="font-sans text-[#c9d1d9]">Using <span class="font-mono">SS_Time = 7774.125</span> and <span class="font-mono">SS_Error = 273.375</span>:</p>
+                <div class="pt-1 text-white">MS_num_adj = 7774.125 / 1.4868 = <strong>5228.7631</strong></div>
+                <div class="text-white">MS_error_adj = 273.375 / 10.4076 = <strong>26.2669</strong></div>
+                <div class="text-[#d29922] font-bold">F_adj = 5228.7631 / 26.2669 = 199.0631</div>
+              </div>
+
+              <div class="obsidian-inset p-4 rounded-xl space-y-2">
+                <div class="font-sans font-bold text-[#3fb950] uppercase">Step 3: Corrected P Value &amp; R Command</div>
+                <p class="font-sans text-[#c9d1d9]">Evaluate <span class="font-mono">F = 199.063</span> on the new distribution <span class="font-mono">F(1.4868, 10.4076)</span>:</p>
+                <div class="pt-1 text-[#8b949e]">Uncorrected p(3, 21) = 1.41e&minus;15</div>
+                <div class="text-[#3fb950] font-bold">GG Corrected p = 6.29e&minus;8</div>
+                <div class="p-2 rounded bg-[#161b22] text-[11px] text-[#58a6ff] select-all">pf(199.063, 1.4868, 10.4076, lower.tail = F)</div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (mode === 'modeB') {
+        container.innerHTML = `
+          <div class="obsidian-subcard rounded-2xl p-6 border-2 border-[#bc8cff]/60 space-y-5">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#30363d] pb-4">
+              <div>
+                <span class="text-xs font-bold uppercase text-[#bc8cff]">Huynh Feldt Worked Example (&epsilon;_HF = 0.5982211)</span>
+                <h3 class="text-xl font-extrabold text-white mt-0.5">Most Powerful df Adjustment (&epsilon;_HF = 0.5982211)</h3>
+              </div>
+              <span class="px-3 py-1 rounded-full bg-[#bc8cff]/20 text-[#bc8cff] border border-[#bc8cff]/40 text-xs font-bold">Most Powerful Univariate Adjustment</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-mono">
+              <div class="obsidian-inset p-4 rounded-xl space-y-2">
+                <div class="font-sans font-bold text-[#bc8cff] uppercase">Step 1: Adjust Degrees of Freedom</div>
+                <p class="font-sans text-[#c9d1d9]">Multiply original <span class="font-mono">df_num = 3</span> and <span class="font-mono">df_error = 21</span> by <span class="font-mono">&epsilon;_HF = 0.5982211</span>:</p>
+                <div class="pt-1 text-white">df_num_adj = 3 &times; 0.5982211 = <strong class="text-[#3fb950]">1.7947</strong></div>
+                <div class="text-white">df_error_adj = 21 &times; 0.5982211 = <strong class="text-[#3fb950]">12.5626</strong></div>
+              </div>
+
+              <div class="obsidian-inset p-4 rounded-xl space-y-2">
+                <div class="font-sans font-bold text-[#d29922] uppercase">Step 2: Algebraic Proof That F Is Unchanged</div>
+                <p class="font-sans text-[#c9d1d9]">Using <span class="font-mono">SS_Time = 7774.125</span> and <span class="font-mono">SS_Error = 273.375</span>:</p>
+                <div class="pt-1 text-white">MS_num_adj = 7774.125 / 1.7946633 = <strong>4331.8014</strong></div>
+                <div class="text-white">MS_error_adj = 273.375 / 12.5626431 = <strong>21.7609</strong></div>
+                <div class="text-[#d29922] font-bold">F_adj = 4331.8014 / 21.7609 = 199.0631</div>
+              </div>
+
+              <div class="obsidian-inset p-4 rounded-xl space-y-2">
+                <div class="font-sans font-bold text-[#3fb950] uppercase">Step 3: Corrected P Value &amp; R Command</div>
+                <p class="font-sans text-[#c9d1d9]">Evaluate <span class="font-mono">F = 199.063</span> on the new distribution <span class="font-mono">F(1.7947, 12.5626)</span>:</p>
+                <div class="pt-1 text-[#8b949e]">Uncorrected p(3, 21) = 1.41e&minus;15</div>
+                <div class="text-[#3fb950] font-bold">HF Corrected p = 7.81e&minus;9</div>
+                <div class="p-2 rounded bg-[#161b22] text-[11px] text-[#bc8cff] select-all">pf(199.063, 1.794663, 12.56264, lower.tail = F)</div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (mode === 'modeLB') {
+        container.innerHTML = `
+          <div class="obsidian-subcard rounded-2xl p-6 border-2 border-[#f85149]/60 space-y-5">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#30363d] pb-4">
+              <div>
+                <span class="text-xs font-bold uppercase text-[#f85149]">Lower Bound Worked Example (&epsilon;_LB = 1 / (a &minus; 1) = 0.3333)</span>
+                <h3 class="text-xl font-extrabold text-white mt-0.5">Most Conservative df Adjustment (&epsilon;_LB = 1 / 3)</h3>
+              </div>
+              <span class="px-3 py-1 rounded-full bg-[#f85149]/20 text-[#f85149] border border-[#f85149]/40 text-xs font-bold">Maximum Possible Sphericity Violation</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-mono">
+              <div class="obsidian-inset p-4 rounded-xl space-y-2">
+                <div class="font-sans font-bold text-[#f85149] uppercase">Step 1: Compute Lower Bound &epsilon; &amp; df</div>
+                <p class="font-sans text-[#c9d1d9]">For <span class="font-mono">a = 4</span> levels, <span class="font-mono">&epsilon;_LB = 1 / (4 &minus; 1) = 0.3333</span>:</p>
+                <div class="pt-1 text-white">df_num_adj = 3 &times; (1/3) = <strong class="text-[#3fb950]">1.0000</strong></div>
+                <div class="text-white">df_error_adj = 21 &times; (1/3) = <strong class="text-[#3fb950]">7.0000</strong></div>
+              </div>
+
+              <div class="obsidian-inset p-4 rounded-xl space-y-2">
+                <div class="font-sans font-bold text-[#d29922] uppercase">Step 2: F Ratio Remains Unchanged</div>
+                <p class="font-sans text-[#c9d1d9]">Dividing both SS values by <span class="font-mono">1</span> and <span class="font-mono">7</span> keeps F identical:</p>
+                <div class="pt-1 text-white">MS_num_adj = 7774.125 / 1 = <strong>7774.1250</strong></div>
+                <div class="text-white">MS_error_adj = 273.375 / 7 = <strong>39.0536</strong></div>
+                <div class="text-[#d29922] font-bold">F_adj = 7774.1250 / 39.0536 = 199.0631</div>
+              </div>
+
+              <div class="obsidian-inset p-4 rounded-xl space-y-2">
+                <div class="font-sans font-bold text-[#3fb950] uppercase">Step 3: Lower Bound P Value &amp; R Command</div>
+                <p class="font-sans text-[#c9d1d9]">Evaluate <span class="font-mono">F = 199.063</span> on the conservative distribution <span class="font-mono">F(1, 7)</span>:</p>
+                <div class="pt-1 text-[#8b949e]">F critical(1, 7) at &alpha; = .05 is 5.5914</div>
+                <div class="text-[#3fb950] font-bold">Lower Bound p = 2.16e&minus;6</div>
+                <div class="p-2 rounded bg-[#161b22] text-[11px] text-[#f85149] select-all">pf(199.063, 1, 7, lower.tail = F)</div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        container.innerHTML = `
+          <div class="obsidian-subcard rounded-2xl p-6 space-y-5">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#30363d] pb-3">
+              <div>
+                <span class="text-xs font-bold uppercase text-[#3fb950]">Interactive Decision Rule &amp; Continuous F Calculator</span>
+                <h3 class="text-lg font-bold text-white mt-0.5">Test Mauchly&rsquo;s p, Epsilon (&epsilon;), and Exact F Distribution Tail Probabilities</h3>
+              </div>
+              <div class="flex flex-wrap gap-1.5">
+                <button onclick="setSandboxPreset(0.021, 0.4956, 199.063)" class="px-2.5 py-1 rounded bg-[#0d1117] text-xs font-mono text-[#58a6ff] border border-[#30363d]">Lab GG (.4956)</button>
+                <button onclick="setSandboxPreset(0.032, 0.8200, 4.150)" class="px-2.5 py-1 rounded bg-[#0d1117] text-xs font-mono text-[#bc8cff] border border-[#30363d]">Mild Violation (.8200)</button>
+                <button onclick="setSandboxPreset(0.240, 0.9100, 3.450)" class="px-2.5 py-1 rounded bg-[#0d1117] text-xs font-mono text-[#3fb950] border border-[#30363d]">Sphericity Met (p=.24)</button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+              <div class="obsidian-inset p-3.5 rounded-xl">
+                <label class="block text-[#8b949e] mb-1">Mauchly&rsquo;s Test p value</label>
+                <input type="number" id="sbMauchlyP" value="0.021" min="0.001" max="0.99" step="0.01" oninput="updateSandboxEngine()" class="w-full bg-[#161b22] text-white font-mono font-bold px-3 py-1.5 rounded border border-[#30363d]">
+              </div>
+              <div class="obsidian-inset p-3.5 rounded-xl">
+                <label class="block text-[#8b949e] mb-1">Greenhouse Geisser Epsilon (&epsilon;)</label>
+                <input type="number" id="sbEps" value="0.4956" min="0.3333" max="1.0" step="0.01" oninput="updateSandboxEngine()" class="w-full bg-[#161b22] text-[#58a6ff] font-mono font-bold px-3 py-1.5 rounded border border-[#30363d]">
+              </div>
+              <div class="obsidian-inset p-3.5 rounded-xl">
+                <label class="block text-[#8b949e] mb-1">Observed F Ratio (df = 3, 21)</label>
+                <input type="number" id="sbFVal" value="199.063" min="0.5" max="500" step="0.1" oninput="updateSandboxEngine()" class="w-full bg-[#161b22] text-[#3fb950] font-mono font-bold px-3 py-1.5 rounded border border-[#30363d]">
+              </div>
+            </div>
+
+            <div id="sbDecisionBanner" class="p-4 rounded-xl border text-xs sm:text-sm font-semibold"></div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
+              <div class="obsidian-inset p-4 rounded-xl space-y-1.5">
+                <div class="font-sans font-bold text-[#8b949e] uppercase">Unadjusted F Test (df = 3, 21)</div>
+                <div>F critical (&alpha; = .05): <strong id="sbUnadjFcrit" class="text-white">3.0725</strong></div>
+                <div>Exact p value: <strong id="sbUnadjP" class="text-[#3fb950]">1.405e&minus;15</strong></div>
+              </div>
+              <div class="obsidian-inset p-4 rounded-xl border border-[#58a6ff]/40 space-y-1.5">
+                <div class="font-sans font-bold text-[#58a6ff] uppercase">Epsilon Adjusted F Test (<span id="sbAdjDfLabel">df = 1.4868, 10.4076</span>)</div>
+                <div>Adjusted F critical (&alpha; = .05): <strong id="sbAdjFcrit" class="text-[#d29922]">4.4699</strong></div>
+                <div>Adjusted Exact p value: <strong id="sbAdjP" class="text-[#3fb950]">6.289e&minus;8</strong></div>
+              </div>
+            </div>
+          </div>
+        `;
+        updateSandboxEngine();
+      }
+    }
+
+    function setSandboxPreset(mp, eps, fval) {
+      document.getElementById('sbMauchlyP').value = mp;
+      document.getElementById('sbEps').value = eps;
+      document.getElementById('sbFVal').value = fval;
+      updateSandboxEngine();
+    }
+
+    function updateSandboxEngine() {
+      const mpEl = document.getElementById('sbMauchlyP');
+      if (!mpEl) return;
+      const mp = parseFloat(mpEl.value) || 0.021;
+      const eps = Math.min(1, Math.max(0.3333, parseFloat(document.getElementById('sbEps').value) || 0.4956));
+      const fVal = parseFloat(document.getElementById('sbFVal').value) || 199.063;
+
+      const adjDf1 = 3 * eps;
+      const adjDf2 = 21 * eps;
+
+      const fCritUnadj = fCriticalValue(0.05, 3, 21);
+      const fCritAdj = fCriticalValue(0.05, adjDf1, adjDf2);
+      const pUnadj = fDistRightTail(fVal, 3, 21);
+      const pAdj = fDistRightTail(fVal, adjDf1, adjDf2);
+
+      document.getElementById('sbUnadjFcrit').innerText = fCritUnadj.toFixed(4);
+      document.getElementById('sbUnadjP').innerText = formatPVal(pUnadj);
+      document.getElementById('sbAdjDfLabel').innerText = `df = ${adjDf1.toFixed(4)}, ${adjDf2.toFixed(4)}`;
+      document.getElementById('sbAdjFcrit').innerText = fCritAdj.toFixed(4);
+      document.getElementById('sbAdjP').innerText = formatPVal(pAdj);
+
+      const banner = document.getElementById('sbDecisionBanner');
+      if (mp >= 0.05) {
+        banner.className = "p-4 rounded-xl bg-[#3fb950]/15 border border-[#3fb950]/50 text-[#e6edf3] text-xs sm:text-sm";
+        banner.innerHTML = `<strong class="text-[#3fb950]">Decision: Sphericity Is Met (Mauchly&rsquo;s p = ${mp.toFixed(3)} &ge; .05).</strong> No degrees of freedom adjustment is needed; report the standard F(3, 21) test.`;
+      } else if (eps < 0.75) {
+        banner.className = "p-4 rounded-xl bg-[#58a6ff]/15 border border-[#58a6ff]/50 text-[#e6edf3] text-xs sm:text-sm";
+        banner.innerHTML = `<strong class="text-[#58a6ff]">Decision: Sphericity Is Violated (Mauchly&rsquo;s p = ${mp.toFixed(3)} &lt; .05) and &epsilon;_GG = ${eps.toFixed(4)} &lt; 0.75.</strong> Use the conservative <strong>Greenhouse Geisser correction</strong> with adjusted degrees of freedom (${adjDf1.toFixed(4)}, ${adjDf2.toFixed(4)}).`;
+      } else {
+        banner.className = "p-4 rounded-xl bg-[#bc8cff]/15 border border-[#bc8cff]/50 text-[#e6edf3] text-xs sm:text-sm";
+        banner.innerHTML = `<strong class="text-[#bc8cff]">Decision: Sphericity Is Violated (Mauchly&rsquo;s p = ${mp.toFixed(3)} &lt; .05) and &epsilon;_GG = ${eps.toFixed(4)} &gt; 0.75.</strong> Because the violation is mild (&epsilon; &gt; .75), Greenhouse Geisser is too conservative; use the more powerful <strong>Huynh Feldt correction</strong>.`;
+      }
+    }
+
+    // =========================================================================
+    // 6. TAB 4 (FORMER TAB 3): ONE-WAY RM ANOVA MATRICES & CELL INSPECTOR
+    // =========================================================================
+
+    function setOneWayMatrix(mode) {
+      const btns = { raw: 'btnOwMatRaw', totaldev: 'btnOwMatTotal', timesubjdev: 'btnOwMatTimeSubj' };
+      Object.keys(btns).forEach(k => {
+        const b = document.getElementById(btns[k]);
+        if (k === mode) {
+          b.className = "px-4 py-2 rounded-xl text-xs font-bold bg-[#58a6ff] text-[#0d1117] shadow";
+        } else {
+          b.className = "px-4 py-2 rounded-xl text-xs font-bold bg-[#1c2128] text-[#c9d1d9] border border-[#30363d] hover:text-white";
+        }
+      });
+
+      const box = document.getElementById('oneWayMatrixBox');
+      const gm = 89.0625;
+
+      if (mode === 'raw') {
+        let rows = '';
+        leftHemiData.forEach(r => {
+          const mi = (r.m10 + r.m20 + r.m30 + r.m40) / 4;
+          rows += `
+            <tr class="hover:bg-[#161b22]">
+              <td class="p-2.5 font-sans font-bold text-white border border-[#30363d]">Participant ${r.subj}</td>
+              <td class="p-2.5 border border-[#30363d]">${r.m10}</td>
+              <td class="p-2.5 border border-[#30363d]">${r.m20}</td>
+              <td class="p-2.5 border border-[#30363d]">${r.m30}</td>
+              <td class="p-2.5 border border-[#30363d]">${r.m40}</td>
+              <td class="p-2.5 border border-[#30363d] bg-[#bc8cff]/10 font-bold text-[#bc8cff]">${mi.toFixed(2)}</td>
+            </tr>
+          `;
+        });
+        box.innerHTML = `
+          <div class="mb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <h4 class="text-sm font-bold text-white">Matrix 1: Raw Cerebral Blood Flow Velocity Scores (cm/s) &amp; Marginal Means</h4>
+            <span class="text-xs font-mono text-[#58a6ff]">Grand Mean GM = 89.0625 cm/s</span>
+          </div>
+          <table class="w-full text-xs font-mono border-collapse obsidian-inset">
+            <thead class="bg-[#161b22] text-[#8b949e]">
+              <tr>
+                <th class="p-2.5 border border-[#30363d]">Participant</th>
+                <th class="p-2.5 border border-[#30363d]">10 mins</th>
+                <th class="p-2.5 border border-[#30363d]">20 mins</th>
+                <th class="p-2.5 border border-[#30363d]">30 mins</th>
+                <th class="p-2.5 border border-[#30363d]">40 mins</th>
+                <th class="p-2.5 border border-[#30363d] text-[#bc8cff]">Participant Mean (M_Participant)</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+            <tfoot class="bg-[#161b22] font-bold text-[#3fb950]">
+              <tr>
+                <td class="p-2.5 font-sans border border-[#30363d]">Time Mean (M_Time)</td>
+                <td class="p-2.5 border border-[#30363d]">113.375</td>
+                <td class="p-2.5 border border-[#30363d]">90.875</td>
+                <td class="p-2.5 border border-[#30363d]">80.250</td>
+                <td class="p-2.5 border border-[#30363d]">71.750</td>
+                <td class="p-2.5 border border-[#30363d] text-[#58a6ff]">GM = 89.0625</td>
+              </tr>
+            </tfoot>
+          </table>
+        `;
+      } else if (mode === 'totaldev') {
+        let rows = '';
+        leftHemiData.forEach(r => {
+          const d10 = Math.pow(r.m10 - gm, 2);
+          const d20 = Math.pow(r.m20 - gm, 2);
+          const d30 = Math.pow(r.m30 - gm, 2);
+          const d40 = Math.pow(r.m40 - gm, 2);
+          const rSum = d10 + d20 + d30 + d40;
+          rows += `
+            <tr class="hover:bg-[#161b22]">
+              <td class="p-2 font-sans font-bold text-white border border-[#30363d]">Participant ${r.subj}</td>
+              <td class="p-2 border border-[#30363d]">${d10.toFixed(4)}</td>
+              <td class="p-2 border border-[#30363d]">${d20.toFixed(4)}</td>
+              <td class="p-2 border border-[#30363d]">${d30.toFixed(4)}</td>
+              <td class="p-2 border border-[#30363d]">${d40.toFixed(4)}</td>
+              <td class="p-2 border border-[#30363d] bg-[#58a6ff]/10 font-bold text-[#58a6ff]">${rSum.toFixed(4)}</td>
+            </tr>
+          `;
+        });
+        box.innerHTML = `
+          <div class="mb-3">
+            <h4 class="text-sm font-bold text-white">Matrix 2: Total Squared Deviations (X &minus; 89.0625)&sup2; for All 32 Observations</h4>
+            <p class="text-xs text-[#8b949e] mt-0.5">Summing all 32 squared deviations around GM = 89.0625 yields <strong>SS_Total = 8401.875</strong>.</p>
+          </div>
+          <table class="w-full text-xs font-mono border-collapse obsidian-inset">
+            <thead class="bg-[#161b22] text-[#8b949e]">
+              <tr>
+                <th class="p-2 border border-[#30363d]">Participant</th>
+                <th class="p-2 border border-[#30363d]">10m (X &minus; GM)&sup2;</th>
+                <th class="p-2 border border-[#30363d]">20m (X &minus; GM)&sup2;</th>
+                <th class="p-2 border border-[#30363d]">30m (X &minus; GM)&sup2;</th>
+                <th class="p-2 border border-[#30363d]">40m (X &minus; GM)&sup2;</th>
+                <th class="p-2 border border-[#30363d] text-[#58a6ff]">Row Sum</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+            <tfoot class="bg-[#161b22] font-bold text-[#58a6ff]">
+              <tr>
+                <td class="p-2.5 font-sans" colspan="5">SS_Total = &Sigma;(X &minus; GM)&sup2; across all 32 observations</td>
+                <td class="p-2.5 text-sm">8401.8750</td>
+              </tr>
+            </tfoot>
+          </table>
+        `;
+      } else {
+        let rows = '';
+        leftHemiData.forEach(r => {
+          const mi = (r.m10 + r.m20 + r.m30 + r.m40) / 4;
+          const sq = Math.pow(mi - gm, 2);
+          rows += `
+            <tr>
+              <td class="p-2 font-sans font-bold text-white border border-[#30363d]">Participant ${r.subj}</td>
+              <td class="p-2 border border-[#30363d]">${mi.toFixed(2)}</td>
+              <td class="p-2 border border-[#30363d]">${(mi - gm >= 0 ? '+' : '\u2212') + Math.abs(mi - gm).toFixed(4)}</td>
+              <td class="p-2 border border-[#30363d] text-[#bc8cff] font-bold">${sq.toFixed(6)}</td>
+              <td class="p-2 border border-[#30363d] text-white font-bold">${(4 * sq).toFixed(4)}</td>
+            </tr>
+          `;
+        });
+        box.innerHTML = `
+          <div class="space-y-4">
+            <h4 class="text-sm font-bold text-white">Matrix 3: Participant Squared Deviations (SS_Participant = 354.375) &amp; Treatment Squared Deviations (SS_Time = 7774.125)</h4>
+            <table class="w-full text-xs font-mono border-collapse obsidian-inset">
+              <thead class="bg-[#161b22] text-[#8b949e]">
+                <tr>
+                  <th class="p-2 border border-[#30363d]">Participant</th>
+                  <th class="p-2 border border-[#30363d]">M_Participant</th>
+                  <th class="p-2 border border-[#30363d]">M_Participant &minus; 89.0625</th>
+                  <th class="p-2 border border-[#30363d] text-[#bc8cff]">(M_Participant &minus; 89.0625)&sup2;</th>
+                  <th class="p-2 border border-[#30363d]">a_i &times; (M_Participant &minus; 89.0625)&sup2;</th>
+                </tr>
+              </thead>
+              <tbody>${rows}</tbody>
+              <tfoot class="bg-[#161b22] font-bold text-[#bc8cff]">
+                <tr>
+                  <td class="p-2.5 font-sans" colspan="3">Sum of Squared Participant Deviations = 88.59375 &rarr; Multiply by a = 4 treatments:</td>
+                  <td class="p-2.5">88.59375</td>
+                  <td class="p-2.5 text-sm">SS_Participant = 354.375</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        `;
+      }
+    }
+
+    function inspectOneWayCell(key) {
+      const box = document.getElementById('oneWayInspectorBox');
+      const map = {
+        ss_time: `<strong class="text-[#58a6ff]">SS_Time = 7774.125:</strong> <code>8 &times; [ (113.375 &minus; 89.0625)&sup2; + (90.875 &minus; 89.0625)&sup2; + (80.25 &minus; 89.0625)&sup2; + (71.75 &minus; 89.0625)&sup2; ] = 8 &times; 971.765625 = 7774.125</code>.`,
+        df_time: `<strong class="text-[#58a6ff]">df_Time = 3:</strong> <code>a &minus; 1 = 4 &minus; 1 = 3</code>.`,
+        ms_time: `<strong class="text-[#58a6ff]">MS_Time = 2591.375:</strong> <code>SS_Time / df_Time = 7774.125 / 3 = 2591.375</code>.`,
+        f_time: `<strong class="text-[#3fb950]">F = 199.0631:</strong> <code>MS_Time / MS_Error = 2591.375 / 13.017857 = 199.0631</code>.`,
+        fcrit_time: `<strong class="text-white">F_critical = 3.0725:</strong> Critical cutoff for F(3, 21) at &alpha; = .05.`,
+        p_time: `<strong class="text-[#3fb950]">p value = 1.41e&minus;15 (Uncorrected):</strong> After Greenhouse Geisser adjustment (&epsilon; = 0.4956, df = 1.4868, 10.4076), p = 6.29e&minus;8.`,
+        eta_time: `<strong class="text-[#d29922]">&eta;_p&sup2; = 0.9660:</strong> <code>SS_Time / (SS_Time + SS_Error) = 7774.125 / (7774.125 + 273.375) = 0.9660</code>.`,
+        ss_subj: `<strong class="text-[#bc8cff]">SS_Participant = 354.375:</strong> <code>4 &times; 88.59375 = 354.375</code> (participant differences removed from error).`,
+        df_subj: `<strong class="text-[#bc8cff]">df_Participant = 7:</strong> <code>n &minus; 1 = 8 &minus; 1 = 7</code>.`,
+        ms_subj: `<strong class="text-[#bc8cff]">MS_Participant = 50.625:</strong> <code>354.375 / 7 = 50.625</code>.`,
+        f_subj: `<strong class="text-[#8b949e]">F_Participant = 3.8889:</strong> <code>50.625 / 13.017857 = 3.8889</code>.`,
+        ss_err: `<strong class="text-[#f85149]">SS_Error = 273.375:</strong> <code>SS_Total &minus; (SS_Time + SS_Participant) = 8401.875 &minus; (7774.125 + 354.375) = 273.375</code>.`,
+        df_err: `<strong class="text-[#f85149]">df_Error = 21:</strong> <code>(a &minus; 1) &times; (n &minus; 1) = 3 &times; 7 = 21</code>.`,
+        ms_err: `<strong class="text-[#f85149]">MS_Error = 13.0179:</strong> <code>273.375 / 21 = 13.017857</code>.`,
+        ss_tot: `<strong class="text-white">SS_Total = 8401.875:</strong> Sum of all 32 squared deviations around GM = 89.0625.`,
+        df_tot: `<strong class="text-white">df_Total = 31:</strong> <code>(n &times; a) &minus; 1 = 32 &minus; 1 = 31</code>.`
+      };
+      box.innerHTML = map[key] || '';
+    }
+
+    // =========================================================================
+    // 7. TAB 5 (FORMER TAB 4): TWO-WAY RM ANOVA INTERMEDIATE TABLES, PLOT & FOLLOW-UPS
+    // =========================================================================
+
+    function setTwoWaySubTable(tab) {
+      const btns = { main: 'btnTwSub_main', timesubj: 'btnTwSub_timesubj', hemisubj: 'btnTwSub_hemisubj', timehemi: 'btnTwSub_timehemi' };
+      Object.keys(btns).forEach(k => {
+        const b = document.getElementById(btns[k]);
+        if (k === tab) {
+          b.className = "p-3 rounded-xl text-xs font-bold text-left bg-[#58a6ff] text-[#0d1117] shadow";
+        } else {
+          b.className = "p-3 rounded-xl text-xs font-bold text-left bg-[#1c2128] text-[#c9d1d9] border border-[#30363d] hover:text-white";
+        }
+      });
+
+      const container = document.getElementById('twoWaySubTableContainer');
+      const gm = 84.5;
+
+      if (tab === 'main') {
+        let rows = '';
+        for (let i = 0; i < 8; i++) {
+          const L = leftHemiData[i];
+          const R = rightHemiData[i];
+          const sMean = (L.m10 + L.m20 + L.m30 + L.m40 + R.m10 + R.m20 + R.m30 + R.m40) / 8;
+          rows += `
+            <tr class="hover:bg-[#161b22]">
+              <td class="p-2 font-sans font-bold text-white border border-[#30363d]">Part ${i + 1}</td>
+              <td class="p-2 border border-[#30363d] text-[#58a6ff]">${L.m10}</td>
+              <td class="p-2 border border-[#30363d] text-[#58a6ff]">${L.m20}</td>
+              <td class="p-2 border border-[#30363d] text-[#58a6ff]">${L.m30}</td>
+              <td class="p-2 border border-[#30363d] text-[#58a6ff]">${L.m40}</td>
+              <td class="p-2 border border-[#30363d] text-[#f85149]">${R.m10}</td>
+              <td class="p-2 border border-[#30363d] text-[#f85149]">${R.m20}</td>
+              <td class="p-2 border border-[#30363d] text-[#f85149]">${R.m30}</td>
+              <td class="p-2 border border-[#30363d] text-[#f85149]">${R.m40}</td>
+              <td class="p-2 border border-[#30363d] bg-[#3fb950]/10 font-bold text-[#3fb950]">${sMean.toFixed(3)}</td>
+            </tr>
+          `;
+        }
+        container.innerHTML = `
+          <div class="space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <h4 class="text-sm font-bold text-white">1. Complete 8 &times; 8 Factorial Dataset &amp; Main Sums of Squares</h4>
+              <span class="text-xs font-mono text-[#58a6ff]">GM = 84.5000 cm/s | SS_Total = 25386.000 (df = 63)</span>
+            </div>
+            <table class="w-full text-xs font-mono border-collapse obsidian-inset">
+              <thead class="bg-[#161b22] text-[#8b949e]">
+                <tr>
+                  <th class="p-2 border border-[#30363d]">Participant</th>
+                  <th class="p-2 border border-[#30363d] text-[#58a6ff]">Left 10m</th>
+                  <th class="p-2 border border-[#30363d] text-[#58a6ff]">Left 20m</th>
+                  <th class="p-2 border border-[#30363d] text-[#58a6ff]">Left 30m</th>
+                  <th class="p-2 border border-[#30363d] text-[#58a6ff]">Left 40m</th>
+                  <th class="p-2 border border-[#30363d] text-[#f85149]">Right 10m</th>
+                  <th class="p-2 border border-[#30363d] text-[#f85149]">Right 20m</th>
+                  <th class="p-2 border border-[#30363d] text-[#f85149]">Right 30m</th>
+                  <th class="p-2 border border-[#30363d] text-[#f85149]">Right 40m</th>
+                  <th class="p-2 border border-[#30363d] text-[#3fb950]">M_Participant</th>
+                </tr>
+              </thead>
+              <tbody>${rows}</tbody>
+              <tfoot class="bg-[#161b22] font-bold text-white">
+                <tr>
+                  <td class="p-2 font-sans border border-[#30363d]">Cell Mean</td>
+                  <td class="p-2 border border-[#30363d] text-[#58a6ff]">113.375</td>
+                  <td class="p-2 border border-[#30363d] text-[#58a6ff]">90.875</td>
+                  <td class="p-2 border border-[#30363d] text-[#58a6ff]">80.250</td>
+                  <td class="p-2 border border-[#30363d] text-[#58a6ff]">71.750</td>
+                  <td class="p-2 border border-[#30363d] text-[#f85149]">113.625</td>
+                  <td class="p-2 border border-[#30363d] text-[#f85149]">83.500</td>
+                  <td class="p-2 border border-[#30363d] text-[#f85149]">65.125</td>
+                  <td class="p-2 border border-[#30363d] text-[#f85149]">57.500</td>
+                  <td class="p-2 border border-[#30363d] text-[#3fb950]">GM = 84.50</td>
+                </tr>
+              </tfoot>
+            </table>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs font-mono">
+              <div class="obsidian-inset p-3.5 rounded-xl">
+                <div class="text-[#3fb950] font-sans font-bold">SS_Participant = 569.250 (df = 7)</div>
+                <div class="text-[#c9d1d9] mt-1">&Sigma; a &times; b (M_Participant &minus; GM)&sup2; = 4 &times; 2 &times; 71.15625 = 569.250</div>
+              </div>
+              <div class="obsidian-inset p-3.5 rounded-xl">
+                <div class="text-[#58a6ff] font-sans font-bold">SS_Time = 22124.375 (df = 3)</div>
+                <div class="text-[#c9d1d9] mt-1">&Sigma; n &times; b (M_Time &minus; GM)&sup2; = 8 &times; 2 &times; 1382.7734 = 22124.375</div>
+              </div>
+              <div class="obsidian-inset p-3.5 rounded-xl">
+                <div class="text-[#bc8cff] font-sans font-bold">SS_Hemisphere = 1332.250 (df = 1)</div>
+                <div class="text-[#c9d1d9] mt-1">&Sigma; n &times; a (M_Hemi &minus; GM)&sup2; = 8 &times; 4 &times; 41.6328 = 1332.250</div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (tab === 'timesubj') {
+        let rows = '';
+        for (let i = 0; i < 8; i++) {
+          const L = leftHemiData[i];
+          const R = rightHemiData[i];
+          const t10 = 0.5 * (L.m10 + R.m10);
+          const t20 = 0.5 * (L.m20 + R.m20);
+          const t30 = 0.5 * (L.m30 + R.m30);
+          const t40 = 0.5 * (L.m40 + R.m40);
+          rows += `
+            <tr>
+              <td class="p-2 font-sans font-bold text-white border border-[#30363d]">Participant ${i + 1}</td>
+              <td class="p-2 border border-[#30363d]">${t10.toFixed(1)} <span class="text-[#8b949e]">(${Math.pow(t10 - gm, 2).toFixed(2)})</span></td>
+              <td class="p-2 border border-[#30363d]">${t20.toFixed(1)} <span class="text-[#8b949e]">(${Math.pow(t20 - gm, 2).toFixed(2)})</span></td>
+              <td class="p-2 border border-[#30363d]">${t30.toFixed(1)} <span class="text-[#8b949e]">(${Math.pow(t30 - gm, 2).toFixed(2)})</span></td>
+              <td class="p-2 border border-[#30363d]">${t40.toFixed(1)} <span class="text-[#8b949e]">(${Math.pow(t40 - gm, 2).toFixed(2)})</span></td>
+            </tr>
+          `;
+        }
+        container.innerHTML = `
+          <div class="space-y-3">
+            <h4 class="text-sm font-bold text-white">2. Intermediate Cell Table 1: Time by Participant (Deriving Error 1: SS_Time &times; Participant = 298.375)</h4>
+            <p class="text-xs text-[#c9d1d9] leading-relaxed">
+              For each participant at each time point, average across the b = 2 hemispheres (e.g., Participant 1 at 10m = <span class="font-mono">(110 + 114)/2 = 112.0</span>). Each cell shows <span class="font-mono">M_Cell</span> followed by <span class="font-mono">(M_Cell &minus; GM)&sup2;</span>:
+            </p>
+            <table class="w-full text-xs font-mono border-collapse obsidian-inset">
+              <thead class="bg-[#161b22] text-[#8b949e]">
+                <tr><th class="p-2 border border-[#30363d]">Participant</th><th class="p-2 border border-[#30363d]">10m Mean (Sq Dev)</th><th class="p-2 border border-[#30363d]">20m Mean (Sq Dev)</th><th class="p-2 border border-[#30363d]">30m Mean (Sq Dev)</th><th class="p-2 border border-[#30363d]">40m Mean (Sq Dev)</th></tr>
+              </thead>
+              <tbody>${rows}</tbody>
+            </table>
+            <div class="obsidian-inset p-4 rounded-xl font-mono text-xs text-[#e6edf3] space-y-1">
+              <div>1. SS_cells(Time &times; Participant) = b &times; &Sigma;(M_Cell &minus; GM)&sup2; = 2 &times; 11496.000 = <strong>22992.000</strong></div>
+              <div>2. SS_Time&times;Participant (Error 1) = 22992.000 &minus; 22124.375 (SS_Time) &minus; 569.250 (SS_Participant) = <strong class="text-[#58a6ff] text-sm">298.375</strong></div>
+              <div>3. df = (4 &minus; 1) &times; (8 &minus; 1) = 21 &rarr; MS_Time&times;Participant = 298.375 / 21 = <strong class="text-[#58a6ff]">14.2083</strong></div>
+            </div>
+          </div>
+        `;
+      } else if (tab === 'hemisubj') {
+        let rows = '';
+        for (let i = 0; i < 8; i++) {
+          const L = leftHemiData[i];
+          const R = rightHemiData[i];
+          const mL = (L.m10 + L.m20 + L.m30 + L.m40) / 4;
+          const mR = (R.m10 + R.m20 + R.m30 + R.m40) / 4;
+          rows += `
+            <tr>
+              <td class="p-2 font-sans font-bold text-white border border-[#30363d]">Participant ${i + 1}</td>
+              <td class="p-2 border border-[#30363d] text-[#58a6ff]">${mL.toFixed(2)}</td>
+              <td class="p-2 border border-[#30363d] text-[#f85149]">${mR.toFixed(2)}</td>
+              <td class="p-2 border border-[#30363d]">${Math.pow(mL - gm, 2).toFixed(4)}</td>
+              <td class="p-2 border border-[#30363d]">${Math.pow(mR - gm, 2).toFixed(4)}</td>
+            </tr>
+          `;
+        }
+        container.innerHTML = `
+          <div class="space-y-3">
+            <h4 class="text-sm font-bold text-white">3. Intermediate Cell Table 2: Hemisphere by Participant (Deriving Error 2: SS_Hemisphere &times; Participant = 67.500)</h4>
+            <p class="text-xs text-[#c9d1d9] leading-relaxed">
+              For each participant in each hemisphere, average across the a = 4 time points (e.g., Participant 1 Left = <span class="font-mono">91.25</span>, Right = <span class="font-mono">83.00</span>):
+            </p>
+            <table class="w-full text-xs font-mono border-collapse obsidian-inset">
+              <thead class="bg-[#161b22] text-[#8b949e]">
+                <tr><th class="p-2 border border-[#30363d]">Participant</th><th class="p-2 border border-[#30363d]">Left Mean</th><th class="p-2 border border-[#30363d]">Right Mean</th><th class="p-2 border border-[#30363d]">(Left &minus; GM)&sup2;</th><th class="p-2 border border-[#30363d]">(Right &minus; GM)&sup2;</th></tr>
+              </thead>
+              <tbody>${rows}</tbody>
+            </table>
+            <div class="obsidian-inset p-4 rounded-xl font-mono text-xs text-[#e6edf3] space-y-1">
+              <div>1. SS_cells(Hemi &times; Participant) = a &times; &Sigma;(M_Cell &minus; GM)&sup2; = 4 &times; 492.250 = <strong>1969.000</strong></div>
+              <div>2. SS_Hemi&times;Participant (Error 2) = 1969.000 &minus; 1332.250 (SS_Hemi) &minus; 569.250 (SS_Participant) = <strong class="text-[#bc8cff] text-sm">67.500</strong></div>
+              <div>3. df = (2 &minus; 1) &times; (8 &minus; 1) = 7 &rarr; MS_Hemi&times;Participant = 67.500 / 7 = <strong class="text-[#bc8cff]">9.6429</strong></div>
+            </div>
+          </div>
+        `;
+      } else {
+        container.innerHTML = `
+          <div class="space-y-3">
+            <h4 class="text-sm font-bold text-white">4. Intermediate Cell Table 3: Time by Hemisphere (Deriving SS_Time &times; Hemi = 612.875 &amp; Error 3 = 381.375)</h4>
+            <p class="text-xs text-[#c9d1d9] leading-relaxed">
+              Take the 8 experimental cell means across the <span class="font-mono">n = 8</span> participants, compute <span class="font-mono">(M_Cell &minus; GM)&sup2;</span>, and multiply their sum by n = 8:
+            </p>
+            <table class="w-full text-xs font-mono border-collapse obsidian-inset">
+              <thead class="bg-[#161b22] text-[#8b949e]">
+                <tr><th class="p-2.5 border border-[#30363d]">Hemisphere</th><th class="p-2.5 border border-[#30363d]">10 mins</th><th class="p-2.5 border border-[#30363d]">20 mins</th><th class="p-2.5 border border-[#30363d]">30 mins</th><th class="p-2.5 border border-[#30363d]">40 mins</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="p-2.5 font-sans font-bold text-[#58a6ff] border border-[#30363d]">Left Mean (Sq Dev)</td>
+                  <td class="p-2.5 border border-[#30363d]">113.375 (833.7656)</td>
+                  <td class="p-2.5 border border-[#30363d]">90.875 (40.6406)</td>
+                  <td class="p-2.5 border border-[#30363d]">80.250 (18.0625)</td>
+                  <td class="p-2.5 border border-[#30363d]">71.750 (162.5625)</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 font-sans font-bold text-[#f85149] border border-[#30363d]">Right Mean (Sq Dev)</td>
+                  <td class="p-2.5 border border-[#30363d]">113.625 (848.2656)</td>
+                  <td class="p-2.5 border border-[#30363d]">83.500 (1.0000)</td>
+                  <td class="p-2.5 border border-[#30363d]">65.125 (375.3906)</td>
+                  <td class="p-2.5 border border-[#30363d]">57.500 (729.0000)</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="obsidian-inset p-4 rounded-xl font-mono text-xs text-[#e6edf3] space-y-1.5">
+              <div>1. SS_cells(Time &times; Hemi) = n &times; &Sigma;(M_Cell &minus; GM)&sup2; = 8 &times; 3008.6875 = <strong>24069.500</strong></div>
+              <div>2. SS_Time&times;Hemi = 24069.500 &minus; 22124.375 &minus; 1332.250 = <strong class="text-[#d29922] text-sm">612.875</strong> (df = 3, MS = 204.2917)</div>
+              <div>3. Three Way Residual Error (Error 3): SS_Time&times;Hemi&times;Participant = 25386.000 &minus; (569.250 + 22124.375 + 1332.250 + 298.375 + 67.500 + 612.875) = <strong class="text-[#f85149] text-sm">381.375</strong> (df = 21, MS = 18.1607)</div>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function inspectTwoWayRow(key) {
+      const box = document.getElementById('twoWayInspectorBox');
+      const map = {
+        time: `<strong class="text-[#58a6ff]">Main Effect of Time:</strong> <code>F(3, 21) = MS_Time / MS_Time&times;Participant = 7374.7917 / 14.2083 = 519.0469, p = 8.26e&minus;20</code>.`,
+        timesubj: `<strong class="text-[#58a6ff]">Error 1 (Time &times; Participant):</strong> <code>SS = 298.375, df = 21, MS = 14.2083</code>. Serves exclusively as the error denominator for the Main Effect of Time.`,
+        hemi: `<strong class="text-[#bc8cff]">Main Effect of Hemisphere:</strong> <code>F(1, 7) = MS_Hemi / MS_Hemi&times;Participant = 1332.250 / 9.6429 = 138.1593, p = 7.40e&minus;6</code>. Because Hemisphere has only 2 levels, sphericity is no longer a concern.`,
+        hemisubj: `<strong class="text-[#bc8cff]">Error 2 (Hemisphere &times; Participant):</strong> <code>SS = 67.500, df = 7, MS = 9.6429</code>. Serves exclusively as the error denominator for the Main Effect of Hemisphere.`,
+        timehemi: `<strong class="text-[#d29922]">Time &times; Hemisphere Interaction:</strong> <code>F(3, 21) = MS_Time&times;Hemi / MS_Time&times;Hemi&times;Participant = 204.2917 / 18.1607 = 11.2491, p = .000131</code>.`,
+        err3way: `<strong class="text-[#d29922]">Error 3 (Time &times; Hemisphere &times; Participant):</strong> <code>SS = 381.375, df = 21, MS = 18.1607</code>. Serves exclusively as the error denominator for the Time &times; Hemisphere interaction.`,
+        subj: `<strong class="text-[#3fb950]">Participant:</strong> <code>SS = 569.250, df = 7, MS = 81.3214</code>. Partitioned out of all within subject error terms.`
+      };
+      box.innerHTML = map[key] || '';
+    }
+
+    function renderTab4InteractionPlot() {
+      const svg = document.getElementById('tab4InteractionSvg');
+      if (!svg) return;
+
+      const times = ["10 mins", "20 mins", "30 mins", "40 mins"];
+      const leftM = [113.375, 90.875, 80.250, 71.750];
+      const rightM = [113.625, 83.500, 65.125, 57.500];
+      const sigFlags = [false, true, true, true];
+
+      const minY = 50;
+      const maxY = 122;
+      const w = 560;
+      const h = 270;
+      const padL = 55;
+      const padR = 35;
+      const padT = 25;
+      const padB = 40;
+
+      const getX = (i) => padL + i * ((w - padL - padR) / 3);
+      const getY = (val) => h - padB - ((val - minY) / (maxY - minY)) * (h - padT - padB);
+
+      let grid = '';
+      for (let v = 55; v <= 120; v += 10) {
+        const y = getY(v);
+        grid += `
+          <line x1="${padL}" y1="${y}" x2="${w - padR}" y2="${y}" stroke="#30363d" stroke-width="1" />
+          <text x="${padL - 8}" y="${y + 4}" fill="#8b949e" font-size="10" font-family="monospace" text-anchor="end">${v}</text>
+        `;
+      }
+
+      let xLabels = '';
+      times.forEach((t, i) => {
+        const x = getX(i);
+        xLabels += `
+          <line x1="${x}" y1="${h - padB}" x2="${x}" y2="${h - padB + 5}" stroke="#8b949e" />
+          <text x="${x}" y="${h - padB + 20}" fill="#e6edf3" font-size="11" font-weight="bold" text-anchor="middle">${t}</text>
+        `;
+      });
+
+      const lPts = leftM.map((m, i) => `${getX(i)},${getY(m)}`).join(' ');
+      const rPts = rightM.map((m, i) => `${getX(i)},${getY(m)}`).join(' ');
+
+      let nodes = '';
+      for (let i = 0; i < 4; i++) {
+        const x = getX(i);
+        const yL = getY(leftM[i]);
+        const yR = getY(rightM[i]);
+
+        if (sigFlags[i]) {
+          nodes += `
+            <line x1="${x}" y1="${yL + 6}" x2="${x}" y2="${yR - 6}" stroke="#3fb950" stroke-width="1.5" stroke-dasharray="3,3" />
+            <text x="${x + 10}" y="${0.5 * (yL + yR) + 4}" fill="#3fb950" font-size="12" font-family="monospace" font-weight="bold">*</text>
+          `;
+        } else {
+          nodes += `<text x="${x}" y="${yL - 18}" fill="#8b949e" font-size="10" font-family="monospace" text-anchor="middle">NS (p=.939)</text>`;
+        }
+
+        nodes += `
+          <circle cx="${x}" cy="${yL}" r="5" fill="#58a6ff" stroke="#0d1117" stroke-width="1.5" />
+          <text x="${x}" y="${yL - 8}" fill="#58a6ff" font-size="10" font-family="monospace" font-weight="bold" text-anchor="middle">${leftM[i].toFixed(2)}</text>
+
+          <circle cx="${x}" cy="${yR}" r="5" fill="#f85149" stroke="#0d1117" stroke-width="1.5" />
+          <text x="${x}" y="${i === 0 ? yR + 18 : yR + 16}" fill="#f85149" font-size="10" font-family="monospace" font-weight="bold" text-anchor="middle">${rightM[i].toFixed(2)}</text>
+        `;
+      }
+
+      svg.innerHTML = `
+        ${grid}
+        <line x1="${padL}" y1="${h - padB}" x2="${w - padR}" y2="${h - padB}" stroke="#8b949e" stroke-width="1.5" />
+        <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${h - padB}" stroke="#8b949e" stroke-width="1.5" />
+        ${xLabels}
+        <polyline fill="none" stroke="#58a6ff" stroke-width="3" points="${lPts}" />
+        <polyline fill="none" stroke="#f85149" stroke-width="3" stroke-dasharray="6,4" points="${rPts}" />
+        ${nodes}
+      `;
+    }
+
+    function setFollowUpView(view) {
+      const btns = { path1: 'btnFuPath1', path2: 'btnFuPath2', main: 'btnFuMain' };
+      Object.keys(btns).forEach(k => {
+        const b = document.getElementById(btns[k]);
+        if (k === view) {
+          b.className = "px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-[#58a6ff] text-[#0d1117] shadow";
+        } else {
+          b.className = "px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-[#1c2128] text-[#c9d1d9] border border-[#30363d] hover:text-white";
+        }
+      });
+
+      const container = document.getElementById('followUpViewContainer');
+
+      if (view === 'path1') {
+        container.innerHTML = `
+          <div class="space-y-4">
+            <div class="obsidian-subcard p-5 rounded-xl border-l-4 border-l-[#58a6ff]">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-1">
+                <h4 class="text-base font-bold text-white">Simple Effects Pathway 1: Compare Left vs Right Hemisphere at Each Fixed Level of Time</h4>
+                <span class="px-3 py-0.5 rounded-full bg-[#3fb950]/20 text-[#3fb950] font-mono text-xs font-bold">Bonferroni &alpha; = .05 / 4 = .0125</span>
+              </div>
+              <p class="text-xs text-[#c9d1d9] leading-relaxed">
+                Because Hemisphere has only 2 levels at each time point, we conduct <strong>4 paired samples t tests</strong> (10 mins, 20 mins, 30 mins, 40 mins). To protect against Type I error inflation across 4 tests, we evaluate significance at <span class="font-mono text-white">&alpha; = .05 / 4 = .0125</span>:
+              </p>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs font-mono border-collapse obsidian-inset rounded-xl overflow-hidden">
+                <thead class="bg-[#161b22] text-[#8b949e] border-b border-[#30363d]">
+                  <tr>
+                    <th class="p-3">Time Level</th>
+                    <th class="p-3 text-[#58a6ff]">Left M (SD)</th>
+                    <th class="p-3 text-[#f85149]">Right M (SD)</th>
+                    <th class="p-3">Mean Diff (L &minus; R)</th>
+                    <th class="p-3">SD of Diff</th>
+                    <th class="p-3">t(7) Statistic</th>
+                    <th class="p-3">Exact p value</th>
+                    <th class="p-3">Conclusion (&alpha; = .0125)</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-[#30363d]">
+                  <tr>
+                    <td class="p-3 font-sans font-bold text-white">10 mins</td>
+                    <td class="p-3">113.38 (5.58)</td>
+                    <td class="p-3">113.63 (6.25)</td>
+                    <td class="p-3">&minus;0.250</td>
+                    <td class="p-3">8.924</td>
+                    <td class="p-3">&minus;0.079</td>
+                    <td class="p-3 text-[#8b949e]">0.9391</td>
+                    <td class="p-3 font-sans text-[#8b949e]">Not Significant (p &gt; .0125)</td>
+                  </tr>
+                  <tr class="bg-[#3fb950]/5">
+                    <td class="p-3 font-sans font-bold text-white">20 mins</td>
+                    <td class="p-3">90.88 (3.31)</td>
+                    <td class="p-3">83.50 (4.07)</td>
+                    <td class="p-3 text-[#3fb950] font-bold">+7.375</td>
+                    <td class="p-3">5.125</td>
+                    <td class="p-3 font-bold text-white">4.070</td>
+                    <td class="p-3 text-[#3fb950] font-bold">0.00475</td>
+                    <td class="p-3 font-sans font-bold text-[#3fb950]">Significant (Left &gt; Right)</td>
+                  </tr>
+                  <tr class="bg-[#3fb950]/5">
+                    <td class="p-3 font-sans font-bold text-white">30 mins</td>
+                    <td class="p-3">80.25 (4.86)</td>
+                    <td class="p-3">65.13 (3.40)</td>
+                    <td class="p-3 text-[#3fb950] font-bold">+15.125</td>
+                    <td class="p-3">3.182</td>
+                    <td class="p-3 font-bold text-white">13.444</td>
+                    <td class="p-3 text-[#3fb950] font-bold">2.98e&minus;6</td>
+                    <td class="p-3 font-sans font-bold text-[#3fb950]">Significant (Left &gt; Right)</td>
+                  </tr>
+                  <tr class="bg-[#3fb950]/5">
+                    <td class="p-3 font-sans font-bold text-white">40 mins</td>
+                    <td class="p-3">71.75 (3.62)</td>
+                    <td class="p-3">57.50 (3.46)</td>
+                    <td class="p-3 text-[#3fb950] font-bold">+14.250</td>
+                    <td class="p-3">3.495</td>
+                    <td class="p-3 font-bold text-white">11.533</td>
+                    <td class="p-3 text-[#3fb950] font-bold">8.30e&minus;6</td>
+                    <td class="p-3 font-sans font-bold text-[#3fb950]">Significant (Left &gt; Right)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      } else if (view === 'path2') {
+        container.innerHTML = `
+          <div class="space-y-4">
+            <div class="obsidian-subcard p-5 rounded-xl border-l-4 border-l-[#bc8cff]">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-1">
+                <h4 class="text-base font-bold text-white">Simple Effects Pathway 2: Effect of Time Within Each Fixed Level of Hemisphere</h4>
+                <span class="px-3 py-0.5 rounded-full bg-[#bc8cff]/20 text-[#bc8cff] font-mono text-xs font-bold">Bonferroni &alpha; = .05 / 2 = .025</span>
+              </div>
+              <p class="text-xs text-[#c9d1d9] leading-relaxed">
+                Here we run <strong>2 separate One Way Repeated Measures ANOVAs</strong> across the 4 time points: one for the Left Hemisphere and one for the Right Hemisphere, evaluating each omnibus test at <span class="font-mono text-white">&alpha; = .05 / 2 = .025</span>:
+              </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
+              <div class="obsidian-inset p-5 rounded-xl border border-[#58a6ff]/40 space-y-2">
+                <div class="font-sans font-bold text-[#58a6ff] text-sm">1. Left Hemisphere Across Time (10m, 20m, 30m, 40m)</div>
+                <div>SS_Time(Left) = 7774.125 (df = 3), MS = 2591.375</div>
+                <div>SS_Error(Left) = 273.375 (df = 21), MS = 13.0179</div>
+                <div class="text-[#3fb950] font-bold text-sm">F(3, 21) = 199.0631, p = 1.41e&minus;15 (&lt; .025 Sig!)</div>
+                <p class="font-sans text-[#c9d1d9] pt-1">
+                  Because Left Hemisphere has 4 time levels and is significant, follow up with 6 pairwise comparisons (or orthogonal polynomial trend analysis) across the 4 time points inside the Left Hemisphere.
+                </p>
+              </div>
+              <div class="obsidian-inset p-5 rounded-xl border border-[#f85149]/40 space-y-2">
+                <div class="font-sans font-bold text-[#f85149] text-sm">2. Right Hemisphere Across Time (10m, 20m, 30m, 40m)</div>
+                <div>SS_Time(Right) = 14963.125 (df = 3), MS = 4987.7083</div>
+                <div>SS_Error(Right) = 406.375 (df = 21), MS = 19.3512</div>
+                <div class="text-[#3fb950] font-bold text-sm">F(3, 21) = 257.7468, p = 1.07e&minus;16 (&lt; .025 Sig!)</div>
+                <p class="font-sans text-[#c9d1d9] pt-1">
+                  Blood flow velocity declines even more steeply across time in the Right Hemisphere (from 113.63 down to 57.50 cm/s).
+                </p>
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        container.innerHTML = `
+          <div class="space-y-4">
+            <div class="obsidian-subcard p-5 rounded-xl border-l-4 border-l-[#d29922]">
+              <h4 class="text-base font-bold text-white">Post Hoc Analyses: Pairwise t Tests &amp; Orthogonal Polynomial Trend Analysis</h4>
+              <p class="text-xs text-[#c9d1d9] mt-1 leading-relaxed">
+                When there is a statistically significant effect of a within subjects factor, post hoc analyses are needed alongside plots to interpret the findings:
+              </p>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 text-xs">
+                <div class="obsidian-inset p-4 rounded-xl">
+                  <div class="font-bold text-[#58a6ff] mb-1">1. Pairwise Paired Samples t Tests (Bonferroni)</div>
+                  <p class="text-[#c9d1d9]">Comparing all pairs of the 4 Time marginal means (<span class="font-mono">113.50, 87.19, 72.69, 64.63</span>) requires <strong>6 paired t tests</strong> with Bonferroni <span class="font-mono text-[#3fb950]">&alpha; = .05 / 6 = .0083</span>. All 6 pairwise comparisons are statistically significant (<span class="font-mono">p &lt; .0001</span>).</p>
+                </div>
+                <div class="obsidian-inset p-4 rounded-xl">
+                  <div class="font-bold text-[#3fb950] mb-1">2. Orthogonal Polynomials (Trend Analysis)</div>
+                  <p class="text-[#c9d1d9]">Because our within subjects factor (<strong>Time</strong>: 10, 20, 30, 40 mins) is <strong>ordered</strong>, orthogonal polynomials can also be used to test whether the change follows a <strong>linear trend</strong> (steady increase or decrease), a <strong>quadratic trend</strong> (U shape or inverted U shape), or a <strong>cubic trend</strong> (up to <span class="font-mono">a &minus; 1 = 3</span>rd order trend for 4 levels).</p>
+                </div>
+                <div class="obsidian-inset p-4 rounded-xl">
+                  <div class="font-bold text-[#bc8cff] mb-1">3. Marginal Main Effect of Hemisphere (a = 2)</div>
+                  <p class="text-[#c9d1d9]">Marginal Means: Left = <span class="font-mono">89.06 cm/s</span> vs Right = <span class="font-mono">79.94 cm/s</span>. Because there are only 2 levels, the significant omnibus F test (<span class="font-mono">F = 138.16, p &lt; .001</span>) already tells us Left &gt; Right without further post hoc tests.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // =========================================================================
+    // 8. TAB 6 (FORMER TAB 5): WORKSHEET VERIFIER & 6-QUESTION MASTERY QUIZ
+    // =========================================================================
+
+    const worksheetTargets = [
+      { id: 'ws_df_err', fb: 'ws_fb_df_err', val: 21, tol: 0.01, hint: '(4 \u2212 1)(8 \u2212 1)' },
+      { id: 'ws_ss_err', fb: 'ws_fb_ss_err', val: 273.375, tol: 0.05, hint: '8401.875 \u2212 (7774.125 + 354.375)' },
+      { id: 'ws_ms_time', fb: 'ws_fb_ms_time', val: 2591.375, tol: 0.05, hint: '7774.125 / 3' },
+      { id: 'ws_gg_df1', fb: 'ws_fb_gg_df1', val: 1.4868, tol: 0.005, hint: '3 \u00d7 0.4956' },
+      { id: 'ws_gg_df2', fb: 'ws_fb_gg_df2', val: 10.4076, tol: 0.01, hint: '21 \u00d7 0.4956' },
+      { id: 'ws_f_hemi', fb: 'ws_fb_f_hemi', val: 138.159, tol: 0.15, hint: '1332.25 / 9.6429' },
+      { id: 'ws_f_int', fb: 'ws_fb_f_int', val: 11.249, tol: 0.05, hint: '204.2917 / 18.1607' },
+      { id: 'ws_bonf_4', fb: 'ws_fb_bonf_4', val: 0.0125, tol: 0.0005, hint: '0.05 / 4 = 0.0125' }
+    ];
+
+    function verifyStudentWorksheet() {
+      let correct = 0;
+      worksheetTargets.forEach(t => {
+        const inp = document.getElementById(t.id);
+        const fb = document.getElementById(t.fb);
+        const v = parseFloat(inp.value);
+        if (!isNaN(v) && Math.abs(v - t.val) <= t.tol) {
+          correct++;
+          inp.className = "w-40 px-3 py-1.5 rounded bg-[#3fb950]/15 border border-[#3fb950] text-white font-mono";
+          fb.className = "font-mono text-xs text-[#3fb950] font-bold";
+          fb.innerText = "Verified!";
+        } else {
+          inp.className = "w-40 px-3 py-1.5 rounded bg-[#f85149]/15 border border-[#f85149] text-white font-mono";
+          fb.className = "font-mono text-xs text-[#d29922]";
+          fb.innerText = "Hint: " + t.hint;
+        }
+      });
+      const banner = document.getElementById('wsOverallBanner');
+      banner.classList.remove('hidden');
+      if (correct === worksheetTargets.length) {
+        banner.className = "mt-4 p-3.5 rounded-xl font-bold text-xs bg-[#3fb950]/20 text-[#3fb950] border border-[#3fb950]/50";
+        banner.innerText = "All 8 worksheet calculations verified! You have mastered the numerical mechanics of the Repeated Measures ANOVA lab.";
+      } else {
+        banner.className = "mt-4 p-3.5 rounded-xl font-bold text-xs bg-[#d29922]/20 text-[#d29922] border border-[#d29922]/50";
+        banner.innerText = `${correct} of 8 entries verified. Check the formula hints next to any highlighted fields and try again.`;
+      }
+    }
+
+    function fillStudentWorksheetKey() {
+      worksheetTargets.forEach(t => {
+        document.getElementById(t.id).value = t.val;
+      });
+      verifyStudentWorksheet();
+    }
+
+    const quizQuestions = [
+      {
+        q: "1. In a Repeated Measures ANOVA, where do the explained variance (SS_Treatment) and unexplained variance (SS_Error) come from?",
+        options: [
+          "They both come from the Within Subjects variance component (SS_Within), after partitioning out variance due to individual participant differences (SS_Participant).",
+          "Explained variance comes from SS_Participant, while unexplained variance comes from SS_Total.",
+          "Participant differences are added into SS_Error to make the F test more conservative.",
+          "They are computed identically to a Between Groups ANOVA without calculating participant means."
+        ],
+        answer: 0,
+        explanation: "Because the experimental manipulation happens inside the same participants, both the treatment effect and residual error come from SS_Within, while baseline participant differences (SS_Participant) are partitioned out."
+      },
+      {
+        q: "2. You run a One Way Within Subjects ANOVA with 4 conditions. Mauchly's Test of Sphericity yields p = .018, and the Greenhouse Geisser epsilon estimate is 0.64. Which reporting strategy is required?",
+        options: [
+          "Report unadjusted degrees of freedom because Mauchly's p is less than .05.",
+          "Use the Greenhouse Geisser adjustment because sphericity is violated (p < .05) and the GG epsilon (0.64) is less than 0.75.",
+          "Use the Huynh Feldt adjustment because epsilon is less than 0.75.",
+          "Switch to a Between Groups ANOVA."
+        ],
+        answer: 1,
+        explanation: "When Mauchly's p < .05, sphericity is violated. Because the GG epsilon estimate (0.64) is below 0.75, the violation is severe and requires the more conservative Greenhouse Geisser correction."
+      },
+      {
+        q: "3. Why does the main effect of Hemisphere (Left vs Right) in our Factorial RM ANOVA not have a Mauchly's test p value in the output?",
+        options: [
+          "Because Hemisphere is a Between Groups variable.",
+          "Because there are only 2 levels (a = 2) of Hemisphere, yielding only 1 column of difference scores (Left minus Right) so the sphericity assumption is no longer a concern.",
+          "Because blood flow velocity is identical in both hemispheres.",
+          "Because Mauchly's test only applies to interaction terms."
+        ],
+        answer: 1,
+        explanation: "Sphericity requires homogeneity of variance of the difference scores across pairs of conditions. With only 2 conditions (a = 2), there is only 1 set of difference scores, so sphericity holds automatically."
+      },
+      {
+        q: "4. When you multiply both df_num and df_error by Greenhouse Geisser epsilon (0.4956), what happens to the Adjusted F ratio and its p value?",
+        options: [
+          "Both the F ratio and the p value become smaller.",
+          "The F ratio remains exactly the same (199.063), while the F critical value increases and the p value becomes larger (less significant).",
+          "The F ratio is cut in half, while the degrees of freedom stay at 3 and 21.",
+          "The p value becomes smaller (more significant) to reward the correction."
+        ],
+        answer: 1,
+        explanation: "Multiplying both numerator and denominator degrees of freedom by epsilon scales both Mean Squares by 1/epsilon, which cancels out in the F ratio. However, evaluating that F ratio on smaller degrees of freedom raises F critical and increases the p value."
+      },
+      {
+        q: "5. In the 2 (Hemisphere) by 4 (Time) Repeated Measures ANOVA, which denominator error term is used to test the Time by Hemisphere interaction (MS = 204.292)?",
+        options: [
+          "MS_Participant (81.321, df = 7)",
+          "MS_Time x Participant (14.208, df = 21)",
+          "MS_Hemisphere x Participant (9.643, df = 7)",
+          "MS_Time x Hemisphere x Participant (18.161, df = 21)"
+        ],
+        answer: 3,
+        explanation: "In a factorial repeated measures design, every within subjects effect is tested against its own interaction with Participant. Thus, Time x Hemisphere is divided by MS_Time x Hemisphere x Participant (204.2917 / 18.1607 = 11.249)."
+      },
+      {
+        q: "6. When decomposing the Time by Hemisphere interaction via Simple Effects Pathway 1 (comparing Left vs Right Hemisphere at each of the 4 time points), why did we find no difference at 10 minutes (p = .939) even though the overall main effect of Hemisphere was highly significant?",
+        options: [
+          "Because the Bonferroni cutoff (.0125) made it impossible to find significance at any time point.",
+          "Because blood flow started at virtually identical velocities at 10 minutes (113.38 vs 113.63 cm/s) and only diverged at 20, 30, and 40 minutes as the Right Hemisphere declined faster.",
+          "Because there were only 8 participants.",
+          "Because Mauchly's test was violated."
+        ],
+        answer: 1,
+        explanation: "This is the exact reason we decompose significant interactions! The main effect of Hemisphere averages across all four times, masking the fact that hemispheric lateralization is absent at 10 minutes and emerges only during sustained vigilance at 20, 30, and 40 minutes."
+      }
+    ];
+
+    const userQuizAnswers = {};
+
+    function renderQuiz() {
+      const container = document.getElementById('quizQuestionsContainer');
+      container.innerHTML = quizQuestions.map((item, qIdx) => `
+        <div class="obsidian-subcard p-5 rounded-2xl space-y-3">
+          <div class="font-bold text-white text-sm sm:text-base">${item.q}</div>
+          <div class="space-y-2">
+            ${item.options.map((opt, oIdx) => `
+              <button onclick="selectQuizAnswer(${qIdx}, ${oIdx})" id="qBtn_${qIdx}_${oIdx}" class="w-full text-left p-3 rounded-xl text-xs sm:text-sm border border-[#30363d] bg-[#0d1117] text-[#c9d1d9] hover:border-[#58a6ff] transition">
+                ${opt}
+              </button>
+            `).join('')}
+          </div>
+          <div id="qExp_${qIdx}" class="hidden p-3.5 rounded-xl text-xs leading-relaxed"></div>
+        </div>
+      `).join('');
+    }
+
+    function selectQuizAnswer(qIdx, oIdx) {
+      userQuizAnswers[qIdx] = oIdx;
+      const item = quizQuestions[qIdx];
+
+      item.options.forEach((_, idx) => {
+        const btn = document.getElementById(`qBtn_${qIdx}_${idx}`);
+        if (idx === item.answer) {
+          btn.className = "w-full text-left p-3 rounded-xl text-xs sm:text-sm border border-[#3fb950] bg-[#3fb950]/15 text-white font-bold";
+        } else if (idx === oIdx && oIdx !== item.answer) {
+          btn.className = "w-full text-left p-3 rounded-xl text-xs sm:text-sm border border-[#f85149] bg-[#f85149]/15 text-white";
+        } else {
+          btn.className = "w-full text-left p-3 rounded-xl text-xs sm:text-sm border border-[#30363d] bg-[#0d1117] text-[#8b949e]";
+        }
+      });
+
+      const expBox = document.getElementById(`qExp_${qIdx}`);
+      expBox.classList.remove('hidden');
+      if (oIdx === item.answer) {
+        expBox.className = "p-3.5 rounded-xl text-xs leading-relaxed bg-[#3fb950]/10 border border-[#3fb950]/40 text-[#e6edf3]";
+        expBox.innerHTML = `<strong class="text-[#3fb950]">Correct!</strong> ${item.explanation}`;
+      } else {
+        expBox.className = "p-3.5 rounded-xl text-xs leading-relaxed bg-[#f85149]/10 border border-[#f85149]/40 text-[#e6edf3]";
+        expBox.innerHTML = `<strong class="text-[#f85149]">Not quite.</strong> ${item.explanation}`;
+      }
+
+      let score = 0;
+      Object.keys(userQuizAnswers).forEach(k => {
+        if (userQuizAnswers[k] === quizQuestions[k].answer) score++;
+      });
+      document.getElementById('quizScoreText').innerText = score;
+    }
+
+    // =========================================================================
+    // INITIALIZE APPLICATION ON LOAD
+    // =========================================================================
+    window.onload = function () {
+      setPartitionView('sidebyside');
+      updateSubjDiffSimulator();
+      renderSphericityTable();
+      setEpsilonMode('modeA');
+      setOneWayMatrix('raw');
+      setTwoWaySubTable('main');
+      renderTab4InteractionPlot();
+      setFollowUpView('path1');
+      renderQuiz();
+    };
+  </script>
+</body>
+</html>
